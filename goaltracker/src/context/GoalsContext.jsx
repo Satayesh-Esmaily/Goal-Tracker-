@@ -1,8 +1,8 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { calculateXpStats } from "../components/xp/XpRules";
 
 const GoalsContext = createContext(null);
 const STORAGE_KEY = "goal-tracker-goals-v1";
-const XP_PER_LOG = 20;
 
 function toDayKey(input = new Date()) {
   const date = typeof input === "string" ? new Date(input) : input;
@@ -81,6 +81,7 @@ export function GoalsProvider({ children }) {
       color: payload.color || "#2563eb",
       notes: payload.notes || "",
       logs: [],
+      completedAt: null,
       createdAt: now,
       updatedAt: now,
     };
@@ -97,12 +98,14 @@ export function GoalsProvider({ children }) {
           return goal;
         }
         const nextProgress = Math.min(goal.target, goal.progress + step);
+        const becameCompleted = nextProgress >= goal.target && goal.status !== "completed";
         const status = nextProgress >= goal.target ? "completed" : goal.status;
         return {
           ...goal,
           progress: nextProgress,
           status,
           logs: [...(goal.logs || []), { date: now, amount: step }],
+          completedAt: becameCompleted ? now : goal.completedAt,
           updatedAt: now,
         };
       })
@@ -135,6 +138,12 @@ export function GoalsProvider({ children }) {
           ...goal,
           ...updates,
           target: Number(updates.target ?? goal.target) || goal.target,
+          completedAt:
+            updates.status === "completed"
+              ? goal.completedAt || now
+              : updates.status && updates.status !== "completed"
+              ? null
+              : goal.completedAt,
           updatedAt: now,
         };
       })
@@ -155,9 +164,8 @@ export function GoalsProvider({ children }) {
               100
           );
 
-    const logsCount = goals.reduce((acc, goal) => acc + (goal.logs?.length || 0), 0);
-    const xpTotal = logsCount * XP_PER_LOG;
     const streak = calculateStreak(goals);
+    const { xpTotal, level, streakBonus } = calculateXpStats(goals, streak);
 
     return {
       activeCount: activeGoals.length,
@@ -166,6 +174,8 @@ export function GoalsProvider({ children }) {
       completionRate,
       xpTotal,
       streak,
+      level,
+      streakBonus,
     };
   }, [goals]);
 
