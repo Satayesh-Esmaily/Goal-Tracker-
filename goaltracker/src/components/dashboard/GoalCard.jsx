@@ -1,4 +1,5 @@
 import { Card, CardContent, Chip, LinearProgress, Stack, Typography, Button, useTheme } from "@mui/material";
+import { useTranslation } from "react-i18next";
 
 function formatDate(date) {
   if (!date) return "-";
@@ -10,6 +11,7 @@ function formatDate(date) {
 export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete, onEdit }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const { t } = useTranslation();
   const percent = Math.round((goal.progress / goal.target) * 100);
   const isCompleted = goal.status === "completed";
   const cardBlue = "#156fc7";
@@ -69,7 +71,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
             </Typography>
             <Chip
               size="small"
-              label={goal.status}
+              label={t(`common.${goal.status}`)}
               variant="outlined"
               sx={{
                 borderRadius: 999,
@@ -101,14 +103,14 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
               }}
             />
             <Typography variant="caption" fontWeight={700} sx={{ color: "#ffffff" }}>
-              {percent}% complete
+              {t("goalCard.completePercent", { count: percent })}
             </Typography>
           </Stack>
 
           <Stack spacing={0.35} sx={{ color: "#ffffff" }}>
-            <Typography variant="caption" fontWeight={700}>Start: {formatDate(goal.startDate)}</Typography>
-            <Typography variant="caption" fontWeight={700}>End: {formatDate(goal.endDate)}</Typography>
-            <Typography variant="caption" fontWeight={700}>Deadline: {formatDate(goal.deadline)}</Typography>
+            <Typography variant="caption" fontWeight={700}>{t("goalCard.start")}: {formatDate(goal.startDate)}</Typography>
+            <Typography variant="caption" fontWeight={700}>{t("goalCard.end")}: {formatDate(goal.endDate)}</Typography>
+            <Typography variant="caption" fontWeight={700}>{t("goalCard.deadline")}: {formatDate(goal.deadline)}</Typography>
           </Stack>
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1} useFlexGap flexWrap="wrap">
@@ -130,7 +132,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
                 },
               }}
             >
-              Mark Progress
+              {t("goalCard.markProgress")}
             </Button>
             <Button
               size="small"
@@ -148,7 +150,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
                 },
               }}
             >
-              {goal.status === "paused" ? "Resume" : "Pause"}
+              {goal.status === "paused" ? t("goalCard.resume") : t("goalCard.pause")}
             </Button>
             <Button
               size="small"
@@ -165,7 +167,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
                 },
               }}
             >
-              Edit
+              {t("goalCard.edit")}
             </Button>
             <Button
               size="small"
@@ -183,7 +185,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
                 },
               }}
             >
-              Delete
+              {t("goalCard.delete")}
             </Button>
           </Stack>
         </Stack>

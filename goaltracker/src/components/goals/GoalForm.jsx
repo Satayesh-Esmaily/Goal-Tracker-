@@ -16,6 +16,7 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { useForm, Controller } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
 import { useGoals } from "../../context/GoalsContext";
+import { useTranslation } from "react-i18next";
 
 const categories = ["Health", "Study", "Work", "Personal", "Fitness", "Hobby"];
 const types = [
@@ -26,9 +27,11 @@ const types = [
 const priorities = ["Low", "Medium", "High"];
 const units = ["Pages", "Sessions", "Minutes", "Hours"];
 
-export default function GoalForm({ initialData = null, onSubmitGoal = null, submitLabel = "Create Goal", title = "Create New Goal" }) {
+export default function GoalForm({ initialData = null, onSubmitGoal = null, submitLabel = null, title = null }) {
   const navigate = useNavigate();
   const { createGoal } = useGoals();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
   const [showAdvanced, setShowAdvanced] = useState(false);
 
   const {
@@ -92,29 +95,29 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
   return (
     <Card elevation={1} sx={{ borderRadius: 3 }}>
       <CardContent sx={{ p: { xs: 2, md: 4 } }}>
-        <Stack spacing={3}>
-          <Stack spacing={1}>
+        <Stack spacing={isFa ? 4 : 3}>
+          <Stack spacing={isFa ? 1.5 : 1}>
             <Typography variant="h4" fontWeight={700}>
-              {title}
+              {title || (initialData ? t("goalForm.editTitle") : t("goalForm.createTitle"))}
             </Typography>
             <Typography color="text.secondary">
-              Fill in the details to add a goal to your dashboard.
+              {t("goalForm.subtitle")}
             </Typography>
           </Stack>
 
           <Divider />
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={2.5}>
+            <Grid container spacing={isFa ? 3.5 : 2.5}>
               <Grid item xs={12}>
                 <Controller
                   name="title"
                   control={control}
-                  rules={{ required: "Title is required" }}
+                  rules={{ required: t("validation.titleRequired") }}
                   render={({ field }) => (
                     <TextField
                       {...field}
-                      label="Title"
+                      label={t("goalForm.title")}
                       fullWidth
                       error={!!errors.title}
                       helperText={errors.title?.message}
@@ -127,12 +130,12 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                 <Controller
                   name="category"
                   control={control}
-                  rules={{ required: "Category is required" }}
+                  rules={{ required: t("validation.categoryRequired") }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       select
-                      label="Category"
+                      label={t("goalForm.category")}
                       fullWidth
                       error={!!errors.category}
                       helperText={errors.category?.message}
@@ -152,7 +155,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                   name="type"
                   control={control}
                   render={({ field }) => (
-                    <TextField {...field} select label="Goal Type" fullWidth>
+                    <TextField {...field} select label={t("goalForm.goalType")} fullWidth>
                       {types.map((type) => (
                         <MenuItem key={type.value} value={type.value}>
                           {type.label}
@@ -168,14 +171,14 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                   name="target"
                   control={control}
                   rules={{
-                    required: "Target is required",
-                    min: { value: 1, message: "Target must be at least 1" },
+                    required: t("validation.targetRequired"),
+                    min: { value: 1, message: t("validation.targetMin") },
                   }}
                   render={({ field }) => (
                     <TextField
                       {...field}
                       type="number"
-                      label="Target"
+                      label={t("goalForm.target")}
                       fullWidth
                       error={!!errors.target}
                       helperText={errors.target?.message}
@@ -189,7 +192,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                   name="unit"
                   control={control}
                   render={({ field }) => (
-                    <TextField {...field} select label="Unit" fullWidth>
+                    <TextField {...field} select label={t("goalForm.unit")} fullWidth>
                       {units.map((unit) => (
                         <MenuItem key={unit} value={unit}>
                           {unit}
@@ -205,7 +208,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                   name="priority"
                   control={control}
                   render={({ field }) => (
-                    <TextField {...field} select label="Priority" fullWidth>
+                    <TextField {...field} select label={t("goalForm.priority")} fullWidth>
                       {priorities.map((priority) => (
                         <MenuItem key={priority} value={priority}>
                           {priority}
@@ -224,7 +227,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                     <TextField
                       {...field}
                       type="date"
-                      label="Start Date"
+                      label={t("goalForm.startDate")}
                       fullWidth
                       InputLabelProps={{ shrink: true }}
                     />
@@ -240,7 +243,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                     <TextField
                       {...field}
                       type="date"
-                      label="End Date"
+                      label={t("goalForm.endDate")}
                       fullWidth
                       InputLabelProps={{ shrink: true }}
                     />
@@ -250,7 +253,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
 
               <Grid item xs={12}>
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography fontWeight={600}>Advanced Options</Typography>
+                  <Typography fontWeight={600}>{t("goalForm.advancedOptions")}</Typography>
                   <IconButton onClick={() => setShowAdvanced((prev) => !prev)} aria-label="toggle advanced options">
                     <ExpandMoreIcon
                       sx={{
@@ -264,7 +267,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
 
               <Grid item xs={12}>
                 <Collapse in={showAdvanced}>
-                  <Grid container spacing={2.5}>
+                  <Grid container spacing={isFa ? 3.5 : 2.5}>
                     <Grid item xs={12} md={6}>
                       <Controller
                         name="deadline"
@@ -273,7 +276,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                           <TextField
                             {...field}
                             type="date"
-                            label="Deadline"
+                            label={t("goalForm.deadline")}
                             fullWidth
                             InputLabelProps={{ shrink: true }}
                           />
@@ -286,7 +289,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                         name="frequency"
                         control={control}
                         render={({ field }) => (
-                          <TextField {...field} label="Frequency (e.g., 3 times/week)" fullWidth />
+                          <TextField {...field} label={t("goalForm.frequency")} fullWidth />
                         )}
                       />
                     </Grid>
@@ -296,7 +299,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                         name="color"
                         control={control}
                         render={({ field }) => (
-                          <TextField {...field} type="color" label="Color" fullWidth />
+                          <TextField {...field} type="color" label={t("goalForm.color")} fullWidth />
                         )}
                       />
                     </Grid>
@@ -306,7 +309,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                         name="notes"
                         control={control}
                         render={({ field }) => (
-                          <TextField {...field} multiline rows={4} label="Notes" fullWidth />
+                          <TextField {...field} multiline rows={4} label={t("goalForm.notes")} fullWidth />
                         )}
                       />
                     </Grid>
@@ -315,12 +318,12 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
               </Grid>
 
               <Grid item xs={12}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} justifyContent="flex-end">
+                <Stack direction={{ xs: "column", sm: "row" }} spacing={isFa ? 2.25 : 1.5} justifyContent="flex-end">
                   <Button variant="outlined" onClick={() => navigate(-1)}>
-                    Cancel
+                    {t("common.cancel")}
                   </Button>
                   <Button type="submit" variant="contained">
-                    {submitLabel}
+                    {submitLabel || (initialData ? t("common.saveChanges") : t("goalForm.createGoal"))}
                   </Button>
                 </Stack>
               </Grid>

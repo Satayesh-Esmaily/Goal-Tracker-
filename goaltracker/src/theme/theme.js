@@ -20,7 +20,7 @@ export const getTheme = (mode) =>
       borderRadius: 10,
     },
     typography: {
-      fontFamily: '"Roboto","Helvetica","Arial",sans-serif',
+      fontFamily: 'var(--app-font, "Inter","Roboto","Helvetica","Arial",sans-serif)',
       h4: { fontWeight: 700 },
       h5: { fontWeight: 700 },
       h6: { fontWeight: 700 },

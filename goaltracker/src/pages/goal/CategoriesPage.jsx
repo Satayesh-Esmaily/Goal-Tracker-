@@ -1,9 +1,11 @@
 import { useMemo } from "react";
 import { Box, Card, CardContent, Container, Grid, LinearProgress, Stack, Typography } from "@mui/material";
 import { useGoals } from "../../context/GoalsContext";
+import { useTranslation } from "react-i18next";
 
 export default function CategoriesPage() {
   const { goals } = useGoals();
+  const { t } = useTranslation();
 
   const categories = useMemo(() => {
     const map = new Map();
@@ -21,12 +23,12 @@ export default function CategoriesPage() {
     <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
       <Stack spacing={3}>
         <Typography variant="h4" fontWeight={700}>
-          Categories
+          {t("categoriesPage.title")}
         </Typography>
 
         {categories.length === 0 ? (
           <Box sx={{ py: 6, textAlign: "center", border: "1px dashed", borderColor: "divider", borderRadius: 3 }}>
-            <Typography color="text.secondary">No categories yet. Create your first goal.</Typography>
+            <Typography color="text.secondary">{t("categoriesPage.noCategories")}</Typography>
           </Box>
         ) : (
           <Grid container spacing={2}>
@@ -40,10 +42,10 @@ export default function CategoriesPage() {
                         {category.name}
                       </Typography>
                       <Typography color="text.secondary" sx={{ mt: 1 }}>
-                        Active: {category.active}
+                        {t("categoriesPage.active")}: {category.active}
                       </Typography>
                       <Typography color="text.secondary">
-                        Completed: {category.completed}
+                        {t("categoriesPage.completed")}: {category.completed}
                       </Typography>
                       <LinearProgress value={percent} variant="determinate" sx={{ mt: 2, height: 8, borderRadius: 999 }} />
                     </CardContent>

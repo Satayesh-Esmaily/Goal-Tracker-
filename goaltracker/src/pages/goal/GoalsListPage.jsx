@@ -12,11 +12,14 @@ import {
   Button,
 } from "@mui/material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import GoalCard from "../../components/dashboard/GoalCard";
 import { useGoals } from "../../context/GoalsContext";
 
 export default function GoalsListPage() {
   const navigate = useNavigate();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
   const { goals, addProgress, togglePause, deleteGoal } = useGoals();
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
@@ -48,46 +51,52 @@ export default function GoalsListPage() {
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
-      <Stack spacing={3}>
-        <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" spacing={2}>
+      <Stack spacing={isFa ? 5 : 3}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          justifyContent="space-between"
+          spacing={isFa ? 4 : 2}
+          useFlexGap
+          flexWrap="wrap"
+        >
           <Typography variant="h4" fontWeight={700}>
-            All Goals
+            {t("goalsPage.title")}
           </Typography>
           <Button variant="contained" component={RouterLink} to="/goals/new">
-            + New Goal
+            {t("goalsPage.newGoal")}
           </Button>
         </Stack>
 
         <Tabs value={tab} onChange={(_, value) => setTab(value)} variant="scrollable">
-          <Tab label="All" value="all" />
-          <Tab label="Active" value="active" />
-          <Tab label="Completed" value="completed" />
-          <Tab label="Paused" value="paused" />
+          <Tab label={t("goalsPage.tabs.all")} value="all" />
+          <Tab label={t("goalsPage.tabs.active")} value="active" />
+          <Tab label={t("goalsPage.tabs.completed")} value="completed" />
+          <Tab label={t("goalsPage.tabs.paused")} value="paused" />
         </Tabs>
 
-        <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+        <Stack direction={{ xs: "column", md: "row" }} spacing={isFa ? 4 : 2}>
           <TextField
             fullWidth
-            label="Search by title"
+            label={t("goalsPage.searchByTitle")}
             value={search}
             onChange={(event) => setSearch(event.target.value)}
           />
           <TextField
             select
-            label="Sort by"
+            label={t("goalsPage.sortBy")}
             sx={{ minWidth: 220 }}
             value={sortBy}
             onChange={(event) => setSortBy(event.target.value)}
           >
-            <MenuItem value="newest">Newest</MenuItem>
-            <MenuItem value="progress">Progress %</MenuItem>
-            <MenuItem value="category">Category</MenuItem>
+            <MenuItem value="newest">{t("goalsPage.newest")}</MenuItem>
+            <MenuItem value="progress">{t("goalsPage.progress")}</MenuItem>
+            <MenuItem value="category">{t("goalsPage.category")}</MenuItem>
           </TextField>
         </Stack>
 
         {filteredGoals.length === 0 ? (
           <Box sx={{ py: 6, textAlign: "center", border: "1px dashed", borderColor: "divider", borderRadius: 3 }}>
-            <Typography color="text.secondary">No goals found.</Typography>
+            <Typography color="text.secondary">{t("goalsPage.noGoalsFound")}</Typography>
           </Box>
         ) : (
           <Grid container spacing={2}>

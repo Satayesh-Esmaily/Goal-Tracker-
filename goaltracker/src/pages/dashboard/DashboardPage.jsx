@@ -22,6 +22,7 @@ import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import GoalCard from "../../components/dashboard/GoalCard";
 import { useGoals } from "../../context/GoalsContext";
+import { useTranslation } from "react-i18next";
 
 function SectionCard({ title, action, children, sx }) {
   return (
@@ -101,6 +102,8 @@ export default function DashboardPage() {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { goals, stats, addProgress, togglePause, deleteGoal } = useGoals();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
 
   const activeGoals = goals.filter((goal) => goal.status !== "completed");
   const completedGoals = goals.filter((goal) => goal.status === "completed").slice(0, 5);
@@ -144,23 +147,65 @@ export default function DashboardPage() {
             >
               <Box>
                 <Typography variant="h4" fontWeight={800}>
-                  Performance Dashboard
+                  {t("dashboard.title")}
                 </Typography>
                 <Typography color="text.secondary" sx={{ mt: 0.75 }}>
-                  Manage goals, monitor progress, and keep your streak alive.
+                  {t("dashboard.subtitle")}
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} useFlexGap flexWrap="wrap">
-                  <Chip size="small" label={`${goals.length} Total Goals`} />
-                  <Chip size="small" color="success" label={`${stats.completedCount} Completed`} />
-                  <Chip size="small" color="warning" label={`${stats.streak}d Streak`} />
+                  <Chip
+                    size="small"
+                    label={t("dashboard.totalGoals", { count: goals.length })}
+                    sx={{
+                      borderRadius: 999,
+                      fontWeight: 700,
+                      bgcolor: "rgba(30,64,175,0.48)",
+                      color: "#dbeafe",
+                      border: "1px solid rgba(96,165,250,0.72)",
+                    }}
+                  />
+                  <Chip
+                    size="small"
+                    label={t("dashboard.completedChip", { count: stats.completedCount })}
+                    sx={{
+                      borderRadius: 999,
+                      fontWeight: 700,
+                      bgcolor: "rgba(22,101,52,0.5)",
+                      color: "#bbf7d0",
+                      border: "1px solid rgba(34,197,94,0.78)",
+                    }}
+                  />
+                  <Chip
+                    size="small"
+                    label={t("dashboard.streakChip", { count: stats.streak })}
+                    sx={{
+                      borderRadius: 999,
+                      fontWeight: 700,
+                      bgcolor: "rgba(146,64,14,0.52)",
+                      color: "#fde68a",
+                      border: "1px solid rgba(245,158,11,0.82)",
+                    }}
+                  />
                 </Stack>
               </Box>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25}>
-                <Button variant="contained" component={RouterLink} to="/goals/new" startIcon={<AddRoundedIcon />}>
-                  New Goal
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={isFa ? 2.75 : 1.25}>
+                <Button
+                  variant="contained"
+                  component={RouterLink}
+                  to="/goals/new"
+                  startIcon={<AddRoundedIcon />}
+                  sx={{ px: isFa ? 2.75 : 2 }}
+                >
+                  {t("dashboard.newGoal")}
                 </Button>
-                <Button variant="outlined" component={RouterLink} to="/goals" endIcon={<ArrowOutwardRoundedIcon />}>
-                  Manage Goals
+                <Button
+                  variant="outlined"
+                  component={RouterLink}
+                  to="/goals"
+                  endIcon={<ArrowOutwardRoundedIcon />}
+                  sx={{ px: isFa ? 2.75 : 2 }}
+                >
+                  {t("dashboard.manageGoals")}
                 </Button>
               </Stack>
             </Stack>
@@ -169,36 +214,36 @@ export default function DashboardPage() {
           <Grid container spacing={2}>
             <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
               <MetricCard
-                title="Active Goals"
+                title={t("dashboard.activeGoals")}
                 value={stats.activeCount}
-                subtitle="Currently in progress"
+                subtitle={t("dashboard.currentlyInProgress")}
                 color="#1976d2"
                 icon={<FlagCircleOutlinedIcon fontSize="small" />}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
               <MetricCard
-                title="Completed"
+                title={t("dashboard.completed")}
                 value={stats.completedCount}
-                subtitle="Finished targets"
+                subtitle={t("dashboard.finishedTargets")}
                 color="#2e7d32"
                 icon={<CheckCircleOutlineRoundedIcon fontSize="small" />}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
               <MetricCard
-                title="Current Streak"
+                title={t("dashboard.currentStreak")}
                 value={`${stats.streak}d`}
-                subtitle="Consecutive days"
+                subtitle={t("dashboard.consecutiveDays")}
                 color="#ed6c02"
                 icon={<LocalFireDepartmentOutlinedIcon fontSize="small" />}
               />
             </Grid>
             <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
               <MetricCard
-                title="Total XP"
+                title={t("dashboard.totalXP")}
                 value={stats.xpTotal}
-                subtitle="Progress points"
+                subtitle={t("dashboard.progressPoints")}
                 color="#9c27b0"
                 icon={<WorkspacePremiumOutlinedIcon fontSize="small" />}
               />
@@ -207,9 +252,12 @@ export default function DashboardPage() {
 
           <Grid container spacing={2.5}>
             <Grid size={{ xs: 12, lg: 8 }}>
-              <SectionCard title="Active Goals" action={<Chip size="small" label={`${activeGoals.length} items`} />}>
+              <SectionCard
+                title={t("dashboard.activeGoals")}
+                action={<Chip size="small" label={t("dashboard.itemsCount", { count: activeGoals.length })} />}
+              >
                 {activeGoals.length === 0 ? (
-                  <Typography color="text.secondary">No active goals yet. Create one to get started.</Typography>
+                  <Typography color="text.secondary">{t("dashboard.noActiveGoals")}</Typography>
                 ) : (
                   <Grid container spacing={1.75}>
                     {activeGoals.slice(0, 6).map((goal) => (
@@ -220,7 +268,7 @@ export default function DashboardPage() {
                           onTogglePause={() => togglePause(goal.id)}
                           onEdit={() => navigate(`/goals/${goal.id}/edit`)}
                           onDelete={() => {
-                            if (window.confirm(`Delete "${goal.title}"?`)) deleteGoal(goal.id);
+                            if (window.confirm(`${t("goalCard.delete")} "${goal.title}"?`)) deleteGoal(goal.id);
                           }}
                         />
                       </Grid>
@@ -232,7 +280,7 @@ export default function DashboardPage() {
 
             <Grid size={{ xs: 12, lg: 4 }}>
               <Stack spacing={2.5}>
-                <SectionCard title="Completion Insight">
+                <SectionCard title={t("dashboard.completionInsight")}>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Box sx={{ position: "relative", display: "inline-flex" }}>
                       <CircularProgress variant="determinate" value={percent} size={92} thickness={4.8} />
@@ -255,7 +303,7 @@ export default function DashboardPage() {
                     </Box>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="body2" color="text.secondary">
-                        {stats.completedCount} completed from {goals.length} goals.
+                        {t("dashboard.completedFrom", { completed: stats.completedCount, total: goals.length })}
                       </Typography>
                       <LinearProgress
                         variant="determinate"
@@ -267,24 +315,24 @@ export default function DashboardPage() {
                 </SectionCard>
 
                 <SectionCard
-                  title="Recent Activity"
+                  title={t("dashboard.recentActivity")}
                   action={
                     <Chip
                       size="small"
                       icon={<InsightsRoundedIcon fontSize="small" />}
-                      label={`${recentLogs.length} logs`}
+                      label={t("dashboard.logsCount", { count: recentLogs.length })}
                     />
                   }
                 >
                   {recentLogs.length === 0 ? (
-                    <Typography color="text.secondary">No activity yet.</Typography>
+                    <Typography color="text.secondary">{t("dashboard.noActivity")}</Typography>
                   ) : (
                     <Stack spacing={1}>
                       {recentLogs.map((log, index) => (
                         <Box key={log.id}>
                           <Stack direction="row" justifyContent="space-between" alignItems="center">
                             <Typography variant="body2">
-                              +{log.amount} on <strong>{log.title}</strong>
+                              {t("dashboard.activityItem", { amount: log.amount, title: log.title })}
                             </Typography>
                             <Typography variant="caption" color="text.secondary">
                               {log.date.toLocaleDateString()}
@@ -297,15 +345,15 @@ export default function DashboardPage() {
                   )}
                 </SectionCard>
 
-                <SectionCard title="Completed Preview">
+                <SectionCard title={t("dashboard.completedPreview")}>
                   {completedGoals.length === 0 ? (
-                    <Typography color="text.secondary">No completed goals yet.</Typography>
+                    <Typography color="text.secondary">{t("dashboard.noCompleted")}</Typography>
                   ) : (
                     <Stack spacing={1}>
                       {completedGoals.map((goal) => (
                         <Stack key={goal.id} direction="row" justifyContent="space-between" alignItems="center">
                           <Typography variant="body2">{goal.title}</Typography>
-                          <Chip size="small" label="Done" color="success" />
+                          <Chip size="small" label={t("common.done")} color="success" />
                         </Stack>
                       ))}
                     </Stack>

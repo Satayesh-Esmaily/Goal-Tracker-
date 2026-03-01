@@ -7,7 +7,7 @@ function Settings({ currentTheme, toggleTheme }) {
   return (
     <Box p={4}>
       <Typography variant="h4" gutterBottom>
-        {t("settings")}
+        {t("nav.settings")}
       </Typography>
 
       <Stack direction="row" spacing={2} mb={3}>
@@ -25,7 +25,7 @@ function Settings({ currentTheme, toggleTheme }) {
               onChange={toggleTheme}
             />
           }
-          label={t(currentTheme === "dark" ? "dark" : "light")}
+          label={t(currentTheme === "dark" ? "common.dark" : "common.light")}
         />
       </Stack>
     </Box>

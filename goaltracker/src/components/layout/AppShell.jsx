@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   AppBar,
-  Avatar,
   Box,
   Button,
   CssBaseline,
@@ -22,24 +21,32 @@ import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
+import logoImage from "../../assets/logo.jpg";
 
 export default function AppShell({ children, mode, toggleTheme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t, i18n } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const isFa = i18n.language === "fa";
 
   useEffect(() => {
     const direction = i18n.language === "fa" ? "rtl" : "ltr";
+    const fontFamily =
+      i18n.language === "fa"
+        ? '"Vazirmatn","Tahoma","Segoe UI",sans-serif'
+        : '"Inter","Roboto","Helvetica","Arial",sans-serif';
     document.documentElement.dir = direction;
+    document.documentElement.lang = i18n.language;
+    document.documentElement.style.setProperty("--app-font", fontFamily);
     document.body.dir = direction;
   }, [i18n.language]);
 
   const links = [
-    { label: t("dashboard"), to: "/" },
-    { label: t("goals"), to: "/goals" },
-    { label: t("categories"), to: "/categories" },
-    { label: t("settings"), to: "/settings" },
+    { label: t("nav.dashboard"), to: "/" },
+    { label: t("nav.goals"), to: "/goals" },
+    { label: t("nav.categories"), to: "/categories" },
+    { label: t("nav.settings"), to: "/settings" },
   ];
 
   return (
@@ -72,21 +79,26 @@ export default function AppShell({ children, mode, toggleTheme }) {
             <MenuIcon />
           </IconButton>
 
-          <Stack direction="row" spacing={1.25} alignItems="center" sx={{ mr: 1 }}>
+          <Stack direction="row" spacing={isFa ? 2.75 : 1.25} alignItems="center" sx={{ mr: isFa ? 2.5 : 1 }}>
             <Box
+              component="img"
+              src={logoImage}
+              alt="Goal Tracker Logo"
               sx={{
-                width: 34,
-                height: 34,
+                width: 36,
+                height: 36,
                 borderRadius: 1.5,
-                background: "linear-gradient(135deg, #1e88e5, #1565c0)",
+                objectFit: "cover",
+                border: "1px solid",
+                borderColor: isDark ? "rgba(255,255,255,0.2)" : "rgba(15,23,42,0.15)",
               }}
             />
             <Box sx={{ color: isDark ? "#e2e8f0" : "#1e293b", fontWeight: 700, fontSize: 22, lineHeight: 1 }}>
-              GT
+              Goal Tracker
             </Box>
           </Stack>
 
-          <Stack direction="row" spacing={0.5} sx={{ display: { xs: "none", md: "flex" } }}>
+          <Stack direction="row" spacing={isFa ? 1.35 : 0.5} sx={{ display: { xs: "none", md: "flex" } }}>
             {links.map((item) => (
               <Button
                 key={item.to}
@@ -95,7 +107,7 @@ export default function AppShell({ children, mode, toggleTheme }) {
                 sx={{
                   color: isDark ? "#cbd5e1" : "#334155",
                   fontWeight: 600,
-                  px: 1.5,
+                  px: isFa ? 2.5 : 1.5,
                   py: 1,
                   borderRadius: 2,
                   "&.active": {
@@ -126,7 +138,7 @@ export default function AppShell({ children, mode, toggleTheme }) {
           >
             <SearchIcon sx={{ color: "#60a5fa", fontSize: 20 }} />
             <InputBase
-              placeholder="Search..."
+              placeholder={t("nav.search")}
               sx={{ ml: 1, color: isDark ? "#e2e8f0" : "#0f172a", flex: 1 }}
             />
             <Box sx={{ color: isDark ? "#94a3b8" : "#64748b", fontSize: 12, fontWeight: 700 }}>
@@ -134,7 +146,7 @@ export default function AppShell({ children, mode, toggleTheme }) {
             </Box>
           </Box>
 
-          <Tooltip title="Language">
+          <Tooltip title={t("nav.language")}>
             <IconButton
               sx={{ color: isDark ? "#cbd5e1" : "#334155" }}
               onClick={() => i18n.changeLanguage(i18n.language === "fa" ? "en" : "fa")}
@@ -143,19 +155,23 @@ export default function AppShell({ children, mode, toggleTheme }) {
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="Theme">
+          <Tooltip title={t("nav.theme")}>
             <IconButton sx={{ color: isDark ? "#cbd5e1" : "#334155" }} onClick={toggleTheme}>
               {mode === "dark" ? <LightModeOutlinedIcon /> : <DarkModeOutlinedIcon />}
             </IconButton>
           </Tooltip>
 
-          <Tooltip title="GitHub">
-            <IconButton sx={{ color: isDark ? "#cbd5e1" : "#334155" }}>
+          <Tooltip title={t("nav.github")}>
+            <IconButton
+              component="a"
+              href="https://github.com/Satayesh-Esmaily/Goal-Tracker-"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ color: isDark ? "#cbd5e1" : "#334155" }}
+            >
               <GitHubIcon />
             </IconButton>
           </Tooltip>
-
-          <Avatar sx={{ width: 34, height: 34, bgcolor: "#1e88e5", fontSize: 14 }}>GT</Avatar>
         </Toolbar>
 
         {mobileOpen && (
