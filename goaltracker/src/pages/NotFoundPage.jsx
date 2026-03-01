@@ -1,16 +1,19 @@
 import { Button, Container, Stack, Typography } from "@mui/material";
 import { Link as RouterLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export default function NotFoundPage() {
+  const { t } = useTranslation();
+
   return (
     <Container maxWidth="sm" sx={{ py: 8 }}>
       <Stack spacing={2} alignItems="center">
-        <Typography variant="h3" fontWeight={700}>
+        <Typography variant="h4" fontWeight={800}>
           404
         </Typography>
-        <Typography color="text.secondary">Page not found.</Typography>
+        <Typography color="text.secondary">{t("notFound.title")}</Typography>
         <Button component={RouterLink} to="/" variant="contained">
-          Go Home
+          {t("notFound.goHome")}
         </Button>
       </Stack>
     </Container>
