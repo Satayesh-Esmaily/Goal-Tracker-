@@ -1,15 +1,28 @@
-const DashboardLayout = ({ children }) => {
+import { Container, Grid } from "@mui/material";
+import HeroSection from "../components/dashboard/HeroSection";
+import TaskCard from "../components/dashboard/TaskCard";
+import CalendarWidget from "../components/dashboard/CalendarWidget";
+
+export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-white shadow p-4">
-        <h1 className="text-xl font-bold">Goal Tracker</h1>
-      </header>
+    <Container maxWidth="xl" sx={{ mt: 4 }}>
+      
+      <Grid container spacing={3}>
 
-      <main className="p-6">
-        {children}
-      </main>
-    </div>
+        <Grid item xs={12} md={7}>
+          <HeroSection />
+        </Grid>
+
+        <Grid item xs={12} md={5}>
+          <TaskCard />
+        </Grid>
+
+        <Grid item xs={12} md={7}>
+          <CalendarWidget />
+        </Grid>
+
+      </Grid>
+
+    </Container>
   );
-};
-
-export default DashboardLayout;
+}
