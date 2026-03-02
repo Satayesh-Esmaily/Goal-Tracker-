@@ -105,8 +105,10 @@ export default function DashboardPage() {
   const { t, i18n } = useTranslation();
   const isFa = i18n.language === "fa";
 
+  // Split goals for dashboard sections.
   const activeGoals = goals.filter((goal) => goal.status !== "completed");
   const completedGoals = goals.filter((goal) => goal.status === "completed").slice(0, 5);
+  // Build a short "recent activity" list from all goal logs.
   const recentLogs = goals
     .flatMap((goal) =>
       (goal.logs || []).map((log, index) => ({
@@ -119,6 +121,7 @@ export default function DashboardPage() {
     .sort((a, b) => b.date.getTime() - a.date.getTime())
     .slice(0, 6);
 
+  // Keep completion rate in a valid progress-bar range.
   const percent = Math.max(0, Math.min(100, stats.completionRate));
 
   return (
@@ -132,6 +135,7 @@ export default function DashboardPage() {
         }}
       >
         <Stack sx={{ width: "100%", maxWidth: "1920px" }} spacing={2.5}>
+          {/* Hero section with greeting and quick actions. */}
           <SectionCard
             sx={{
               background: isDark
@@ -153,6 +157,7 @@ export default function DashboardPage() {
                   {t("dashboard.subtitle")}
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} useFlexGap flexWrap="wrap">
+                  {/* Small chips summarize key counts at a glance. */}
                   <Chip
                     size="small"
                     label={t("dashboard.totalGoals", { count: goals.length })}
@@ -212,6 +217,7 @@ export default function DashboardPage() {
           </SectionCard>
 
           <Grid container spacing={2}>
+            {/* Quick summary metrics */}
             <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
               <MetricCard
                 title={t("dashboard.activeGoals")}
@@ -251,6 +257,7 @@ export default function DashboardPage() {
           </Grid>
 
           <Grid container spacing={2.5}>
+            {/* Main list of current goals */}
             <Grid size={{ xs: 12, lg: 8 }}>
               <SectionCard
                 title={t("dashboard.activeGoals")}
@@ -260,6 +267,7 @@ export default function DashboardPage() {
                   <Typography color="text.secondary">{t("dashboard.noActiveGoals")}</Typography>
                 ) : (
                   <Grid container spacing={1.75}>
+                    {/* Show only a compact preview of active goals on dashboard. */}
                     {activeGoals.slice(0, 6).map((goal) => (
                       <Grid size={{ xs: 12, md: 6 }} key={goal.id} sx={{ display: "flex" }}>
                         <GoalCard
@@ -278,6 +286,7 @@ export default function DashboardPage() {
               </SectionCard>
             </Grid>
 
+            {/* Right side insights and activity */}
             <Grid size={{ xs: 12, lg: 4 }}>
               <Stack spacing={2.5}>
                 <SectionCard title={t("dashboard.completionInsight")}>
@@ -367,3 +376,4 @@ export default function DashboardPage() {
     </Box>
   );
 }
+

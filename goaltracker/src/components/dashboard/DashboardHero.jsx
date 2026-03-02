@@ -89,3 +89,4 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
     </SectionCard>
   );
 }
+

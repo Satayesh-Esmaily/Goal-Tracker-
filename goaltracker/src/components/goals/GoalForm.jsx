@@ -40,6 +40,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
     reset,
     formState: { errors },
   } = useForm({
+    // Shared defaults for both create mode and edit mode.
     defaultValues: {
       title: "",
       category: "",
@@ -58,6 +59,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
   });
 
   useEffect(() => {
+    // In edit mode, load existing goal values into the form.
     if (!initialData) return;
     reset({
       title: initialData.title || "",
@@ -74,10 +76,12 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
       notes: initialData.notes || "",
       status: initialData.status || "active",
     });
+    // Auto-open advanced fields if any advanced value already exists.
     setShowAdvanced(Boolean(initialData.deadline || initialData.frequency || initialData.notes));
   }, [initialData, reset]);
 
   const onSubmit = (data) => {
+    // Keep payload shape consistent for both create and update actions.
     const payload = {
       ...data,
       target: Number(data.target),
@@ -89,6 +93,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
     } else {
       createGoal(payload);
     }
+    // Return to dashboard after saving.
     navigate("/");
   };
 
@@ -252,6 +257,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
               </Grid>
 
               <Grid item xs={12}>
+                {/* Advanced options are hidden by default to keep the form simple. */}
                 <Stack direction="row" justifyContent="space-between" alignItems="center">
                   <Typography fontWeight={600}>{t("goalForm.advancedOptions")}</Typography>
                   <IconButton onClick={() => setShowAdvanced((prev) => !prev)} aria-label="toggle advanced options">
@@ -267,6 +273,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
 
               <Grid item xs={12}>
                 <Collapse in={showAdvanced}>
+                  {/* Extra planning fields are optional. */}
                   <Grid container spacing={isFa ? 3.5 : 2.5}>
                     <Grid item xs={12} md={6}>
                       <Controller
@@ -334,3 +341,4 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
     </Card>
   );
 }
+

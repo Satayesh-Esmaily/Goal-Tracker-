@@ -12,12 +12,15 @@ import { sortAndFilterGoals } from "../../utils/goals";
 export default function GoalsListPage() {
   const navigate = useNavigate();
   const { i18n } = useTranslation();
+  // Slight spacing tweaks for Persian typography.
   const isFa = i18n.language === "fa";
   const { goals, addProgress, togglePause, deleteGoal } = useGoals();
+  // UI state for filtering and sorting the goals list.
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
 
+  // Recompute only when input values change.
   const filteredGoals = useMemo(() => {
     return sortAndFilterGoals(goals, { tab, search, sortBy });
   }, [goals, tab, search, sortBy]);
@@ -27,8 +30,10 @@ export default function GoalsListPage() {
       <Stack spacing={isFa ? 5 : 3}>
         <GoalsPageHeader isFa={isFa} />
 
+        {/* Status-based filtering tabs: all, active, paused, completed. */}
         <GoalsFilterTabs value={tab} onChange={setTab} />
 
+        {/* Search + sort controls for the same goal list. */}
         <GoalsFiltersBar
           search={search}
           sortBy={sortBy}
@@ -37,6 +42,7 @@ export default function GoalsListPage() {
           isFa={isFa}
         />
 
+        {/* Final rendered list after filter/sort is applied. */}
         <GoalsGrid
           goals={filteredGoals}
           onAddProgress={(goalId) => addProgress(goalId, 1)}
@@ -48,3 +54,4 @@ export default function GoalsListPage() {
     </Container>
   );
 }
+

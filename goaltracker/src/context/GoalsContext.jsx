@@ -4,11 +4,13 @@ import { calculateXpStats } from "../components/xp/XpRules";
 const GoalsContext = createContext(null);
 const STORAGE_KEY = "goal-tracker-goals-v1";
 
+// Convert any date input to YYYY-MM-DD so different logs of the same day can be grouped.
 function toDayKey(input = new Date()) {
   const date = typeof input === "string" ? new Date(input) : input;
   return date.toISOString().slice(0, 10);
 }
 
+// Streak = number of consecutive days with at least one progress log.
 function calculateStreak(goals) {
   const uniqueDays = new Set();
   goals.forEach((goal) => {
@@ -44,6 +46,7 @@ function calculateStreak(goals) {
   return streak;
 }
 
+// Local storage can be empty or broken; this keeps app startup safe.
 function parseStoredGoals(raw) {
   if (!raw) return [];
   try {
@@ -57,6 +60,7 @@ function parseStoredGoals(raw) {
 export function GoalsProvider({ children }) {
   const [goals, setGoals] = useState(() => parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
 
+  // Persist every change so data survives page refresh.
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
   }, [goals]);
@@ -85,15 +89,18 @@ export function GoalsProvider({ children }) {
       createdAt: now,
       updatedAt: now,
     };
+    // Add newest goals at the top for better visibility.
     setGoals((prev) => [goal, ...prev]);
     return goal;
   };
 
   const addProgress = (goalId, amount = 1) => {
+    // Normalize user input to a positive numeric step.
     const step = Math.max(1, Number(amount) || 1);
     const now = new Date().toISOString();
     setGoals((prev) =>
       prev.map((goal) => {
+        // Do not update paused or already completed goals.
         if (goal.id !== goalId || goal.status === "paused" || goal.status === "completed") {
           return goal;
         }
@@ -119,6 +126,7 @@ export function GoalsProvider({ children }) {
   const togglePause = (goalId) => {
     setGoals((prev) =>
       prev.map((goal) => {
+        // Completed goals stay completed.
         if (goal.id !== goalId || goal.status === "completed") return goal;
         return {
           ...goal,
@@ -137,6 +145,7 @@ export function GoalsProvider({ children }) {
         return {
           ...goal,
           ...updates,
+          // Keep target numeric after edits from form fields.
           target: Number(updates.target ?? goal.target) || goal.target,
           completedAt:
             updates.status === "completed"
@@ -155,6 +164,7 @@ export function GoalsProvider({ children }) {
     const pausedGoals = goals.filter((goal) => goal.status === "paused");
     const completedGoals = goals.filter((goal) => goal.status === "completed");
 
+    // Average progress percentage across all goals.
     const completionRate =
       goals.length === 0
         ? 0
@@ -202,3 +212,4 @@ export function useGoals() {
   }
   return context;
 }
+

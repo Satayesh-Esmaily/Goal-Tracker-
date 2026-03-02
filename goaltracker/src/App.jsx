@@ -14,6 +14,7 @@ import NotFoundPage from "./pages/NotFoundPage";
 import AppShell from "./components/layout/AppShell";
 
 export default function App() {
+  // Theme mode is kept at app root so all pages stay in sync.
   const [mode, setMode] = useState("dark");
 
   const theme = useMemo(() => getTheme(mode), [mode]);
@@ -24,8 +25,10 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
+      {/* GoalsProvider exposes goals state to all routes. */}
       <GoalsProvider>
         <AppShell mode={mode} toggleTheme={toggleTheme}>
+          {/* Main route table for app pages. */}
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
@@ -44,3 +47,4 @@ export default function App() {
     </ThemeProvider>
   );
 }
+

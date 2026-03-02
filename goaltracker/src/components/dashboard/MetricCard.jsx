@@ -45,3 +45,4 @@ export default function MetricCard({ title, value, icon, color, subtitle }) {
     </Card>
   );
 }
+

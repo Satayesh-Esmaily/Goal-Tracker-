@@ -26,3 +26,4 @@ export default function SectionCard({ title, action, children, sx, contentSx }) 
     </Card>
   );
 }
+

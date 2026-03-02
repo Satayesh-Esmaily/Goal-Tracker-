@@ -6,6 +6,7 @@ export default function GoalsGrid({ goals, onAddProgress, onTogglePause, onEdit,
   const { t } = useTranslation();
 
   if (goals.length === 0) {
+    // Empty state shown after filtering/search when no goal matches.
     return (
       <Box sx={{ py: 6, textAlign: "center", border: "1px dashed", borderColor: "divider", borderRadius: 3 }}>
         <Typography color="text.secondary">{t("goalsPage.noGoalsFound")}</Typography>
@@ -15,6 +16,7 @@ export default function GoalsGrid({ goals, onAddProgress, onTogglePause, onEdit,
 
   return (
     <Grid container spacing={2}>
+      {/* Keep each goal card wired to parent handlers by id. */}
       {goals.map((goal) => (
         <Grid item xs={12} md={6} key={goal.id}>
           <GoalCard
@@ -29,3 +31,4 @@ export default function GoalsGrid({ goals, onAddProgress, onTogglePause, onEdit,
     </Grid>
   );
 }
+

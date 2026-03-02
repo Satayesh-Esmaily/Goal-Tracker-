@@ -13,3 +13,4 @@ export default function GoalsFilterTabs({ value, onChange }) {
     </Tabs>
   );
 }
+

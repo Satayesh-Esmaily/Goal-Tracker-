@@ -8,6 +8,7 @@ export default function CategoriesPage() {
   const { t } = useTranslation();
 
   const categories = useMemo(() => {
+    // Group goals by category and calculate simple counts.
     const map = new Map();
     goals.forEach((goal) => {
       const current = map.get(goal.category) || { name: goal.category, active: 0, completed: 0, total: 0 };
@@ -27,12 +28,14 @@ export default function CategoriesPage() {
         </Typography>
 
         {categories.length === 0 ? (
+          // Empty state when there is no categorized goal yet.
           <Box sx={{ py: 6, textAlign: "center", border: "1px dashed", borderColor: "divider", borderRadius: 3 }}>
             <Typography color="text.secondary">{t("categoriesPage.noCategories")}</Typography>
           </Box>
         ) : (
           <Grid container spacing={2}>
             {categories.map((category) => {
+              // Completion ratio for each category card.
               const percent = Math.round((category.completed / category.total) * 100);
               return (
                 <Grid item xs={12} sm={6} md={4} key={category.name}>
@@ -59,3 +62,4 @@ export default function CategoriesPage() {
     </Container>
   );
 }
+

@@ -216,3 +216,4 @@ export default function AppShell({ children, mode, toggleTheme }) {
     </Box>
   );
 }
+

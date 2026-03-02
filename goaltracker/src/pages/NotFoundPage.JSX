@@ -6,6 +6,7 @@ export default function NotFoundPage() {
   const { t } = useTranslation();
 
   return (
+    // Fallback page for unknown routes.
     <Container maxWidth="sm" sx={{ py: 8 }}>
       <Stack spacing={2} alignItems="center">
         <Typography variant="h4" fontWeight={800}>
@@ -19,3 +20,4 @@ export default function NotFoundPage() {
     </Container>
   );
 }
+

@@ -26,3 +26,4 @@ export default function GoalsFiltersBar({ search, sortBy, onSearchChange, onSort
     </Stack>
   );
 }
+

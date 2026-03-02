@@ -5,6 +5,7 @@ function formatDate(date) {
   if (!date) return "-";
   const parsed = new Date(date);
   if (Number.isNaN(parsed.getTime())) return "-";
+  // Use browser locale for familiar date formatting.
   return parsed.toLocaleDateString();
 }
 
@@ -12,11 +13,13 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslation();
+  // Clamp to a visual percentage for progress bar and label.
   const percent = Math.round((goal.progress / goal.target) * 100);
   const isCompleted = goal.status === "completed";
   const cardBlue = "#156fc7";
   const progressColor = goal.color || "#dbeafe";
   const statusChipSx =
+    // Match chip style with goal status for quick scanning.
     goal.status === "completed"
       ? {
           color: "#bbf7d0",
@@ -35,6 +38,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
           borderColor: "rgba(56,189,248,0.92)",
         };
   const chipButtonSx = {
+    // Shared pill button style used by all row actions.
     borderRadius: 999,
     px: 1.55,
     py: 0.38,
@@ -193,3 +197,4 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
     </Card>
   );
 }
+
