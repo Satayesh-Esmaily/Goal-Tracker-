@@ -1,6 +1,7 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { Routes, Route, Navigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 import { getTheme } from "./theme/theme";
 import DashboardPage from "./pages/dashboard/DashboardPage";
@@ -12,21 +13,46 @@ import GoalsListPage from "./pages/goal/GoalsListPage";
 import CategoriesPage from "./pages/goal/CategoriesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AppShell from "./components/layout/AppShell";
-import SplashScreen from "./components/common/SplashScreen";
 
 export default function App() {
-  // Theme mode is kept at app root so all pages stay in sync.
+  const { i18n } = useTranslation();
+
   const [mode, setMode] = useState("dark");
   const [showSplash, setShowSplash] = useState(true);
 
-  const theme = useMemo(() => getTheme(mode), [mode]);
+  const [primaryColor, setPrimaryColor] = useState(
+    localStorage.getItem("primaryColor") || "blue"
+  );
 
-  const toggleTheme = () => {
+  useEffect(() => {
+    localStorage.setItem("primaryColor", primaryColor);
+  }, [primaryColor]);
+
+  const direction = i18n.language === "fa" ? "rtl" : "ltr";
+
+  useEffect(() => {
+    document.documentElement.dir = direction;
+  }, [direction]);
+
+  const cache = useMemo(() => {
+    return createCache({
+      key: direction === "rtl" ? "muirtl" : "mui",
+      stylisPlugins: direction === "rtl" ? [rtlPlugin] : [],
+      prepend: true,
+    });
+  }, [direction]);
+
+  const theme = useMemo(
+    () => getTheme(mode, direction, primaryColor),
+    [mode, direction, primaryColor]
+  );
+
+  const toggleTheme = () =>
     setMode((prev) => (prev === "light" ? "dark" : "light"));
-  };
 
   return (
     <ThemeProvider theme={theme}>
+      {/* GoalsProvider exposes goals state to all routes. */}
       <GoalsProvider>
         <AppShell mode={mode} toggleTheme={toggleTheme}>
           {/* Main route table for app pages. */}
@@ -45,9 +71,6 @@ export default function App() {
           </Routes>
         </AppShell>
       </GoalsProvider>
-
-      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
     </ThemeProvider>
   );
 }
-
