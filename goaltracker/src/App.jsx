@@ -12,10 +12,12 @@ import GoalsListPage from "./pages/goal/GoalsListPage";
 import CategoriesPage from "./pages/goal/CategoriesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AppShell from "./components/layout/AppShell";
+import SplashScreen from "./components/common/SplashScreen";
 
 export default function App() {
   // Theme mode is kept at app root so all pages stay in sync.
   const [mode, setMode] = useState("dark");
+  const [showSplash, setShowSplash] = useState(true);
 
   const theme = useMemo(() => getTheme(mode), [mode]);
 
@@ -25,7 +27,6 @@ export default function App() {
 
   return (
     <ThemeProvider theme={theme}>
-      {/* GoalsProvider exposes goals state to all routes. */}
       <GoalsProvider>
         <AppShell mode={mode} toggleTheme={toggleTheme}>
           {/* Main route table for app pages. */}
@@ -44,6 +45,8 @@ export default function App() {
           </Routes>
         </AppShell>
       </GoalsProvider>
+
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
     </ThemeProvider>
   );
 }
