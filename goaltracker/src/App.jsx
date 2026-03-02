@@ -13,6 +13,7 @@ import GoalsListPage from "./pages/goal/GoalsListPage";
 import CategoriesPage from "./pages/goal/CategoriesPage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AppShell from "./components/layout/AppShell";
+import SplashScreen from "./components/common/SplashScreen";
 
 export default function App() {
   const { i18n } = useTranslation();
@@ -32,14 +33,6 @@ export default function App() {
 
   useEffect(() => {
     document.documentElement.dir = direction;
-  }, [direction]);
-
-  const cache = useMemo(() => {
-    return createCache({
-      key: direction === "rtl" ? "muirtl" : "mui",
-      stylisPlugins: direction === "rtl" ? [rtlPlugin] : [],
-      prepend: true,
-    });
   }, [direction]);
 
   const theme = useMemo(
@@ -71,6 +64,8 @@ export default function App() {
           </Routes>
         </AppShell>
       </GoalsProvider>
+
+      {showSplash && <SplashScreen onFinish={() => setShowSplash(false)} />}
     </ThemeProvider>
   );
 }
