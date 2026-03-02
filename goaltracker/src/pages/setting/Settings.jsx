@@ -23,14 +23,13 @@ import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-export default function Settings({
-  currentTheme,
-  toggleTheme,
-  primaryColor,
-  setPrimaryColor,
-}) {
-  const { t, i18n } = useTranslation();
+import { useTheme } from "../../context/ThemeContext";
 
+export default function Settings() {
+  const { t, i18n } = useTranslation();
+  const { mode, toggleMode, primaryColor, setPrimaryColor } = useTheme();
+
+  // Preferences
   const [reminder, setReminder] = useState(
     JSON.parse(localStorage.getItem("reminder")) ?? false
   );
@@ -46,6 +45,7 @@ export default function Settings({
   );
   useEffect(() => localStorage.setItem("animations", animations), [animations]);
 
+  // Danger Zone
   const [openConfirm, setOpenConfirm] = useState(false);
   const handleReset = () => {
     localStorage.clear();
@@ -54,10 +54,10 @@ export default function Settings({
 
   // Theme Colors
   const themeColors = [
-    { value: "blue", label: t("settings.themeColor"), hex: "#1976d2" },
-    { value: "green", label: t("settings.themeColor"), hex: "#2e7d32" },
-    { value: "purple", label: t("settings.themeColor"), hex: "#7b1fa2" },
-    { value: "pink", label: t("settings.themeColor"), hex: "#c2185b" },
+    { value: "blue", hex: "#1976d2" },
+    { value: "green", hex: "#2e7d32" },
+    { value: "purple", hex: "#7b1fa2" },
+    { value: "pink", hex: "#c2185b" },
   ];
 
   return (
@@ -92,24 +92,14 @@ export default function Settings({
             <FormControlLabel
               control={
                 <Tooltip
-                  title={
-                    currentTheme === "dark"
-                      ? t("common.dark")
-                      : t("common.light")
-                  }
+                  title={mode === "dark" ? t("common.dark") : t("common.light")}
                 >
-                  <IconButton onClick={toggleTheme} color="primary">
-                    {currentTheme === "dark" ? (
-                      <DarkModeIcon />
-                    ) : (
-                      <LightModeIcon />
-                    )}
+                  <IconButton onClick={toggleMode} color="primary">
+                    {mode === "dark" ? <DarkModeIcon /> : <LightModeIcon />}
                   </IconButton>
                 </Tooltip>
               }
-              label={
-                currentTheme === "dark" ? t("common.dark") : t("common.light")
-              }
+              label={mode === "dark" ? t("common.dark") : t("common.light")}
             />
           </Stack>
         </CardContent>
@@ -129,13 +119,7 @@ export default function Settings({
             {themeColors.map((color) => (
               <Tooltip
                 key={color.value}
-                title={
-                  i18n.language === "fa"
-                    ? t("settings.applyTheme", {
-                        color: t(`settings.colors.${color.value}`),
-                      })
-                    : `Apply ${color.value} theme`
-                }
+                title={`Apply ${color.value} theme`}
                 placement="top"
               >
                 <FormControlLabel
