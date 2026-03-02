@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useEffect } from "react";
 import { ThemeProvider } from "@mui/material/styles";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -18,18 +18,19 @@ import { CacheProvider } from "@emotion/react";
 import createCache from "@emotion/cache";
 import rtlPlugin from "stylis-plugin-rtl";
 
+import { ThemeProviderCustom, useTheme } from "./context/ThemeContext";
+
 export default function App() {
-  const { i18n } = useTranslation();
-
-  const [mode, setMode] = useState("dark");
-
-  const [primaryColor, setPrimaryColor] = useState(
-    localStorage.getItem("primaryColor") || "blue"
+  return (
+    <ThemeProviderCustom>
+      <AppInner />
+    </ThemeProviderCustom>
   );
+}
 
-  useEffect(() => {
-    localStorage.setItem("primaryColor", primaryColor);
-  }, [primaryColor]);
+function AppInner() {
+  const { mode, toggleMode, primaryColor, setPrimaryColor } = useTheme();
+  const { i18n } = useTranslation();
 
   const direction = i18n.language === "fa" ? "rtl" : "ltr";
 
@@ -50,14 +51,11 @@ export default function App() {
     [mode, direction, primaryColor]
   );
 
-  const toggleTheme = () =>
-    setMode((prev) => (prev === "light" ? "dark" : "light"));
-
   return (
     <CacheProvider value={cache}>
       <ThemeProvider theme={theme}>
         <GoalsProvider>
-          <AppShell mode={mode} toggleTheme={toggleTheme}>
+          <AppShell mode={mode} toggleTheme={toggleMode}>
             <Routes>
               <Route path="/" element={<DashboardPage />} />
               <Route path="/dashboard" element={<Navigate to="/" replace />} />
@@ -70,7 +68,7 @@ export default function App() {
                 element={
                   <Settings
                     currentTheme={mode}
-                    toggleTheme={toggleTheme}
+                    toggleTheme={toggleMode}
                     primaryColor={primaryColor}
                     setPrimaryColor={setPrimaryColor}
                   />
