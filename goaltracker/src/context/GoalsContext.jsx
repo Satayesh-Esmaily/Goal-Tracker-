@@ -28,7 +28,6 @@ function calculateStreak(goals) {
   const latest = loggedDays[0];
   const gap = Math.floor((today.getTime() - latest.getTime()) / dayMs);
 
-  // If user missed more than one day, streak resets.
   if (gap > 1) return 0;
 
   let streak = 1;
@@ -212,4 +211,3 @@ export function useGoals() {
   }
   return context;
 }
-
