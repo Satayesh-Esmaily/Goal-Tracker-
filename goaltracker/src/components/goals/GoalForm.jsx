@@ -119,6 +119,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
   const dateTimeFieldSx = {
     "& input::-webkit-calendar-picker-indicator": {
       opacity: 0,
+      width: 0,
       position: "absolute",
     },
   };
