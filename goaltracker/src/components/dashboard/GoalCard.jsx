@@ -1,10 +1,26 @@
-import { Card, CardContent, Chip, LinearProgress, Stack, Typography, Button, useTheme } from "@mui/material";
+import AddTaskOutlinedIcon from "@mui/icons-material/AddTaskOutlined";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
+import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Divider,
+  LinearProgress,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 function formatDate(date) {
-  if (!date) return "-";
+  if (!date) return null;
   const parsed = new Date(date);
-  if (Number.isNaN(parsed.getTime())) return "-";
+  if (Number.isNaN(parsed.getTime())) return null;
   // Use browser locale for familiar date formatting.
   return parsed.toLocaleDateString();
 }
@@ -16,7 +32,11 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
   // Clamp to a visual percentage for progress bar and label.
   const percent = Math.round((goal.progress / goal.target) * 100);
   const isCompleted = goal.status === "completed";
-  const cardBlue = "#156fc7";
+  const dateItems = [
+    { label: t("goalCard.start"), value: formatDate(goal.startDate) },
+    { label: t("goalCard.end"), value: formatDate(goal.endDate) },
+    { label: t("goalCard.deadline"), value: formatDate(goal.deadline) },
+  ].filter((item) => item.value);
   const progressColor = goal.color || "#dbeafe";
   const statusChipSx =
     // Match chip style with goal status for quick scanning.
@@ -38,15 +58,14 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
           borderColor: "rgba(56,189,248,0.92)",
         };
   const chipButtonSx = {
-    // Shared pill button style used by all row actions.
-    borderRadius: 999,
-    px: 1.55,
-    py: 0.38,
-    minHeight: 30,
+    borderRadius: 2,
+    px: 1.15,
+    py: 0.45,
+    minHeight: 34,
     textTransform: "none",
     fontWeight: 700,
     letterSpacing: 0,
-    fontSize: "0.95rem",
+    fontSize: "0.86rem",
     lineHeight: 1.1,
   };
 
@@ -57,22 +76,34 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
         borderRadius: 3.5,
         height: "100%",
         border: "1px solid",
-        borderColor: isDark ? "rgba(191,219,254,0.28)" : "rgba(21,111,199,0.35)",
-        bgcolor: cardBlue,
-        color: "#f8fbff",
+        borderColor: isDark ? "rgba(148,163,184,0.3)" : "rgba(15,23,42,0.12)",
+        background: isDark
+          ? "linear-gradient(180deg, rgba(15,23,42,0.95), rgba(15,23,42,0.84))"
+          : "linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,0.94))",
+        color: isDark ? "#e2e8f0" : "#0f172a",
         transition: "transform 160ms ease, box-shadow 160ms ease",
         "&:hover": {
           transform: "translateY(-2px)",
-          boxShadow: "0 10px 24px rgba(21,111,199,0.38)",
+          boxShadow: isDark ? "0 12px 26px rgba(2,6,23,0.45)" : "0 10px 24px rgba(15,23,42,0.12)",
         },
       }}
     >
       <CardContent sx={{ p: 2.25 }}>
-        <Stack spacing={1.75}>
+        <Stack spacing={1.6}>
           <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
-            <Typography variant="subtitle1" fontWeight={800} sx={{ color: "#ffffff" }}>
-              {goal.title}
-            </Typography>
+            <Stack spacing={0.25} sx={{ minWidth: 0 }}>
+              <Typography
+                variant="subtitle1"
+                fontWeight={800}
+                sx={{ color: isDark ? "#f8fafc" : "#0f172a" }}
+                noWrap
+              >
+                {goal.title}
+              </Typography>
+              <Typography variant="caption" sx={{ color: isDark ? "#94a3b8" : "#64748b" }}>
+                {goal.type} • {goal.unit}
+              </Typography>
+            </Stack>
             <Chip
               size="small"
               label={t(`common.${goal.status}`)}
@@ -87,52 +118,61 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
             />
           </Stack>
 
-          <Stack direction="row" spacing={1}>
+          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
             <Chip size="small" variant="outlined" label={goal.category} />
-            <Chip size="small" variant="outlined" label={goal.type} />
+            <Chip size="small" variant="outlined" label={`Target ${goal.target}`} />
           </Stack>
 
           <Stack spacing={0.75}>
-            <Typography variant="body2" fontWeight={700} sx={{ color: "#ffffff" }}>
-              {goal.progress}/{goal.target} {goal.unit}
-            </Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="body2" fontWeight={700} sx={{ color: isDark ? "#f8fafc" : "#0f172a" }}>
+                {goal.progress}/{goal.target} {goal.unit}
+              </Typography>
+              <Chip size="small" label={`${percent}%`} sx={{ fontWeight: 800 }} />
+            </Stack>
             <LinearProgress
               value={percent}
               variant="determinate"
               sx={{
                 height: 10,
                 borderRadius: 999,
-                bgcolor: "rgba(248,251,255,0.25)",
+                bgcolor: isDark ? "rgba(148,163,184,0.22)" : "rgba(15,23,42,0.12)",
                 "& .MuiLinearProgress-bar": { bgcolor: progressColor },
               }}
             />
-            <Typography variant="caption" fontWeight={700} sx={{ color: "#ffffff" }}>
+            <Typography variant="caption" fontWeight={600} sx={{ color: isDark ? "#cbd5e1" : "#334155" }}>
               {t("goalCard.completePercent", { count: percent })}
             </Typography>
           </Stack>
 
-          <Stack spacing={0.35} sx={{ color: "#ffffff" }}>
-            <Typography variant="caption" fontWeight={700}>{t("goalCard.start")}: {formatDate(goal.startDate)}</Typography>
-            <Typography variant="caption" fontWeight={700}>{t("goalCard.end")}: {formatDate(goal.endDate)}</Typography>
-            <Typography variant="caption" fontWeight={700}>{t("goalCard.deadline")}: {formatDate(goal.deadline)}</Typography>
-          </Stack>
+          {dateItems.length > 0 && (
+            <Stack spacing={0.35} sx={{ color: isDark ? "#cbd5e1" : "#334155" }}>
+              <Divider sx={{ borderColor: isDark ? "rgba(148,163,184,0.18)" : "rgba(148,163,184,0.35)" }} />
+              {dateItems.map((item) => (
+                <Typography key={item.label} variant="caption" fontWeight={700}>
+                  {item.label}: {item.value}
+                </Typography>
+              ))}
+            </Stack>
+          )}
 
           <Stack direction={{ xs: "column", sm: "row" }} spacing={1} useFlexGap flexWrap="wrap">
             <Button
               size="small"
-              variant="outlined"
+              variant="contained"
+              startIcon={<AddTaskOutlinedIcon />}
               onClick={onAddProgress}
               disabled={goal.status === "paused" || isCompleted}
               sx={{
                 ...chipButtonSx,
-                bgcolor: "rgba(3,105,161,0.48)",
-                color: "#bae6fd",
-                border: "1px solid rgba(56,189,248,0.92)",
-                "&:hover": { bgcolor: "rgba(3,105,161,0.65)" },
+                bgcolor: isDark ? "rgba(37,99,235,0.88)" : "#2563eb",
+                color: "#ffffff",
+                border: "1px solid transparent",
+                "&:hover": { bgcolor: isDark ? "rgba(37,99,235,1)" : "#1d4ed8" },
                 "&.Mui-disabled": {
-                  color: "rgba(255,255,255,0.45)",
-                  borderColor: "rgba(255,255,255,0.2)",
-                  bgcolor: "rgba(255,255,255,0.08)",
+                  color: isDark ? "rgba(203,213,225,0.45)" : "rgba(100,116,139,0.65)",
+                  borderColor: isDark ? "rgba(148,163,184,0.22)" : "rgba(148,163,184,0.35)",
+                  bgcolor: isDark ? "rgba(148,163,184,0.08)" : "rgba(226,232,240,0.7)",
                 },
               }}
             >
@@ -141,16 +181,17 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
             <Button
               size="small"
               variant="outlined"
+              startIcon={goal.status === "paused" ? <PlayCircleOutlineRoundedIcon /> : <PauseCircleOutlineRoundedIcon />}
               onClick={onTogglePause}
               disabled={isCompleted}
               sx={{
                 ...chipButtonSx,
-                color: "#fef3c7",
-                bgcolor: "rgba(146,64,14,0.5)",
-                borderColor: "rgba(245,158,11,0.92)",
+                color: isDark ? "#fde68a" : "#92400e",
+                bgcolor: isDark ? "rgba(146,64,14,0.45)" : "rgba(254,243,199,0.95)",
+                borderColor: isDark ? "rgba(245,158,11,0.82)" : "rgba(217,119,6,0.45)",
                 "&:hover": {
-                  borderColor: "#fde68a",
-                  bgcolor: "rgba(146,64,14,0.65)",
+                  borderColor: isDark ? "#fde68a" : "#b45309",
+                  bgcolor: isDark ? "rgba(146,64,14,0.62)" : "rgba(253,230,138,0.95)",
                 },
               }}
             >
@@ -159,15 +200,16 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
             <Button
               size="small"
               variant="outlined"
+              startIcon={<EditRoundedIcon />}
               onClick={onEdit}
               sx={{
                 ...chipButtonSx,
-                color: "#bbf7d0",
-                bgcolor: "rgba(22,101,52,0.5)",
-                borderColor: "rgba(34,197,94,0.92)",
+                color: isDark ? "#bbf7d0" : "#166534",
+                bgcolor: isDark ? "rgba(22,101,52,0.45)" : "rgba(220,252,231,0.95)",
+                borderColor: isDark ? "rgba(34,197,94,0.82)" : "rgba(22,163,74,0.45)",
                 "&:hover": {
-                  borderColor: "#86efac",
-                  bgcolor: "rgba(22,101,52,0.64)",
+                  borderColor: isDark ? "#86efac" : "#15803d",
+                  bgcolor: isDark ? "rgba(22,101,52,0.62)" : "rgba(187,247,208,0.95)",
                 },
               }}
             >
@@ -177,15 +219,16 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
               size="small"
               color="error"
               variant="outlined"
+              startIcon={<DeleteOutlineRoundedIcon />}
               onClick={onDelete}
               sx={{
                 ...chipButtonSx,
-                borderColor: "rgba(239,68,68,0.92)",
-                bgcolor: "rgba(127,29,29,0.56)",
-                color: "#fee2e2",
+                borderColor: isDark ? "rgba(239,68,68,0.82)" : "rgba(220,38,38,0.45)",
+                bgcolor: isDark ? "rgba(127,29,29,0.5)" : "rgba(254,226,226,0.95)",
+                color: isDark ? "#fee2e2" : "#991b1b",
                 "&:hover": {
-                  borderColor: "#fecaca",
-                  bgcolor: "rgba(127,29,29,0.7)",
+                  borderColor: isDark ? "#fecaca" : "#dc2626",
+                  bgcolor: isDark ? "rgba(127,29,29,0.68)" : "rgba(254,202,202,0.95)",
                 },
               }}
             >
@@ -197,4 +240,3 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
     </Card>
   );
 }
-

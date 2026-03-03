@@ -21,6 +21,7 @@ import CheckCircleOutlineRoundedIcon from "@mui/icons-material/CheckCircleOutlin
 import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import GoalCard from "../../components/dashboard/GoalCard";
+import LiveDateTimeCard from "../../components/dashboard/LiveDateTimeCard";
 import { useGoals } from "../../context/GoalsContext";
 import { useTranslation } from "react-i18next";
 
@@ -52,6 +53,9 @@ function SectionCard({ title, action, children, sx }) {
 }
 
 function MetricCard({ title, value, icon, color, subtitle }) {
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+
   return (
     <Card
       elevation={0}
@@ -62,6 +66,10 @@ function MetricCard({ title, value, icon, color, subtitle }) {
         height: "100%",
         position: "relative",
         overflow: "hidden",
+        background: isDark
+          ? "linear-gradient(180deg, rgba(15,23,42,0.92), rgba(15,23,42,0.82))"
+          : "linear-gradient(180deg, rgba(255,255,255,0.85), rgba(248,250,252,0.95))",
+        boxShadow: isDark ? "0 8px 22px rgba(2,6,23,0.35)" : "0 6px 20px rgba(15,23,42,0.06)",
       }}
     >
       <Box sx={{ position: "absolute", insetInlineStart: 0, top: 0, width: "100%", height: 3, bgcolor: color }} />
@@ -85,8 +93,8 @@ function MetricCard({ title, value, icon, color, subtitle }) {
               borderRadius: 2,
               display: "grid",
               placeItems: "center",
-              bgcolor: color,
-              color: "#fff",
+              bgcolor: `${color}20`,
+              color,
             }}
           >
             {icon}
@@ -289,6 +297,8 @@ export default function DashboardPage() {
             {/* Right side insights and activity */}
             <Grid size={{ xs: 12, lg: 4 }}>
               <Stack spacing={2.5}>
+                <LiveDateTimeCard />
+
                 <SectionCard title={t("dashboard.completionInsight")}>
                   <Stack direction="row" spacing={2} alignItems="center">
                     <Box sx={{ position: "relative", display: "inline-flex" }}>
@@ -376,4 +386,3 @@ export default function DashboardPage() {
     </Box>
   );
 }
-
