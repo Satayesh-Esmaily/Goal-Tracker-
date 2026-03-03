@@ -120,7 +120,7 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
 
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
             <Chip size="small" variant="outlined" label={goal.category} />
-            <Chip size="small" variant="outlined" label={`Target ${goal.target}`} />
+            <Chip size="small" variant="outlined" label={goal.priority || "-"} />
           </Stack>
 
           <Stack spacing={0.75}>
@@ -165,10 +165,10 @@ export default function GoalCard({ goal, onAddProgress, onTogglePause, onDelete,
               disabled={goal.status === "paused" || isCompleted}
               sx={{
                 ...chipButtonSx,
-                bgcolor: isDark ? "rgba(37,99,235,0.88)" : "#2563eb",
-                color: "#ffffff",
+                bgcolor: theme.palette.primary.main,
+                color: theme.palette.primary.contrastText,
                 border: "1px solid transparent",
-                "&:hover": { bgcolor: isDark ? "rgba(37,99,235,1)" : "#1d4ed8" },
+                "&:hover": { bgcolor: theme.palette.primary.dark },
                 "&.Mui-disabled": {
                   color: isDark ? "rgba(203,213,225,0.45)" : "rgba(100,116,139,0.65)",
                   borderColor: isDark ? "rgba(148,163,184,0.22)" : "rgba(148,163,184,0.35)",

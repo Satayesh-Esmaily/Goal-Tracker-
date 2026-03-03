@@ -7,6 +7,7 @@ import GoalsPageHeader from "../../components/goals/GoalsPageHeader";
 import GoalsFilterTabs from "../../components/goals/GoalsFilterTabs";
 import GoalsFiltersBar from "../../components/goals/GoalsFiltersBar";
 import GoalsGrid from "../../components/goals/GoalsGrid";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
 import { sortAndFilterGoals } from "../../utils/goals";
 
 export default function GoalsListPage() {
@@ -19,6 +20,7 @@ export default function GoalsListPage() {
   const [tab, setTab] = useState("all");
   const [search, setSearch] = useState("");
   const [sortBy, setSortBy] = useState("newest");
+  const [goalToDelete, setGoalToDelete] = useState(null);
 
   // Recompute only when input values change.
   const filteredGoals = useMemo(() => {
@@ -48,10 +50,25 @@ export default function GoalsListPage() {
           onAddProgress={(goalId) => addProgress(goalId, 1)}
           onTogglePause={togglePause}
           onEdit={(goalId) => navigate(`/goals/${goalId}/edit`)}
-          onDelete={deleteGoal}
+          onDelete={(goalId) => {
+            const targetGoal = goals.find((goal) => goal.id === goalId);
+            if (targetGoal) setGoalToDelete(targetGoal);
+          }}
         />
       </Stack>
+
+      <ConfirmDialog
+        open={Boolean(goalToDelete)}
+        title={`⚠️ ${i18n.language === "fa" ? "مطمئن هستید؟" : "Are you sure?"}`}
+        description={goalToDelete ? `${i18n.language === "fa" ? "حذف" : "Delete"} "${goalToDelete.title}"?` : ""}
+        confirmLabel={i18n.language === "fa" ? "حذف" : "Delete"}
+        onCancel={() => setGoalToDelete(null)}
+        onConfirm={() => {
+          if (!goalToDelete) return;
+          deleteGoal(goalToDelete.id);
+          setGoalToDelete(null);
+        }}
+      />
     </Container>
   );
 }
-

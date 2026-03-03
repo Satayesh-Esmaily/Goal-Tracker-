@@ -22,8 +22,10 @@ import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import GoalCard from "../../components/dashboard/GoalCard";
 import LiveDateTimeCard from "../../components/dashboard/LiveDateTimeCard";
+import ConfirmDialog from "../../components/common/ConfirmDialog";
 import { useGoals } from "../../context/GoalsContext";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
 
 function SectionCard({ title, action, children, sx }) {
   return (
@@ -112,6 +114,7 @@ export default function DashboardPage() {
   const { goals, stats, addProgress, togglePause, deleteGoal } = useGoals();
   const { t, i18n } = useTranslation();
   const isFa = i18n.language === "fa";
+  const [goalToDelete, setGoalToDelete] = useState(null);
 
   // Split goals for dashboard sections.
   const activeGoals = goals.filter((goal) => goal.status !== "completed");
@@ -283,9 +286,7 @@ export default function DashboardPage() {
                           onAddProgress={() => addProgress(goal.id, 1)}
                           onTogglePause={() => togglePause(goal.id)}
                           onEdit={() => navigate(`/goals/${goal.id}/edit`)}
-                          onDelete={() => {
-                            if (window.confirm(`${t("goalCard.delete")} "${goal.title}"?`)) deleteGoal(goal.id);
-                          }}
+                          onDelete={() => setGoalToDelete(goal)}
                         />
                       </Grid>
                     ))}
@@ -383,6 +384,19 @@ export default function DashboardPage() {
           </Grid>
         </Stack>
       </Box>
+
+      <ConfirmDialog
+        open={Boolean(goalToDelete)}
+        title={`⚠️ ${t("settings.confirmTitle")}`}
+        description={goalToDelete ? `${t("goalCard.delete")} "${goalToDelete.title}"?` : ""}
+        confirmLabel={t("goalCard.delete")}
+        onCancel={() => setGoalToDelete(null)}
+        onConfirm={() => {
+          if (!goalToDelete) return;
+          deleteGoal(goalToDelete.id);
+          setGoalToDelete(null);
+        }}
+      />
     </Box>
   );
 }

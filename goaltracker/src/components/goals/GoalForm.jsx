@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   TextField,
   Button,
@@ -7,16 +7,24 @@ import {
   CardContent,
   Typography,
   Collapse,
-  IconButton,
   Grid,
   Stack,
-  Divider,
+  Box,
+  Chip,
+  InputAdornment,
+  IconButton,
+  useTheme,
 } from "@mui/material";
-import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { useForm, Controller } from "react-hook-form";
+import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
+import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
+import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
+import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
+import { useForm, Controller, useWatch } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useGoals } from "../../context/GoalsContext";
 import { useTranslation } from "react-i18next";
+import { createGoalFormSchema, goalFormDefaultValues } from "./goalFormSchema";
 
 const categories = ["Health", "Study", "Work", "Personal", "Fitness", "Hobby"];
 const types = [
@@ -29,37 +37,44 @@ const units = ["Pages", "Sessions", "Minutes", "Hours"];
 
 export default function GoalForm({ initialData = null, onSubmitGoal = null, submitLabel = null, title = null }) {
   const navigate = useNavigate();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const { createGoal } = useGoals();
   const { t, i18n } = useTranslation();
   const isFa = i18n.language === "fa";
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [showOptional, setShowOptional] = useState(true);
+  const schema = useMemo(() => createGoalFormSchema(t), [t]);
 
   const {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
-    // Shared defaults for both create mode and edit mode.
-    defaultValues: {
-      title: "",
-      category: "",
-      type: "daily",
-      target: "",
-      unit: "Sessions",
-      priority: "Medium",
-      startDate: "",
-      endDate: "",
-      deadline: "",
-      frequency: "",
-      color: "#2563eb",
-      notes: "",
-      status: "active",
-    },
+    defaultValues: goalFormDefaultValues,
+    resolver: yupResolver(schema),
+    mode: "onChange",
+    reValidateMode: "onChange",
   });
 
+  const [watchedTitle, watchedCategory, watchedType, watchedTarget, watchedUnit, watchedPriority, watchedStartDate, watchedEndDate, watchedDeadline] =
+    useWatch({
+      control,
+      name: ["title", "category", "type", "target", "unit", "priority", "startDate", "endDate", "deadline"],
+    });
+
+  const isCreateEnabled =
+    String(watchedTitle || "").trim() !== "" &&
+    String(watchedCategory || "").trim() !== "" &&
+    String(watchedType || "").trim() !== "" &&
+    String(watchedTarget || "").trim() !== "" &&
+    String(watchedUnit || "").trim() !== "" &&
+    String(watchedPriority || "").trim() !== "" &&
+    String(watchedStartDate || "").trim() !== "" &&
+    String(watchedEndDate || "").trim() !== "" &&
+    String(watchedDeadline || "").trim() !== "";
+
   useEffect(() => {
-    // In edit mode, load existing goal values into the form.
     if (!initialData) return;
     reset({
       title: initialData.title || "",
@@ -74,271 +89,438 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
       frequency: initialData.frequency || "",
       color: initialData.color || "#2563eb",
       notes: initialData.notes || "",
+      startTime: initialData.startTime || "",
+      endTime: initialData.endTime || "",
       status: initialData.status || "active",
     });
-    // Auto-open advanced fields if any advanced value already exists.
-    setShowAdvanced(Boolean(initialData.deadline || initialData.frequency || initialData.notes));
   }, [initialData, reset]);
 
   const onSubmit = (data) => {
-    // Keep payload shape consistent for both create and update actions.
     const payload = {
       ...data,
       target: Number(data.target),
       status: "active",
     };
 
-    if (onSubmitGoal) {
-      onSubmitGoal(payload);
-    } else {
-      createGoal(payload);
-    }
-    // Return to dashboard after saving.
+    if (onSubmitGoal) onSubmitGoal(payload);
+    else createGoal(payload);
+
     navigate("/");
   };
 
+  const panelSx = {
+    p: { xs: 1.5, md: 2 },
+    borderRadius: 2.5,
+    border: "1px solid",
+    borderColor: "divider",
+    bgcolor: isDark ? "rgba(15,23,42,0.32)" : "rgba(248,250,252,0.7)",
+    height: "100%",
+  };
+  const dateTimeFieldSx = {
+    "& input::-webkit-calendar-picker-indicator": {
+      opacity: 0,
+      position: "absolute",
+    },
+  };
+  const openNativePicker = (event) => {
+    const fieldRoot = event.currentTarget.closest(".MuiFormControl-root");
+    const input = fieldRoot?.querySelector("input");
+    if (!input) return;
+    if (typeof input.showPicker === "function") {
+      input.showPicker();
+    } else {
+      input.focus();
+    }
+  };
+
   return (
-    <Card elevation={1} sx={{ borderRadius: 3 }}>
-      <CardContent sx={{ p: { xs: 2, md: 4 } }}>
-        <Stack spacing={isFa ? 4 : 3}>
-          <Stack spacing={isFa ? 1.5 : 1}>
-            <Typography variant="h4" fontWeight={700}>
+    <Card
+      elevation={0}
+      sx={{
+        borderRadius: 4,
+        border: "1px solid",
+        borderColor: "divider",
+        overflow: "hidden",
+        background: isDark
+          ? "linear-gradient(145deg, rgba(15,23,42,0.97), rgba(15,23,42,0.86))"
+          : "linear-gradient(145deg, rgba(255,255,255,1), rgba(248,250,252,0.95))",
+      }}
+    >
+      <Box
+        sx={{
+          px: { xs: 2, md: 3 },
+          py: 1.25,
+          display: "flex",
+          alignItems: "center",
+          gap: 1,
+          borderBottom: "1px solid",
+          borderColor: "divider",
+          background: isDark
+            ? "linear-gradient(90deg, rgba(37,99,235,0.18), rgba(14,165,233,0.12))"
+            : "linear-gradient(90deg, rgba(37,99,235,0.1), rgba(14,165,233,0.08))",
+        }}
+      >
+        <AutoAwesomeRoundedIcon color="primary" />
+        <Typography fontWeight={800}>
+          Goal Builder
+        </Typography>
+      </Box>
+
+      <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+        <Stack spacing={2.5}>
+          <Box>
+            <Typography variant="h4" fontWeight={800}>
               {title || (initialData ? t("goalForm.editTitle") : t("goalForm.createTitle"))}
             </Typography>
-            <Typography color="text.secondary">
+            <Typography color="text.secondary" sx={{ mt: 0.6 }}>
               {t("goalForm.subtitle")}
             </Typography>
-          </Stack>
+          </Box>
 
-          <Divider />
+          <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
+            <Stack spacing={2.5}>
+              <Grid container spacing={2.5}>
+                <Grid item xs={12} lg={8}>
+                  <Box sx={panelSx}>
+                    <Stack spacing={2}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Typography fontWeight={800}>Required Inputs</Typography>
+                        <Chip size="small" label="Required" color="primary" />
+                      </Stack>
 
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <Grid container spacing={isFa ? 3.5 : 2.5}>
-              <Grid item xs={12}>
-                <Controller
-                  name="title"
-                  control={control}
-                  rules={{ required: t("validation.titleRequired") }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      label={t("goalForm.title")}
-                      fullWidth
-                      error={!!errors.title}
-                      helperText={errors.title?.message}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="category"
-                  control={control}
-                  rules={{ required: t("validation.categoryRequired") }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      select
-                      label={t("goalForm.category")}
-                      fullWidth
-                      error={!!errors.category}
-                      helperText={errors.category?.message}
-                    >
-                      {categories.map((cat) => (
-                        <MenuItem key={cat} value={cat}>
-                          {cat}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="type"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField {...field} select label={t("goalForm.goalType")} fullWidth>
-                      {types.map((type) => (
-                        <MenuItem key={type.value} value={type.value}>
-                          {type.label}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="target"
-                  control={control}
-                  rules={{
-                    required: t("validation.targetRequired"),
-                    min: { value: 1, message: t("validation.targetMin") },
-                  }}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      type="number"
-                      label={t("goalForm.target")}
-                      fullWidth
-                      error={!!errors.target}
-                      helperText={errors.target?.message}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="unit"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField {...field} select label={t("goalForm.unit")} fullWidth>
-                      {units.map((unit) => (
-                        <MenuItem key={unit} value={unit}>
-                          {unit}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="priority"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField {...field} select label={t("goalForm.priority")} fullWidth>
-                      {priorities.map((priority) => (
-                        <MenuItem key={priority} value={priority}>
-                          {priority}
-                        </MenuItem>
-                      ))}
-                    </TextField>
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="startDate"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      type="date"
-                      label={t("goalForm.startDate")}
-                      fullWidth
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12} md={6}>
-                <Controller
-                  name="endDate"
-                  control={control}
-                  render={({ field }) => (
-                    <TextField
-                      {...field}
-                      type="date"
-                      label={t("goalForm.endDate")}
-                      fullWidth
-                      InputLabelProps={{ shrink: true }}
-                    />
-                  )}
-                />
-              </Grid>
-
-              <Grid item xs={12}>
-                {/* Advanced options are hidden by default to keep the form simple. */}
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography fontWeight={600}>{t("goalForm.advancedOptions")}</Typography>
-                  <IconButton onClick={() => setShowAdvanced((prev) => !prev)} aria-label="toggle advanced options">
-                    <ExpandMoreIcon
-                      sx={{
-                        transform: showAdvanced ? "rotate(180deg)" : "rotate(0deg)",
-                        transition: "transform 200ms ease",
-                      }}
-                    />
-                  </IconButton>
-                </Stack>
-              </Grid>
-
-              <Grid item xs={12}>
-                <Collapse in={showAdvanced}>
-                  {/* Extra planning fields are optional. */}
-                  <Grid container spacing={isFa ? 3.5 : 2.5}>
-                    <Grid item xs={12} md={6}>
-                      <Controller
-                        name="deadline"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField
-                            {...field}
-                            type="date"
-                            label={t("goalForm.deadline")}
-                            fullWidth
-                            InputLabelProps={{ shrink: true }}
+                      <Grid container spacing={2}>
+                        <Grid item xs={12}>
+                          <Controller
+                            name="title"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField {...field} label={t("goalForm.title")} fullWidth error={!!errors.title} helperText={errors.title?.message} />
+                            )}
                           />
-                        )}
-                      />
-                    </Grid>
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Controller
+                            name="category"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                select
+                                label={t("goalForm.category")}
+                                fullWidth
+                                error={!!errors.category}
+                                helperText={errors.category?.message}
+                                InputLabelProps={{ shrink: true }}
+                                SelectProps={{
+                                  displayEmpty: true,
+                                  renderValue: (selected) =>
+                                    selected ? selected : `Select ${t("goalForm.category")}`,
+                                }}
+                              >
+                                <MenuItem value="" disabled>
+                                  {`Select ${t("goalForm.category")}`}
+                                </MenuItem>
+                                {categories.map((cat) => (
+                                  <MenuItem key={cat} value={cat}>
+                                    {cat}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={6}>
+                          <Controller
+                            name="type"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField {...field} select label={t("goalForm.goalType")} fullWidth>
+                                {types.map((type) => (
+                                  <MenuItem key={type.value} value={type.value}>
+                                    {type.label}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            )}
+                          />
+                        </Grid>
 
-                    <Grid item xs={12} md={6}>
-                      <Controller
-                        name="frequency"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField {...field} label={t("goalForm.frequency")} fullWidth />
-                        )}
-                      />
-                    </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Controller
+                            name="target"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField {...field} type="number" label={t("goalForm.target")} fullWidth error={!!errors.target} helperText={errors.target?.message} />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Controller
+                            name="unit"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField {...field} select label={t("goalForm.unit")} fullWidth>
+                                {units.map((unit) => (
+                                  <MenuItem key={unit} value={unit}>
+                                    {unit}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Controller
+                            name="priority"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField {...field} select label={t("goalForm.priority")} fullWidth>
+                                {priorities.map((priority) => (
+                                  <MenuItem key={priority} value={priority}>
+                                    {priority}
+                                  </MenuItem>
+                                ))}
+                              </TextField>
+                            )}
+                          />
+                        </Grid>
 
-                    <Grid item xs={12} md={6}>
-                      <Controller
-                        name="color"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField {...field} type="color" label={t("goalForm.color")} fullWidth />
-                        )}
-                      />
-                    </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Controller
+                            name="startDate"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                type="date"
+                                label={t("goalForm.startDate")}
+                                fullWidth
+                                error={!!errors.startDate}
+                                helperText={errors.startDate?.message}
+                                InputLabelProps={{ shrink: true }}
+                                sx={dateTimeFieldSx}
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      <IconButton
+                                        size="small"
+                                        edge="end"
+                                        onMouseDown={(e) => e.preventDefault()}
+                                        onClick={openNativePicker}
+                                      >
+                                        <CalendarMonthRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                      </IconButton>
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Controller
+                            name="endDate"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                type="date"
+                                label={t("goalForm.endDate")}
+                                fullWidth
+                                error={!!errors.endDate}
+                                helperText={errors.endDate?.message}
+                                InputLabelProps={{ shrink: true }}
+                                sx={dateTimeFieldSx}
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      <IconButton
+                                        size="small"
+                                        edge="end"
+                                        onMouseDown={(e) => e.preventDefault()}
+                                        onClick={openNativePicker}
+                                      >
+                                        <CalendarMonthRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                      </IconButton>
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            )}
+                          />
+                        </Grid>
+                        <Grid item xs={12} md={4}>
+                          <Controller
+                            name="deadline"
+                            control={control}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                type="date"
+                                label={t("goalForm.deadline")}
+                                fullWidth
+                                error={!!errors.deadline}
+                                helperText={errors.deadline?.message}
+                                InputLabelProps={{ shrink: true }}
+                                sx={dateTimeFieldSx}
+                                InputProps={{
+                                  endAdornment: (
+                                    <InputAdornment position="end">
+                                      <IconButton
+                                        size="small"
+                                        edge="end"
+                                        onMouseDown={(e) => e.preventDefault()}
+                                        onClick={openNativePicker}
+                                      >
+                                        <CalendarMonthRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                      </IconButton>
+                                    </InputAdornment>
+                                  ),
+                                }}
+                              />
+                            )}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Stack>
+                  </Box>
+                </Grid>
 
-                    <Grid item xs={12}>
-                      <Controller
-                        name="notes"
-                        control={control}
-                        render={({ field }) => (
-                          <TextField {...field} multiline rows={4} label={t("goalForm.notes")} fullWidth />
-                        )}
-                      />
-                    </Grid>
-                  </Grid>
-                </Collapse>
+                <Grid item xs={12} lg={4}>
+                  <Box sx={panelSx}>
+                    <Stack spacing={1.5}>
+                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                        <Stack direction="row" spacing={1} alignItems="center">
+                          <Typography fontWeight={800}>Optional</Typography>
+                          <Chip size="small" label="Planner" variant="outlined" />
+                        </Stack>
+                        <Button
+                          variant="text"
+                          size="small"
+                          onClick={() => setShowOptional((prev) => !prev)}
+                          endIcon={
+                            <ExpandMoreRoundedIcon
+                              sx={{
+                                transform: showOptional ? "rotate(180deg)" : "rotate(0deg)",
+                                transition: "transform 200ms ease",
+                              }}
+                            />
+                          }
+                        >
+                          {showOptional ? "Hide" : "Show"}
+                        </Button>
+                      </Stack>
+
+                      <Collapse in={showOptional}>
+                        <Stack spacing={1.5}>
+                          <Controller
+                            name="frequency"
+                            control={control}
+                            render={({ field }) => <TextField {...field} label={t("goalForm.frequency")} fullWidth />}
+                          />
+
+                          <Controller
+                            name="color"
+                            control={control}
+                            render={({ field }) => <TextField {...field} type="color" label={t("goalForm.color")} fullWidth />}
+                          />
+
+                          <Grid container spacing={1.5}>
+                            <Grid item xs={12} sm={6} lg={12}>
+                              <Controller
+                                name="startTime"
+                                control={control}
+                                render={({ field }) => (
+                                  <TextField
+                                    {...field}
+                                    type="time"
+                                    label="Start Time"
+                                    fullWidth
+                                    error={!!errors.startTime}
+                                    helperText={errors.startTime?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={dateTimeFieldSx}
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          <IconButton
+                                            size="small"
+                                            edge="end"
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            onClick={openNativePicker}
+                                          >
+                                            <AccessTimeRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                          </IconButton>
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                  />
+                                )}
+                              />
+                            </Grid>
+                            <Grid item xs={12} sm={6} lg={12}>
+                              <Controller
+                                name="endTime"
+                                control={control}
+                                render={({ field }) => (
+                                  <TextField
+                                    {...field}
+                                    type="time"
+                                    label="End Time"
+                                    fullWidth
+                                    error={!!errors.endTime}
+                                    helperText={errors.endTime?.message}
+                                    InputLabelProps={{ shrink: true }}
+                                    sx={dateTimeFieldSx}
+                                    InputProps={{
+                                      endAdornment: (
+                                        <InputAdornment position="end">
+                                          <IconButton
+                                            size="small"
+                                            edge="end"
+                                            onMouseDown={(e) => e.preventDefault()}
+                                            onClick={openNativePicker}
+                                          >
+                                            <AccessTimeRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                          </IconButton>
+                                        </InputAdornment>
+                                      ),
+                                    }}
+                                  />
+                                )}
+                              />
+                            </Grid>
+                          </Grid>
+
+                          <Controller
+                            name="notes"
+                            control={control}
+                            render={({ field }) => <TextField {...field} multiline rows={5} label={t("goalForm.notes")} fullWidth />}
+                          />
+                        </Stack>
+                      </Collapse>
+                    </Stack>
+                  </Box>
+                </Grid>
               </Grid>
 
-              <Grid item xs={12}>
-                <Stack direction={{ xs: "column", sm: "row" }} spacing={isFa ? 2.25 : 1.5} justifyContent="flex-end">
-                  <Button variant="outlined" onClick={() => navigate(-1)}>
-                    {t("common.cancel")}
-                  </Button>
-                  <Button type="submit" variant="contained">
-                    {submitLabel || (initialData ? t("common.saveChanges") : t("goalForm.createGoal"))}
-                  </Button>
-                </Stack>
-              </Grid>
-            </Grid>
+              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} justifyContent="flex-end">
+                <Button variant="outlined" onClick={() => navigate(-1)} sx={{ borderRadius: 2.5, px: 2 }}>
+                  {t("common.cancel")}
+                </Button>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  disabled={!isCreateEnabled || isSubmitting}
+                  sx={{ borderRadius: 2.5, px: 2.75, minWidth: 160, fontWeight: 700 }}
+                >
+                  {submitLabel || (initialData ? t("common.saveChanges") : t("goalForm.createGoal"))}
+                </Button>
+              </Stack>
+            </Stack>
           </form>
         </Stack>
       </CardContent>
     </Card>
   );
 }
-
