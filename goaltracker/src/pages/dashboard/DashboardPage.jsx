@@ -167,13 +167,13 @@ export default function DashboardPage() {
                 {user?.name && (
                   <Typography
                     variant="subtitle2"
-                    sx={{
-                      mb: 0.45,
-                      color: isDark ? "rgba(191,219,254,0.92)" : "rgba(30,64,175,0.86)",
-                      fontWeight: 700,
-                    }}
-                  >
-                    Welcome, {user.name}
+                      sx={{
+                        mb: 0.45,
+                        color: isDark ? "rgba(191,219,254,0.92)" : "rgba(30,64,175,0.86)",
+                        fontWeight: 700,
+                      }}
+                    >
+                    {t("dashboard.welcome", { name: user.name })}
                   </Typography>
                 )}
                 <Typography variant="h4" fontWeight={800}>

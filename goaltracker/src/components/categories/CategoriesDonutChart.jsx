@@ -4,9 +4,11 @@ import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import { alpha } from "@mui/material/styles";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
+import { useTranslation } from "react-i18next";
 import SectionCard from "../common/SectionCard";
 
 export default function CategoriesDonutChart({ categories }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
@@ -43,8 +45,14 @@ export default function CategoriesDonutChart({ categories }) {
 
   return (
     <SectionCard
-      title="Progress Share"
-      action={<Chip size="small" icon={<InsightsRoundedIcon sx={{ fontSize: 16 }} />} label="Insights" />}
+      title={t("categoriesPage.donut.progressShare")}
+      action={
+        <Chip
+          size="small"
+          icon={<InsightsRoundedIcon sx={{ fontSize: 16 }} />}
+          label={t("categoriesPage.donut.insights")}
+        />
+      }
       sx={{
         height: "100%",
         width: "100%",
@@ -59,7 +67,7 @@ export default function CategoriesDonutChart({ categories }) {
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       {chartItems.length === 0 ? (
-        <Typography color="text.secondary">No category data yet.</Typography>
+        <Typography color="text.secondary">{t("categoriesPage.noDataYet")}</Typography>
       ) : (
         <Box
           sx={{
@@ -111,7 +119,7 @@ export default function CategoriesDonutChart({ categories }) {
               sx={{ position: "absolute", inset: 0 }}
             >
               <Typography variant="caption" color="text.secondary">
-                Average Progress
+                {t("categoriesPage.donut.averageProgress")}
               </Typography>
               <Typography variant="h5" fontWeight={900}>
                 {avgProgress}%
@@ -165,7 +173,7 @@ export default function CategoriesDonutChart({ categories }) {
               }}
             >
               <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 1 }}>
-                Quick Insights
+                {t("categoriesPage.donut.quickInsights")}
               </Typography>
               <Stack spacing={0.8}>
                 <Stack
@@ -209,13 +217,13 @@ export default function CategoriesDonutChart({ categories }) {
                 <Chip
                   size="small"
                   variant="outlined"
-                  label={`Avg Progress ${avgProgress}%`}
+                  label={t("categoriesPage.donut.avgProgressChip", { value: avgProgress })}
                   sx={{ fontWeight: 700 }}
                 />
                 <Chip
                   size="small"
                   variant="outlined"
-                  label={`Avg Completed ${avgCompletion}%`}
+                  label={t("categoriesPage.donut.avgCompletedChip", { value: avgCompletion })}
                   sx={{ fontWeight: 700 }}
                 />
               </Stack>

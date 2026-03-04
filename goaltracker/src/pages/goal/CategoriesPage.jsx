@@ -127,14 +127,14 @@ export default function CategoriesPage() {
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <CategoryRoundedIcon sx={{ color: primary }} fontSize="small" />
                   <Typography variant="body2" color="text.secondary">
-                    Categories
+                    {t("categoriesPage.stats.categories")}
                   </Typography>
                 </Stack>
                 <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
                   {totalCategories}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {totalGoals} goals tracked
+                  {t("categoriesPage.stats.goalsTracked", { count: totalGoals })}
                 </Typography>
               </CardContent>
             </Card>
@@ -152,7 +152,7 @@ export default function CategoriesPage() {
                   {activeGoals}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  currently in progress
+                  {t("categoriesPage.stats.currentlyInProgress")}
                 </Typography>
               </CardContent>
             </Card>
@@ -170,7 +170,7 @@ export default function CategoriesPage() {
                   {completedGoals}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  finished goals
+                  {t("categoriesPage.stats.finishedGoals")}
                 </Typography>
               </CardContent>
             </Card>
@@ -181,14 +181,14 @@ export default function CategoriesPage() {
                 <Stack direction="row" alignItems="center" spacing={1}>
                   <AutoGraphRoundedIcon sx={{ color: primary }} fontSize="small" />
                   <Typography variant="body2" color="text.secondary">
-                    Avg Progress
+                    {t("categoriesPage.stats.avgProgress")}
                   </Typography>
                 </Stack>
                 <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
                   {avgProgress}%
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  across all categories
+                  {t("categoriesPage.stats.acrossAllCategories")}
                 </Typography>
               </CardContent>
             </Card>

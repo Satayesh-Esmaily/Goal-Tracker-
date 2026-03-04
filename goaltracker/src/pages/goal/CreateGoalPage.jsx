@@ -9,21 +9,23 @@ import {
   Chip,
   Divider,
 } from "@mui/material";
-import GoalForm from "../../components/goals/GoalForm";
+import { useTranslation } from "react-i18next";
 import TrendingUpIcon from "@mui/icons-material/TrendingUp";
+import GoalForm from "../../components/goals/GoalForm";
 
 const CreateGoalPage = () => {
   const [previewData, setPreviewData] = useState(null);
+  const { t } = useTranslation();
 
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 3, md: 5 } }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
           <Typography variant="h4" fontWeight={800}>
-            Create New Goal
+            {t("createGoalPage.title")}
           </Typography>
           <Typography variant="body2" color="text.secondary">
-            Define your next milestone and start building momentum.
+            {t("createGoalPage.subtitle")}
           </Typography>
         </Stack>
 
@@ -51,20 +53,20 @@ const CreateGoalPage = () => {
             >
               <CardContent>
                 <Typography variant="subtitle2" sx={{ opacity: 0.8 }}>
-                  Live Preview
+                  {t("createGoalPage.livePreview")}
                 </Typography>
 
                 <Typography variant="h6" fontWeight={700}>
-                  {previewData?.title || "Your goal title"}
+                  {previewData?.title || t("createGoalPage.yourGoalTitle")}
                 </Typography>
 
                 <Typography variant="body2" sx={{ mt: 1 }}>
-                  Target: {previewData?.target || 0}
+                  {t("createGoalPage.target")}: {previewData?.target || 0}
                 </Typography>
 
                 <Chip
                   icon={<TrendingUpIcon />}
-                  label="Estimated XP: +100"
+                  label={t("createGoalPage.estimatedXp")}
                   sx={{
                     mt: 2,
                     bgcolor: "rgba(255,255,255,0.2)",
@@ -77,17 +79,17 @@ const CreateGoalPage = () => {
             <Card>
               <CardContent>
                 <Typography variant="subtitle1" fontWeight={700}>
-                  💡 Smart Tips
+                  {t("createGoalPage.smartTips")}
                 </Typography>
                 <Divider sx={{ my: 1 }} />
                 <Typography variant="body2" color="text.secondary">
-                  • Break big goals into smaller milestones.
+                  {t("createGoalPage.tip1")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  • Daily goals improve streak consistency.
+                  {t("createGoalPage.tip2")}
                 </Typography>
                 <Typography variant="body2" color="text.secondary">
-                  • Specific targets increase completion rate by 42%.
+                  {t("createGoalPage.tip3")}
                 </Typography>
               </CardContent>
             </Card>

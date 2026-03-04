@@ -16,18 +16,38 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Container,
+  useTheme as useMuiTheme,
+  TextField,
+  MenuItem,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme as useAppTheme } from "../../context/ThemeContext";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Settings() {
   const { t, i18n } = useTranslation();
-  const { mode, toggleMode, primaryColor, setPrimaryColor } = useTheme();
+  const { mode, toggleMode, primaryColor, setPrimaryColor } = useAppTheme();
+  const { user, updateProfile } = useAuth();
+  const muiTheme = useMuiTheme();
+  const isDark = muiTheme.palette.mode === "dark";
+  const primary = muiTheme.palette.primary.main;
+  const [profileName, setProfileName] = useState(user?.name || "");
+  const [profileEmail, setProfileEmail] = useState(user?.email || "");
+  const [profileFocus, setProfileFocus] = useState(user?.focusArea || "study");
+  const [profileSaved, setProfileSaved] = useState(false);
+
+  useEffect(() => {
+    setProfileName(user?.name || "");
+    setProfileEmail(user?.email || "");
+    setProfileFocus(user?.focusArea || "study");
+  }, [user]);
 
   // Preferences
   const [reminder, setReminder] = useState(
@@ -60,14 +80,46 @@ export default function Settings() {
     { value: "pink", hex: "#c2185b" },
   ];
 
+  const sectionCardSx = {
+    border: "1px solid",
+    borderColor: "divider",
+    borderRadius: 3,
+    overflow: "hidden",
+    background: isDark
+      ? `linear-gradient(180deg, ${alpha(muiTheme.palette.background.paper, 0.92)}, ${alpha(
+          muiTheme.palette.background.paper,
+          0.78
+        )})`
+      : `linear-gradient(180deg, ${alpha("#ffffff", 0.98)}, ${alpha("#f8fafc", 0.94)})`,
+    boxShadow: isDark ? "0 10px 26px rgba(2,6,23,0.32)" : "0 10px 22px rgba(15,23,42,0.08)",
+  };
+
   return (
-    <Box p={{ xs: 2, sm: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        {t("nav.settings")}
-      </Typography>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
+      <Stack spacing={3}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: alpha(primary, 0.35),
+            borderRadius: 3.2,
+            background: isDark
+              ? `linear-gradient(120deg, ${alpha(primary, 0.24)}, ${alpha(muiTheme.palette.background.paper, 0.9)})`
+              : `linear-gradient(120deg, ${alpha(primary, 0.12)}, ${alpha("#ffffff", 0.94)})`,
+          }}
+        >
+          <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+            <Stack spacing={0.5}>
+              <Typography variant="h4" fontWeight={900}>
+                {t("nav.settings")}
+              </Typography>
+              <Typography color="text.secondary">{t("settings.subtitle")}</Typography>
+            </Stack>
+          </CardContent>
+        </Card>
 
       {/* Appearance */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
+        <Card elevation={0} sx={sectionCardSx}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {t("settings.appearance")}
@@ -76,7 +128,7 @@ export default function Settings() {
           <Stack
             spacing={2}
             direction={{ xs: "column", sm: "row" }}
-            alignItems="center"
+            alignItems={{ xs: "stretch", sm: "center" }}
           >
             {/* Language Toggle */}
             <Button
@@ -84,29 +136,124 @@ export default function Settings() {
               onClick={() =>
                 i18n.changeLanguage(i18n.language === "fa" ? "en" : "fa")
               }
+              sx={{
+                borderRadius: 999,
+                px: 2.2,
+                minHeight: 42,
+                minWidth: 96,
+                fontWeight: 800,
+                textTransform: "none",
+                borderColor: alpha(primary, 0.48),
+                color: isDark ? "#c4b5fd" : alpha(primary, 0.9),
+                bgcolor: isDark ? alpha("#0f172a", 0.58) : alpha("#ffffff", 0.88),
+                "&:hover": {
+                  borderColor: primary,
+                  bgcolor: isDark ? alpha(primary, 0.2) : alpha(primary, 0.12),
+                },
+              }}
             >
               {i18n.language === "fa" ? "EN" : "FA"}
             </Button>
 
             {/* Dark/Light Mode */}
-            <FormControlLabel
-              control={
-                <Tooltip
-                  title={mode === "dark" ? t("common.dark") : t("common.light")}
-                >
-                  <IconButton onClick={toggleMode} color="primary">
-                    {mode === "dark" ? <DarkModeIcon /> : <LightModeIcon />}
-                  </IconButton>
-                </Tooltip>
-              }
-              label={mode === "dark" ? t("common.dark") : t("common.light")}
+            <Tooltip title={mode === "dark" ? t("common.dark") : t("common.light")}>
+              <Button
+                onClick={toggleMode}
+                variant="outlined"
+                startIcon={mode === "dark" ? <DarkModeIcon /> : <LightModeIcon />}
+                sx={{
+                  borderRadius: 999,
+                  px: 2.2,
+                  minHeight: 42,
+                  minWidth: 130,
+                  fontWeight: 800,
+                  textTransform: "none",
+                  borderColor: alpha(primary, 0.48),
+                  color: isDark ? "#e2e8f0" : "#0f172a",
+                  bgcolor: isDark ? alpha("#0f172a", 0.58) : alpha("#ffffff", 0.88),
+                  "&:hover": {
+                    borderColor: primary,
+                    bgcolor: isDark ? alpha(primary, 0.2) : alpha(primary, 0.12),
+                  },
+                }}
+              >
+                {mode === "dark" ? t("common.dark") : t("common.light")}
+              </Button>
+            </Tooltip>
+          </Stack>
+        </CardContent>
+      </Card>
+
+      {/* Profile */}
+      <Card elevation={0} sx={sectionCardSx}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            {t("settings.profile.title")}
+          </Typography>
+          <Typography variant="body2" color="text.secondary" sx={{ mb: 2 }}>
+            {t("settings.profile.subtitle")}
+          </Typography>
+
+          <Stack spacing={2}>
+            <TextField
+              label={t("settings.profile.name")}
+              value={profileName}
+              onChange={(event) => {
+                setProfileSaved(false);
+                setProfileName(event.target.value);
+              }}
+              fullWidth
             />
+            <TextField
+              label={t("settings.profile.email")}
+              value={profileEmail}
+              onChange={(event) => {
+                setProfileSaved(false);
+                setProfileEmail(event.target.value);
+              }}
+              fullWidth
+            />
+            <TextField
+              select
+              label={t("settings.profile.mainFocus")}
+              value={profileFocus}
+              onChange={(event) => {
+                setProfileSaved(false);
+                setProfileFocus(event.target.value);
+              }}
+              fullWidth
+            >
+              <MenuItem value="study">{t("loginPage.focus.study")}</MenuItem>
+              <MenuItem value="work">{t("loginPage.focus.work")}</MenuItem>
+              <MenuItem value="health">{t("loginPage.focus.health")}</MenuItem>
+              <MenuItem value="personal">{t("loginPage.focus.personal")}</MenuItem>
+            </TextField>
+
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="caption" color={profileSaved ? "success.main" : "text.secondary"}>
+                {profileSaved ? t("settings.profile.saved") : t("settings.profile.helper")}
+              </Typography>
+              <Button
+                variant="contained"
+                onClick={() => {
+                  updateProfile({
+                    name: profileName,
+                    email: profileEmail,
+                    focusArea: profileFocus,
+                  });
+                  setProfileSaved(true);
+                }}
+                sx={{ borderRadius: 2.5, textTransform: "none", fontWeight: 700, px: 2.2 }}
+              >
+                {t("settings.profile.save")}
+              </Button>
+            </Stack>
           </Stack>
         </CardContent>
       </Card>
 
       {/* Theme Color */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
+        <Card elevation={0} sx={sectionCardSx}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {t("settings.themeColor")}
@@ -138,10 +285,19 @@ export default function Settings() {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        width: 20,
-                        height: 20,
+                        width: 24,
+                        height: 24,
                         borderRadius: "50%",
                         bgcolor: color.hex,
+                        border: "2px solid",
+                        borderColor:
+                          primaryColor === color.value
+                            ? (isDark ? "#e2e8f0" : "#0f172a")
+                            : "transparent",
+                        boxShadow:
+                          primaryColor === color.value
+                            ? "0 0 0 3px rgba(59,130,246,0.18)"
+                            : "none",
                       }}
                     />
                   }
@@ -154,7 +310,7 @@ export default function Settings() {
       </Card>
 
       {/* Preferences */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
+        <Card elevation={0} sx={sectionCardSx}>
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {t("settings.preferences")}
@@ -220,7 +376,22 @@ export default function Settings() {
       </Card>
 
       {/* Danger Zone */}
-      <Card sx={{ boxShadow: 3 }}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: alpha(muiTheme.palette.error.main, 0.35),
+            borderRadius: 3,
+            overflow: "hidden",
+            background: isDark
+              ? `linear-gradient(180deg, ${alpha(muiTheme.palette.background.paper, 0.92)}, ${alpha(
+                  muiTheme.palette.error.dark,
+                  0.12
+                )})`
+              : `linear-gradient(180deg, ${alpha("#ffffff", 0.98)}, ${alpha(muiTheme.palette.error.light, 0.08)})`,
+            boxShadow: isDark ? "0 10px 26px rgba(2,6,23,0.32)" : "0 10px 22px rgba(15,23,42,0.08)",
+          }}
+        >
         <CardContent>
           <Typography variant="h6" gutterBottom sx={{ color: "error.main" }}>
             {t("settings.dangerZone")}
@@ -252,7 +423,8 @@ export default function Settings() {
             </DialogActions>
           </Dialog>
         </CardContent>
-      </Card>
-    </Box>
+        </Card>
+      </Stack>
+    </Container>
   );
 }

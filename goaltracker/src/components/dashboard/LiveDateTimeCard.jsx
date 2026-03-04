@@ -9,7 +9,7 @@ import { useTranslation } from "react-i18next";
 export default function LiveDateTimeCard() {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const [now, setNow] = useState(() => new Date());
   const [is24Hour, setIs24Hour] = useState(() => {
     const saved = localStorage.getItem("clock-hour-format");
@@ -75,7 +75,7 @@ export default function LiveDateTimeCard() {
             <Stack direction="row" spacing={1} alignItems="center">
               <AccessTimeRoundedIcon fontSize="small" color="primary" />
               <Typography variant="subtitle2" color="text.secondary">
-                Live Date & Time
+                {t("dashboard.liveDateTime")}
               </Typography>
               <Box
                 sx={{
