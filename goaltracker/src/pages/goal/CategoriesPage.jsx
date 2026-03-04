@@ -56,7 +56,7 @@ export default function CategoriesPage() {
               {t("categoriesPage.title")}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Track category performance with progress and completion insights.
+              {t("categoriesPage.subtitle")}
             </Typography>
           </Stack>
         </Stack>
@@ -83,7 +83,7 @@ export default function CategoriesPage() {
               </Box>
             </Box>
 
-            <SectionCard title="All Categories">
+            <SectionCard title={t("categoriesPage.allCategories")}>
               <CategoriesCardsGrid categories={categories} />
             </SectionCard>
           </Stack>

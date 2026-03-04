@@ -82,6 +82,8 @@ const resources = {
       },
       categoriesPage: {
         title: "Categories",
+        subtitle: "Track category performance with progress and completion insights.",
+        allCategories: "All Categories",
         noCategories: "No categories yet. Create your first goal.",
         active: "Active",
         completed: "Completed",
@@ -223,6 +225,8 @@ const resources = {
       },
       categoriesPage: {
         title: "دسته‌بندی‌ها",
+        subtitle: "عملکرد دسته‌بندی‌ها را با شاخص پیشرفت و تکمیل پیگیری کنید.",
+        allCategories: "همه دسته‌بندی‌ها",
         noCategories: "هنوز دسته‌بندی‌ای وجود ندارد. اولین هدف را بسازید.",
         active: "فعال",
         completed: "تکمیل‌شده",

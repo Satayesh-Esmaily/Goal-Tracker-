@@ -1,4 +1,3 @@
-// Premium branded splash screen shown at app startup.
 import { Box, LinearProgress, Stack, Typography, useTheme } from "@mui/material";
 import { useEffect, useMemo, useState } from "react";
 import logoImage from "../../assets/logo.jpg";
