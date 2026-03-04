@@ -3,16 +3,29 @@ import { alpha } from "@mui/material/styles";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import SectionCard from "../common/SectionCard";
+import { useGoals } from "../../context/GoalsContext";
 
 function shortLabel(text, max = 12) {
   if (text.length <= max) return text;
   return `${text.slice(0, max - 1)}...`;
 }
 
-export default function CategoriesProgressChart({ categories }) {
+export default function CategoriesProgressChart() {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
+
+  const { stats } = useGoals();
+
+  const categories = stats?.categoryProgress
+    ? Object.keys(stats.categoryProgress).map((key) => ({
+        name: key,
+        progressRate: stats.categoryProgress[key],
+        completed: stats.categoryProgress[key],
+        total: 100,
+      }))
+    : [];
+
   const chartItems = categories.slice(0, 7);
   const labels = chartItems.map((item) => shortLabel(item.name));
   const progressSeries = chartItems.map((item) => item.progressRate);
@@ -20,33 +33,49 @@ export default function CategoriesProgressChart({ categories }) {
     item.total === 0 ? 0 : Math.round((item.completed / item.total) * 100)
   );
   const chartHeight = Math.max(300, chartItems.length * 42 + 88);
+
   const topCategory = chartItems[0];
   const avgProgress =
     chartItems.length === 0
       ? 0
-      : Math.round(chartItems.reduce((acc, item) => acc + item.progressRate, 0) / chartItems.length);
+      : Math.round(
+          chartItems.reduce((acc, item) => acc + item.progressRate, 0) /
+            chartItems.length
+        );
   const avgCompletion =
     chartItems.length === 0
       ? 0
       : Math.round(
-          chartItems.reduce((acc, item) => acc + (item.total ? (item.completed / item.total) * 100 : 0), 0) /
-            chartItems.length
+          chartItems.reduce(
+            (acc, item) =>
+              acc + (item.total ? (item.completed / item.total) * 100 : 0),
+            0
+          ) / chartItems.length
         );
 
   return (
     <SectionCard
       title="Category Comparison"
-      action={<Chip size="small" icon={<AutoGraphRoundedIcon sx={{ fontSize: 16 }} />} label="Analytics" />}
+      action={
+        <Chip
+          size="small"
+          icon={<AutoGraphRoundedIcon sx={{ fontSize: 16 }} />}
+          label="Analytics"
+        />
+      }
       sx={{
         height: "100%",
         width: "100%",
         borderColor: alpha(primary, 0.24),
         background: isDark
-          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.9)}, ${alpha(
+          ? `linear-gradient(180deg, ${alpha(
               theme.palette.background.paper,
-              0.78
-            )})`
-          : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
+              0.9
+            )}, ${alpha(theme.palette.background.paper, 0.78)})`
+          : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha(
+              "#f8fafc",
+              0.9
+            )})`,
       }}
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
@@ -57,7 +86,9 @@ export default function CategoriesProgressChart({ categories }) {
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
             <Chip
               size="small"
-              label={`Top: ${topCategory?.name || "-"} (${topCategory?.progressRate || 0}%)`}
+              label={`Top: ${topCategory?.name || "-"} (${
+                topCategory?.progressRate || 0
+              }%)`}
               sx={{ fontWeight: 700, borderRadius: 1.5 }}
             />
             <Chip
@@ -88,7 +119,9 @@ export default function CategoriesProgressChart({ categories }) {
               width: "100%",
               maxWidth: 560,
               mx: "auto",
-              boxShadow: isDark ? "0 10px 24px rgba(2,8,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+              boxShadow: isDark
+                ? "0 10px 24px rgba(2,8,23,0.32)"
+                : "0 8px 20px rgba(15,23,42,0.08)",
             }}
           >
             <BarChart
@@ -98,8 +131,18 @@ export default function CategoriesProgressChart({ categories }) {
               xAxis={[{ min: 0, max: 100 }]}
               margin={{ top: 18, right: 22, bottom: 20, left: 120 }}
               series={[
-                { data: progressSeries, label: "Progress %", color: primary, borderRadius: 6 },
-                { data: completeSeries, label: "Completed %", color: theme.palette.success.main, borderRadius: 6 },
+                {
+                  data: progressSeries,
+                  label: "Progress %",
+                  color: primary,
+                  borderRadius: 6,
+                },
+                {
+                  data: completeSeries,
+                  label: "Completed %",
+                  color: theme.palette.success.main,
+                  borderRadius: 6,
+                },
               ]}
               grid={{ horizontal: true }}
               slotProps={{

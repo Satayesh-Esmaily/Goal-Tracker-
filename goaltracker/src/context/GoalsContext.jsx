@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   collection,
@@ -59,7 +58,9 @@ function calculateStreak(goals) {
 }
 
 export function GoalsProvider({ children }) {
-  const [goals, setGoals] = useState(() => parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
+  const [goals, setGoals] = useState(() =>
+    parseStoredGoals(localStorage.getItem(STORAGE_KEY))
+  );
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
@@ -70,11 +71,14 @@ export function GoalsProvider({ children }) {
       try {
         const q = query(collection(db, "goals"), orderBy("createdAt", "desc"));
         const snapshot = await getDocs(q);
-        const list = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+        const list = snapshot.docs.map((item) => ({
+          id: item.id,
+          ...item.data(),
+        }));
         setGoals(list);
       } catch (error) {
         console.error("Failed to fetch goals from Firestore:", error);
-        // Keep local copy if cloud is unavailable.
+
         setGoals(parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
       }
     };
@@ -117,7 +121,10 @@ export function GoalsProvider({ children }) {
       setGoals((prev) => prev.map((g) => (g.id === tempId ? cloudGoal : g)));
       return cloudGoal;
     } catch (error) {
-      console.error("Failed to create goal in Firestore, using local fallback:", error);
+      console.error(
+        "Failed to create goal in Firestore, using local fallback:",
+        error
+      );
       return localGoal;
     }
   };
@@ -127,7 +134,6 @@ export function GoalsProvider({ children }) {
     const now = new Date().toISOString();
     setGoals((prev) =>
       prev.map((goal) => {
-        // Do not update paused, deleted, or already completed goals.
         if (
           goal.id !== goalId ||
           goal.status === "paused" ||
@@ -137,7 +143,8 @@ export function GoalsProvider({ children }) {
           return goal;
         }
         const nextProgress = Math.min(goal.target, goal.progress + step);
-        const becameCompleted = nextProgress >= goal.target && goal.status !== "completed";
+        const becameCompleted =
+          nextProgress >= goal.target && goal.status !== "completed";
         const status = nextProgress >= goal.target ? "completed" : goal.status;
         return {
           ...goal,
@@ -170,8 +177,12 @@ export function GoalsProvider({ children }) {
   const togglePause = (goalId) => {
     setGoals((prev) =>
       prev.map((goal) => {
-        // Completed and deleted goals stay unchanged.
-        if (goal.id !== goalId || goal.status === "completed" || goal.status === "deleted") return goal;
+        if (
+          goal.id !== goalId ||
+          goal.status === "completed" ||
+          goal.status === "deleted"
+        )
+          return goal;
         return {
           ...goal,
           status: goal.status === "paused" ? "active" : "paused",
@@ -187,7 +198,9 @@ export function GoalsProvider({ children }) {
       prev.map((goal) => {
         if (goal.id !== goalId || goal.status !== "deleted") return goal;
         const restoredStatus =
-          goal.previousStatus && goal.previousStatus !== "deleted" ? goal.previousStatus : "active";
+          goal.previousStatus && goal.previousStatus !== "deleted"
+            ? goal.previousStatus
+            : "active";
         return {
           ...goal,
           status: restoredStatus,
@@ -222,7 +235,7 @@ export function GoalsProvider({ children }) {
         return {
           ...goal,
           ...updates,
-          // Keep target numeric after edits from form fields.
+
           target: Number(updates.target ?? goal.target) || goal.target,
           completedAt:
             updates.status === "completed"
@@ -240,20 +253,37 @@ export function GoalsProvider({ children }) {
     const visibleGoals = goals.filter((goal) => goal.status !== "deleted");
     const activeGoals = visibleGoals.filter((goal) => goal.status === "active");
     const pausedGoals = visibleGoals.filter((goal) => goal.status === "paused");
-    const completedGoals = visibleGoals.filter((goal) => goal.status === "completed");
+    const completedGoals = visibleGoals.filter(
+      (goal) => goal.status === "completed"
+    );
 
-    // Average progress percentage across visible goals.
     const completionRate =
       visibleGoals.length === 0
         ? 0
         : Math.round(
-            (visibleGoals.reduce((acc, goal) => acc + Math.min(goal.progress / goal.target, 1), 0) /
+            (visibleGoals.reduce(
+              (acc, goal) => acc + Math.min(goal.progress / goal.target, 1),
+              0
+            ) /
               visibleGoals.length) *
               100
           );
 
     const streak = calculateStreak(visibleGoals);
-    const { xpTotal, level, streakBonus } = calculateXpStats(visibleGoals, streak);
+    const { xpTotal, level, streakBonus } = calculateXpStats(
+      visibleGoals,
+      streak
+    );
+
+    const categoryProgress = visibleGoals.reduce((acc, goal) => {
+      const pct = Math.round((goal.progress / goal.target) * 100);
+      if (acc[goal.category]) {
+        acc[goal.category] = Math.round((acc[goal.category] + pct) / 2);
+      } else {
+        acc[goal.category] = pct;
+      }
+      return acc;
+    }, {});
 
     return {
       activeCount: activeGoals.length,
@@ -264,6 +294,7 @@ export function GoalsProvider({ children }) {
       streak,
       level,
       streakBonus,
+      categoryProgress,
     };
   }, [goals]);
 
@@ -282,7 +313,9 @@ export function GoalsProvider({ children }) {
     [goals, stats]
   );
 
-  return <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>;
+  return (
+    <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>
+  );
 }
 
 export function useGoals() {
