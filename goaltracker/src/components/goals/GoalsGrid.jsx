@@ -1,34 +1,31 @@
-import { Box, Grid, Typography } from "@mui/material";
-import { useTranslation } from "react-i18next";
+import { Grid } from "@mui/material";
 import GoalCard from "../dashboard/GoalCard";
+import EmptyState from "../common/EmptyState";
 
-export default function GoalsGrid({ goals, onAddProgress, onTogglePause, onEdit, onDelete }) {
-  const { t } = useTranslation();
-
-  if (goals.length === 0) {
-    // Empty state shown after filtering/search when no goal matches.
-    return (
-      <Box sx={{ py: 6, textAlign: "center", border: "1px dashed", borderColor: "divider", borderRadius: 3 }}>
-        <Typography color="text.secondary">{t("goalsPage.noGoalsFound")}</Typography>
-      </Box>
-    );
+export default function GoalsGrid({
+  goals,
+  onAddProgress,
+  onTogglePause,
+  onEdit,
+  onDelete,
+}) {
+  if (!Array.isArray(goals) || goals.length === 0) {
+    return <EmptyState message="No goals found" />;
   }
 
   return (
     <Grid container spacing={2}>
-      {/* Keep each goal card wired to parent handlers by id. */}
-      {goals.map((goal) => (
-        <Grid item xs={12} md={6} key={goal.id}>
+      {goals.map((goal, index) => (
+        <Grid item xs={12} md={6} key={goal.id || index}>
           <GoalCard
-            goal={goal}
-            onAddProgress={() => onAddProgress(goal.id)}
-            onTogglePause={() => onTogglePause(goal.id)}
-            onEdit={() => onEdit(goal.id)}
-            onDelete={() => onDelete(goal.id)}
+            goal={goal || {}}
+            onAddProgress={() => onAddProgress && onAddProgress(goal?.id)}
+            onTogglePause={() => onTogglePause && onTogglePause(goal?.id)}
+            onEdit={() => onEdit && onEdit(goal?.id)}
+            onDelete={() => onDelete && onDelete(goal?.id)}
           />
         </Grid>
       ))}
     </Grid>
   );
 }
-

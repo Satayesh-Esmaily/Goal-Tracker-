@@ -1,7 +1,7 @@
 import { Card, CardContent, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
-function GoalspageHero() {
+export default function GoalsPageHeader({ isFa }) {
   const { t } = useTranslation();
 
   return (
@@ -22,5 +22,3 @@ function GoalspageHero() {
     </Card>
   );
 }
-
-export default GoalspageHero;

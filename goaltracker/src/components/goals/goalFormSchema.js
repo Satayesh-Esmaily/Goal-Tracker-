@@ -37,7 +37,9 @@ export function createGoalFormSchema(t) {
     type: yup.string().oneOf(["daily", "count", "time"]).required(),
     target: yup
       .number()
-      .transform((value, originalValue) => (originalValue === "" ? NaN : Number(originalValue)))
+      .transform((value, originalValue) =>
+        originalValue === "" ? NaN : Number(originalValue)
+      )
       .typeError(t("validation.targetRequired"))
       .required(t("validation.targetRequired"))
       .min(1, t("validation.targetMin"))
@@ -47,33 +49,57 @@ export function createGoalFormSchema(t) {
     startDate: yup
       .string()
       .required("Start date is required.")
-      .test("start-date-format", "Invalid start date format.", (value) => !value || DATE_PATTERN.test(value)),
+      .test(
+        "start-date-format",
+        "Invalid start date format.",
+        (value) => !value || DATE_PATTERN.test(value)
+      ),
     endDate: yup
       .string()
       .required("End date is required.")
-      .test("end-date-format", "Invalid end date format.", (value) => !value || DATE_PATTERN.test(value))
-      .test("end-after-start", "End date must be after start date.", function validate(value) {
-        const startDate = parseDate(this.parent.startDate);
-        const endDate = parseDate(value);
-        if (!startDate || !endDate) return true;
-        return endDate >= startDate;
-      }),
+      .test(
+        "end-date-format",
+        "Invalid end date format.",
+        (value) => !value || DATE_PATTERN.test(value)
+      )
+      .test(
+        "end-after-start",
+        "End date must be after start date.",
+        function validate(value) {
+          const startDate = parseDate(this.parent.startDate);
+          const endDate = parseDate(value);
+          if (!startDate || !endDate) return true;
+          return endDate >= startDate;
+        }
+      ),
     deadline: yup
       .string()
       .required("Deadline is required.")
-      .test("deadline-format", "Invalid deadline format.", (value) => !value || DATE_PATTERN.test(value))
-      .test("deadline-after-start", "Deadline must be after start date.", function validate(value) {
-        const startDate = parseDate(this.parent.startDate);
-        const deadline = parseDate(value);
-        if (!startDate || !deadline) return true;
-        return deadline >= startDate;
-      })
-      .test("deadline-before-end", "Deadline should not be after end date.", function validate(value) {
-        const endDate = parseDate(this.parent.endDate);
-        const deadline = parseDate(value);
-        if (!endDate || !deadline) return true;
-        return deadline <= endDate;
-      }),
+      .test(
+        "deadline-format",
+        "Invalid deadline format.",
+        (value) => !value || DATE_PATTERN.test(value)
+      )
+      .test(
+        "deadline-after-start",
+        "Deadline must be after start date.",
+        function validate(value) {
+          const startDate = parseDate(this.parent.startDate);
+          const deadline = parseDate(value);
+          if (!startDate || !deadline) return true;
+          return deadline >= startDate;
+        }
+      )
+      .test(
+        "deadline-before-end",
+        "Deadline should not be after end date.",
+        function validate(value) {
+          const endDate = parseDate(this.parent.endDate);
+          const deadline = parseDate(value);
+          if (!endDate || !deadline) return true;
+          return deadline <= endDate;
+        }
+      ),
     frequency: yup.string().max(60, "Frequency must be 60 characters or less."),
     color: yup
       .string()
@@ -81,15 +107,27 @@ export function createGoalFormSchema(t) {
     notes: yup.string().max(500, "Notes must be 500 characters or less."),
     startTime: yup
       .string()
-      .test("start-time-format", "Start time must be HH:mm.", (value) => !value || /^\d{2}:\d{2}$/.test(value)),
+      .test(
+        "start-time-format",
+        "Start time must be HH:mm.",
+        (value) => !value || /^\d{2}:\d{2}$/.test(value)
+      ),
     endTime: yup
       .string()
-      .test("end-time-format", "End time must be HH:mm.", (value) => !value || /^\d{2}:\d{2}$/.test(value))
-      .test("end-time-after-start-time", "End time should be after start time.", function validate(value) {
-        const start = this.parent.startTime;
-        if (!start || !value) return true;
-        return value >= start;
-      }),
+      .test(
+        "end-time-format",
+        "End time must be HH:mm.",
+        (value) => !value || /^\d{2}:\d{2}$/.test(value)
+      )
+      .test(
+        "end-time-after-start-time",
+        "End time should be after start time.",
+        function validate(value) {
+          const start = this.parent.startTime;
+          if (!start || !value) return true;
+          return value >= start;
+        }
+      ),
     status: yup.string().oneOf(["active", "completed", "paused"]).required(),
   });
 }

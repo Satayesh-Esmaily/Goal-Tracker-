@@ -1,4 +1,3 @@
-/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { onAuthStateChanged, signInAnonymously, signOut } from "firebase/auth";
 import { auth } from "../firebase";
@@ -42,7 +41,6 @@ export function AuthProvider({ children }) {
         setLoading(false);
       },
       () => {
-        // Keep app usable if Firebase auth listener fails.
         setUser(readLocalFakeUser());
         setLoading(false);
       }
@@ -63,7 +61,6 @@ export function AuthProvider({ children }) {
       localStorage.setItem(LOCAL_FAKE_AUTH_KEY, JSON.stringify(authUser));
       return authUser;
     } catch {
-      // Fallback mode if anonymous auth is disabled in Firebase.
       const localUser = {
         uid: crypto.randomUUID(),
         name: name.trim(),
@@ -78,9 +75,7 @@ export function AuthProvider({ children }) {
   const logout = async () => {
     try {
       await signOut(auth);
-    } catch {
-      // ignore signOut error in fallback mode
-    }
+    } catch {}
     localStorage.removeItem(LOCAL_FAKE_AUTH_KEY);
     setUser(null);
   };

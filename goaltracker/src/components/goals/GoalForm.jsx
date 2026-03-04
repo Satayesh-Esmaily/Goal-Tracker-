@@ -35,7 +35,12 @@ const types = [
 const priorities = ["Low", "Medium", "High"];
 const units = ["Pages", "Sessions", "Minutes", "Hours"];
 
-export default function GoalForm({ initialData = null, onSubmitGoal = null, submitLabel = null, title = null }) {
+export default function GoalForm({
+  initialData = null,
+  onSubmitGoal = null,
+  submitLabel = null,
+  title = null,
+}) {
   const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -57,11 +62,30 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
     reValidateMode: "onChange",
   });
 
-  const [watchedTitle, watchedCategory, watchedType, watchedTarget, watchedUnit, watchedPriority, watchedStartDate, watchedEndDate, watchedDeadline] =
-    useWatch({
-      control,
-      name: ["title", "category", "type", "target", "unit", "priority", "startDate", "endDate", "deadline"],
-    });
+  const [
+    watchedTitle,
+    watchedCategory,
+    watchedType,
+    watchedTarget,
+    watchedUnit,
+    watchedPriority,
+    watchedStartDate,
+    watchedEndDate,
+    watchedDeadline,
+  ] = useWatch({
+    control,
+    name: [
+      "title",
+      "category",
+      "type",
+      "target",
+      "unit",
+      "priority",
+      "startDate",
+      "endDate",
+      "deadline",
+    ],
+  });
 
   const isCreateEnabled =
     String(watchedTitle || "").trim() !== "" &&
@@ -109,7 +133,6 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
         return;
       }
 
-      // For create flow, trigger save and navigate immediately to dashboard.
       createGoal(payload);
       navigate("/", { replace: true });
     } catch (error) {
@@ -175,16 +198,17 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
         }}
       >
         <AutoAwesomeRoundedIcon color="primary" />
-        <Typography fontWeight={800}>
-          Goal Builder
-        </Typography>
+        <Typography fontWeight={800}>Goal Builder</Typography>
       </Box>
 
       <CardContent sx={{ p: { xs: 2, md: 3 } }}>
         <Stack spacing={2.5}>
           <Box>
             <Typography variant="h4" fontWeight={800}>
-              {title || (initialData ? t("goalForm.editTitle") : t("goalForm.createTitle"))}
+              {title ||
+                (initialData
+                  ? t("goalForm.editTitle")
+                  : t("goalForm.createTitle"))}
             </Typography>
             <Typography color="text.secondary" sx={{ mt: 0.6 }}>
               {t("goalForm.subtitle")}
@@ -202,8 +226,14 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                 <Grid item xs={12} lg={8}>
                   <Box sx={panelSx}>
                     <Stack spacing={2}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Typography fontWeight={800}>Required Inputs</Typography>
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
+                        <Typography fontWeight={800}>
+                          Required Inputs
+                        </Typography>
                         <Chip size="small" label="Required" color="primary" />
                       </Stack>
 
@@ -213,7 +243,13 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                             name="title"
                             control={control}
                             render={({ field }) => (
-                              <TextField {...field} label={t("goalForm.title")} fullWidth error={!!errors.title} helperText={errors.title?.message} />
+                              <TextField
+                                {...field}
+                                label={t("goalForm.title")}
+                                fullWidth
+                                error={!!errors.title}
+                                helperText={errors.title?.message}
+                              />
                             )}
                           />
                         </Grid>
@@ -233,7 +269,9 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                 SelectProps={{
                                   displayEmpty: true,
                                   renderValue: (selected) =>
-                                    selected ? selected : `Select ${t("goalForm.category")}`,
+                                    selected
+                                      ? selected
+                                      : `Select ${t("goalForm.category")}`,
                                 }}
                               >
                                 <MenuItem value="" disabled>
@@ -253,7 +291,12 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                             name="type"
                             control={control}
                             render={({ field }) => (
-                              <TextField {...field} select label={t("goalForm.goalType")} fullWidth>
+                              <TextField
+                                {...field}
+                                select
+                                label={t("goalForm.goalType")}
+                                fullWidth
+                              >
                                 {types.map((type) => (
                                   <MenuItem key={type.value} value={type.value}>
                                     {type.label}
@@ -269,7 +312,14 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                             name="target"
                             control={control}
                             render={({ field }) => (
-                              <TextField {...field} type="number" label={t("goalForm.target")} fullWidth error={!!errors.target} helperText={errors.target?.message} />
+                              <TextField
+                                {...field}
+                                type="number"
+                                label={t("goalForm.target")}
+                                fullWidth
+                                error={!!errors.target}
+                                helperText={errors.target?.message}
+                              />
                             )}
                           />
                         </Grid>
@@ -278,7 +328,12 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                             name="unit"
                             control={control}
                             render={({ field }) => (
-                              <TextField {...field} select label={t("goalForm.unit")} fullWidth>
+                              <TextField
+                                {...field}
+                                select
+                                label={t("goalForm.unit")}
+                                fullWidth
+                              >
                                 {units.map((unit) => (
                                   <MenuItem key={unit} value={unit}>
                                     {unit}
@@ -293,7 +348,12 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                             name="priority"
                             control={control}
                             render={({ field }) => (
-                              <TextField {...field} select label={t("goalForm.priority")} fullWidth>
+                              <TextField
+                                {...field}
+                                select
+                                label={t("goalForm.priority")}
+                                fullWidth
+                              >
                                 {priorities.map((priority) => (
                                   <MenuItem key={priority} value={priority}>
                                     {priority}
@@ -327,7 +387,14 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                         onMouseDown={(e) => e.preventDefault()}
                                         onClick={openNativePicker}
                                       >
-                                        <CalendarMonthRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                        <CalendarMonthRoundedIcon
+                                          sx={{
+                                            color: isDark
+                                              ? "#cbd5e1"
+                                              : "#334155",
+                                            fontSize: 20,
+                                          }}
+                                        />
                                       </IconButton>
                                     </InputAdornment>
                                   ),
@@ -359,7 +426,14 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                         onMouseDown={(e) => e.preventDefault()}
                                         onClick={openNativePicker}
                                       >
-                                        <CalendarMonthRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                        <CalendarMonthRoundedIcon
+                                          sx={{
+                                            color: isDark
+                                              ? "#cbd5e1"
+                                              : "#334155",
+                                            fontSize: 20,
+                                          }}
+                                        />
                                       </IconButton>
                                     </InputAdornment>
                                   ),
@@ -391,7 +465,14 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                         onMouseDown={(e) => e.preventDefault()}
                                         onClick={openNativePicker}
                                       >
-                                        <CalendarMonthRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                        <CalendarMonthRoundedIcon
+                                          sx={{
+                                            color: isDark
+                                              ? "#cbd5e1"
+                                              : "#334155",
+                                            fontSize: 20,
+                                          }}
+                                        />
                                       </IconButton>
                                     </InputAdornment>
                                   ),
@@ -408,10 +489,18 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                 <Grid item xs={12} lg={4}>
                   <Box sx={panelSx}>
                     <Stack spacing={1.5}>
-                      <Stack direction="row" justifyContent="space-between" alignItems="center">
+                      <Stack
+                        direction="row"
+                        justifyContent="space-between"
+                        alignItems="center"
+                      >
                         <Stack direction="row" spacing={1} alignItems="center">
                           <Typography fontWeight={800}>Optional</Typography>
-                          <Chip size="small" label="Planner" variant="outlined" />
+                          <Chip
+                            size="small"
+                            label="Planner"
+                            variant="outlined"
+                          />
                         </Stack>
                         <Button
                           variant="text"
@@ -420,7 +509,9 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                           endIcon={
                             <ExpandMoreRoundedIcon
                               sx={{
-                                transform: showOptional ? "rotate(180deg)" : "rotate(0deg)",
+                                transform: showOptional
+                                  ? "rotate(180deg)"
+                                  : "rotate(0deg)",
                                 transition: "transform 200ms ease",
                               }}
                             />
@@ -435,13 +526,26 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                           <Controller
                             name="frequency"
                             control={control}
-                            render={({ field }) => <TextField {...field} label={t("goalForm.frequency")} fullWidth />}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                label={t("goalForm.frequency")}
+                                fullWidth
+                              />
+                            )}
                           />
 
                           <Controller
                             name="color"
                             control={control}
-                            render={({ field }) => <TextField {...field} type="color" label={t("goalForm.color")} fullWidth />}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                type="color"
+                                label={t("goalForm.color")}
+                                fullWidth
+                              />
+                            )}
                           />
 
                           <Grid container spacing={1.5}>
@@ -465,10 +569,19 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                           <IconButton
                                             size="small"
                                             edge="end"
-                                            onMouseDown={(e) => e.preventDefault()}
+                                            onMouseDown={(e) =>
+                                              e.preventDefault()
+                                            }
                                             onClick={openNativePicker}
                                           >
-                                            <AccessTimeRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                            <AccessTimeRoundedIcon
+                                              sx={{
+                                                color: isDark
+                                                  ? "#cbd5e1"
+                                                  : "#334155",
+                                                fontSize: 20,
+                                              }}
+                                            />
                                           </IconButton>
                                         </InputAdornment>
                                       ),
@@ -497,10 +610,19 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                           <IconButton
                                             size="small"
                                             edge="end"
-                                            onMouseDown={(e) => e.preventDefault()}
+                                            onMouseDown={(e) =>
+                                              e.preventDefault()
+                                            }
                                             onClick={openNativePicker}
                                           >
-                                            <AccessTimeRoundedIcon sx={{ color: isDark ? "#cbd5e1" : "#334155", fontSize: 20 }} />
+                                            <AccessTimeRoundedIcon
+                                              sx={{
+                                                color: isDark
+                                                  ? "#cbd5e1"
+                                                  : "#334155",
+                                                fontSize: 20,
+                                              }}
+                                            />
                                           </IconButton>
                                         </InputAdornment>
                                       ),
@@ -514,7 +636,15 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                           <Controller
                             name="notes"
                             control={control}
-                            render={({ field }) => <TextField {...field} multiline rows={5} label={t("goalForm.notes")} fullWidth />}
+                            render={({ field }) => (
+                              <TextField
+                                {...field}
+                                multiline
+                                rows={5}
+                                label={t("goalForm.notes")}
+                                fullWidth
+                              />
+                            )}
                           />
                         </Stack>
                       </Collapse>
@@ -523,17 +653,33 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                 </Grid>
               </Grid>
 
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1.25} justifyContent="flex-end">
-                <Button variant="outlined" onClick={() => navigate(-1)} sx={{ borderRadius: 2.5, px: 2 }}>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                spacing={1.25}
+                justifyContent="flex-end"
+              >
+                <Button
+                  variant="outlined"
+                  onClick={() => navigate(-1)}
+                  sx={{ borderRadius: 2.5, px: 2 }}
+                >
                   {t("common.cancel")}
                 </Button>
                 <Button
                   type="submit"
                   variant="contained"
                   disabled={!isCreateEnabled || isSubmitting}
-                  sx={{ borderRadius: 2.5, px: 2.75, minWidth: 160, fontWeight: 700 }}
+                  sx={{
+                    borderRadius: 2.5,
+                    px: 2.75,
+                    minWidth: 160,
+                    fontWeight: 700,
+                  }}
                 >
-                  {submitLabel || (initialData ? t("common.saveChanges") : t("goalForm.createGoal"))}
+                  {submitLabel ||
+                    (initialData
+                      ? t("common.saveChanges")
+                      : t("goalForm.createGoal"))}
                 </Button>
               </Stack>
             </Stack>

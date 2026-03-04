@@ -6,25 +6,31 @@ import {
   Card,
   CardContent,
   Grid,
-  useTheme,
+  Button,
   alpha,
+  Tooltip,
+  LinearProgress,
+  Divider,
 } from "@mui/material";
+import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { useGoals } from "../../context/GoalsContext";
+
 import GoalsPageHeader from "../../components/goals/GoalsPageHeader";
 import GoalsFilterTabs from "../../components/goals/GoalsFilterTabs";
 import GoalsFiltersBar from "../../components/goals/GoalsFiltersBar";
 import GoalsGrid from "../../components/goals/GoalsGrid";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
+import EmptyState from "../../components/common/EmptyState";
+
+import { useGoals } from "../../context/GoalsContext";
 import { sortAndFilterGoals } from "../../utils/goals";
 
 export default function GoalsListPage() {
   const navigate = useNavigate();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const isFa = i18n.language === "fa";
-  const theme = useTheme();
-  const isDark = theme.palette.mode === "dark";
 
   const { goals, addProgress, togglePause, deleteGoal } = useGoals();
 
@@ -39,25 +45,21 @@ export default function GoalsListPage() {
   );
 
   const stats = useMemo(() => {
-    const active = visibleGoals.filter(
-      (goal) => goal.status === "active"
-    ).length;
+    const active = visibleGoals.filter((g) => g.status === "active").length;
     const completed = visibleGoals.filter(
-      (goal) => goal.status === "completed"
+      (g) => g.status === "completed"
     ).length;
-    const paused = visibleGoals.filter(
-      (goal) => goal.status === "paused"
-    ).length;
+    const paused = visibleGoals.filter((g) => g.status === "paused").length;
     const avgProgress =
       visibleGoals.length === 0
         ? 0
         : Math.round(
             (visibleGoals.reduce(
-              (acc, goal) =>
+              (acc, g) =>
                 acc +
                 Math.min(
-                  (Number(goal.progress) || 0) /
-                    Math.max(1, Number(goal.target) || 1),
+                  (Number(g.progress) || 0) /
+                    Math.max(1, Number(g.target) || 1),
                   1
                 ),
               0
@@ -78,66 +80,111 @@ export default function GoalsListPage() {
     return sortAndFilterGoals(visibleGoals, { tab, search, sortBy });
   }, [visibleGoals, tab, search, sortBy]);
 
-  const cardBgGradient = isDark
-    ? `linear-gradient(180deg, ${alpha(
-        theme.palette.background.paper,
-        0.92
-      )}, ${alpha(theme.palette.background.paper, 0.72)})`
-    : `linear-gradient(180deg, ${alpha(
-        theme.palette.background.paper,
-        0.96
-      )}, ${alpha("#f8fafc", 0.94)})`;
+  const handleExport = () => {
+    if (!visibleGoals.length) return;
+    const goalsToExport = visibleGoals.map(
+      ({
+        id,
+        title,
+        category,
+        type,
+        target,
+        progress,
+        status,
+        startDate,
+        endDate,
+        logs,
+      }) => ({
+        id,
+        title,
+        category,
+        type,
+        target,
+        progress,
+        status,
+        startDate,
+        endDate,
+        logs,
+      })
+    );
 
-  const cardBorderColor = isDark
-    ? "rgba(148,163,184,0.35)"
-    : "rgba(148,163,184,0.3)";
-  const cardShadow = isDark
-    ? "0 14px 36px rgba(2,6,23,0.32)"
-    : "0 10px 30px rgba(15,23,42,0.08)";
+    const dataStr =
+      "data:text/json;charset=utf-8," +
+      encodeURIComponent(JSON.stringify(goalsToExport, null, 2));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "goals_export.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
 
   return (
-    <Container maxWidth="xl" sx={{ py: { xs: 2, md: 4 } }}>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
       <Stack spacing={4}>
         <GoalsPageHeader isFa={isFa} />
 
-        <Grid container spacing={2}>
-          {[
-            { label: "Total", value: stats.total },
-            { label: "Active", value: stats.active },
-            { label: "Completed", value: stats.completed },
-            { label: "Paused", value: stats.paused },
-            { label: "Avg Progress", value: `${stats.avgProgress}%` },
-          ].map((stat, idx) => (
-            <Grid item xs={6} md={2} key={idx}>
-              <Card
-                elevation={0}
-                sx={{
-                  borderRadius: 3,
-                  background: cardBgGradient,
-                  border: "1px solid",
-                  borderColor: cardBorderColor,
-                  boxShadow: cardShadow,
-                  transition:
-                    "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
-                  "&:hover": {
-                    transform: "translateY(-3px)",
-                    borderColor: alpha(theme.palette.primary.main, 0.58),
-                    boxShadow: isDark
-                      ? "0 18px 40px rgba(2,6,23,0.45)"
-                      : "0 16px 36px rgba(15,23,42,0.12)",
-                  },
-                }}
-              >
-                <CardContent>
-                  <Typography variant="caption">{stat.label}</Typography>
-                  <Typography variant="h6" fontWeight={700}>
-                    {stat.value}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))}
-        </Grid>
+        <Stack
+          direction="row"
+          spacing={1.5}
+          sx={{ mb: 2, flexWrap: "wrap", justifyContent: "space-between" }}
+        >
+          <Tooltip title={isFa ? "ایجاد هدف جدید" : "Create New Goal"}>
+            <Button
+              variant="contained"
+              startIcon={<AddRoundedIcon />}
+              onClick={() => navigate("/goals/new")}
+            >
+              {isFa ? "هدف جدید" : "New Goal"}
+            </Button>
+          </Tooltip>
+
+          <Tooltip title={isFa ? "خروجی گرفتن اهداف" : "Export Goals"}>
+            <Button
+              variant="outlined"
+              startIcon={<DownloadRoundedIcon />}
+              onClick={handleExport}
+              sx={{ px: isFa ? 2.75 : 2 }}
+              disabled={visibleGoals.length === 0}
+            >
+              {isFa ? "خروجی گرفتن" : "Export"}
+            </Button>
+          </Tooltip>
+        </Stack>
+
+        {visibleGoals.length > 0 && (
+          <Card elevation={0} sx={{ borderRadius: 3, p: 2 }}>
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              spacing={2}
+              divider={<Divider orientation="vertical" flexItem />}
+            >
+              <Typography variant="body2">
+                {t("goalsPage.total")}: {stats.total}
+              </Typography>
+              <Typography variant="body2" color="success.main">
+                {t("goalsPage.active")}: {stats.active}
+              </Typography>
+              <Typography variant="body2" color="primary.main">
+                {t("goalsPage.completed")}: {stats.completed}
+              </Typography>
+              <Typography variant="body2" color="warning.main">
+                {t("goalsPage.paused")}: {stats.paused}
+              </Typography>
+              <Stack direction="row" spacing={1} alignItems="center">
+                <Typography variant="body2">
+                  {t("goalsPage.avgProgress")}:
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={stats.avgProgress}
+                  sx={{ width: 120, height: 10, borderRadius: 5 }}
+                />
+                <Typography variant="body2">{stats.avgProgress}%</Typography>
+              </Stack>
+            </Stack>
+          </Card>
+        )}
 
         <GoalsFilterTabs value={tab} onChange={setTab} />
         <GoalsFiltersBar
@@ -148,34 +195,40 @@ export default function GoalsListPage() {
           isFa={isFa}
         />
 
-        <GoalsGrid
-          goals={filteredGoals}
-          onAddProgress={(goalId) => addProgress(goalId, 1)}
-          onTogglePause={togglePause}
-          onEdit={(goalId) => navigate(`/goals/${goalId}/edit`)}
-          onDelete={(goalId) => {
-            const targetGoal = visibleGoals.find((goal) => goal.id === goalId);
-            if (targetGoal) setGoalToDelete(targetGoal);
+        {filteredGoals.length === 0 ? (
+          <EmptyState message={isFa ? "هیچ هدفی یافت نشد" : "No goals found"} />
+        ) : (
+          <GoalsGrid
+            goals={filteredGoals}
+            onAddProgress={(goalId) => addProgress(goalId, 1)}
+            onTogglePause={togglePause}
+            onEdit={(goalId) => navigate(`/goals/${goalId}/edit`)}
+            onDelete={(goalId) => {
+              const targetGoal = visibleGoals.find(
+                (goal) => goal.id === goalId
+              );
+              if (targetGoal) setGoalToDelete(targetGoal);
+            }}
+          />
+        )}
+
+        <ConfirmDialog
+          open={Boolean(goalToDelete)}
+          title={isFa ? "⚠️ مطمئن هستید؟" : "⚠️ Are you sure?"}
+          description={
+            goalToDelete
+              ? `${isFa ? "حذف" : "Delete"} "${goalToDelete.title}"?`
+              : ""
+          }
+          confirmLabel={isFa ? "حذف" : "Delete"}
+          onCancel={() => setGoalToDelete(null)}
+          onConfirm={() => {
+            if (!goalToDelete) return;
+            deleteGoal(goalToDelete.id);
+            setGoalToDelete(null);
           }}
         />
       </Stack>
-
-      <ConfirmDialog
-        open={Boolean(goalToDelete)}
-        title={`⚠️ ${isFa ? "مطمئن هستید؟" : "Are you sure?"}`}
-        description={
-          goalToDelete
-            ? `${isFa ? "حذف" : "Delete"} "${goalToDelete.title}"?`
-            : ""
-        }
-        confirmLabel={isFa ? "حذف" : "Delete"}
-        onCancel={() => setGoalToDelete(null)}
-        onConfirm={() => {
-          if (!goalToDelete) return;
-          deleteGoal(goalToDelete.id);
-          setGoalToDelete(null);
-        }}
-      />
     </Container>
   );
 }

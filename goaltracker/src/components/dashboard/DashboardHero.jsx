@@ -4,9 +4,25 @@ import ArrowOutwardRoundedIcon from "@mui/icons-material/ArrowOutwardRounded";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SectionCard from "../common/SectionCard";
+import DownloadRoundIcon from "@mui/icons-material/DownloadRounded"
 
 export default function DashboardHero({ totalGoals, completedCount, streak, isFa, isDark }) {
   const { t } = useTranslation();
+
+  // تابع Export برای خروجی گرفتن JSON
+  const handleExport = () => {
+    const goals = JSON.parse(localStorage.getItem("goals") || "[]");
+    const stats = JSON.parse(localStorage.getItem("stats") || "{}"); // اگر stats داشبورد ذخیره شده
+    const exportData = { goals, stats };
+
+    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportData, null, 2));
+    const downloadAnchorNode = document.createElement("a");
+    downloadAnchorNode.setAttribute("href", dataStr);
+    downloadAnchorNode.setAttribute("download", "dashboard_export.json");
+    document.body.appendChild(downloadAnchorNode);
+    downloadAnchorNode.click();
+    downloadAnchorNode.remove();
+  };
 
   return (
     <SectionCard
@@ -22,6 +38,7 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
         alignItems={{ xs: "flex-start", md: "center" }}
         spacing={2}
       >
+        {/* بخش عنوان و چیپ‌ها */}
         <Box>
           <Typography variant="h4" fontWeight={800}>
             {t("dashboard.title")}
@@ -29,7 +46,7 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
           <Typography color="text.secondary" sx={{ mt: 0.75 }}>
             {t("dashboard.subtitle")}
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} useFlexGap flexWrap="wrap">
+          <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} flexWrap="wrap">
             <Chip
               size="small"
               label={t("dashboard.totalGoals", { count: totalGoals })}
@@ -65,7 +82,9 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
             />
           </Stack>
         </Box>
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={isFa ? 2.75 : 1.25}>
+
+        {/* دکمه‌ها */}
+        <Stack direction={{ xs: "column", sm: "row" }} spacing={isFa ? 2.75 : 1.25} flexWrap="wrap">
           <Button
             variant="contained"
             component={RouterLink}
@@ -75,6 +94,7 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
           >
             {t("dashboard.newGoal")}
           </Button>
+
           <Button
             variant="outlined"
             component={RouterLink}
@@ -84,9 +104,18 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
           >
             {t("dashboard.manageGoals")}
           </Button>
+
+          {/* دکمه Export JSON */}
+          <Button
+  variant="outlined"
+  startIcon={<DownloadRoundedIcon />}
+  onClick={handleExport}
+  sx={{ px: isFa ? 2.75 : 2 }}
+>
+  {t("dashboard.export")}
+</Button>
         </Stack>
-      </Stack>
+        </Stack>
     </SectionCard>
   );
 }
-

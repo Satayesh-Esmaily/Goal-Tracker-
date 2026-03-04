@@ -20,7 +20,7 @@ const CreateGoalPage = () => {
       <Stack spacing={4}>
         <Stack spacing={1}>
           <Typography variant="h4" fontWeight={800}>
-            🎯 Create New Goal
+            Create New Goal
           </Typography>
           <Typography variant="body2" color="text.secondary">
             Define your next milestone and start building momentum.
