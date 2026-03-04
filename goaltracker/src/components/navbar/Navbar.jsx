@@ -30,7 +30,7 @@ function Navbar() {
         }}
       >
 
-        <Typography variant="h6">Goal Tracker</Typography>
+        <Typography variant="h6">{i18n.language === "fa" ? "گول ترکر" : "Goal Tracker"}</Typography>
 
 
         <Stack direction="row" spacing={2}>

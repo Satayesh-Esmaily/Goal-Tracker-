@@ -98,7 +98,7 @@ export default function AppShell({ children, mode, toggleTheme }) {
               }}
             />
             <Box sx={{ color: isDark ? "#e2e8f0" : "#1e293b", fontWeight: 700, fontSize: 22, lineHeight: 1 }}>
-              Goal Tracker
+              {isFa ? "گول ترکر" : "Goal Tracker"}
             </Box>
           </Stack>
 
