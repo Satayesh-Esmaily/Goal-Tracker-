@@ -1,16 +1,24 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
+import {
+  collection,
+  addDoc,
+  doc,
+  updateDoc,
+  deleteDoc,
+  getDocs,
+  query,
+  orderBy,
+} from "firebase/firestore";
+import { db } from "../firebase";
 import { calculateXpStats } from "../components/xp/XpRules";
 
 const GoalsContext = createContext(null);
-const STORAGE_KEY = "goal-tracker-goals-v1";
 
-// Convert any date input to YYYY-MM-DD so different logs of the same day can be grouped.
 function toDayKey(input = new Date()) {
   const date = typeof input === "string" ? new Date(input) : input;
   return date.toISOString().slice(0, 10);
 }
 
-// Streak = number of consecutive days with at least one progress log.
 function calculateStreak(goals) {
   const uniqueDays = new Set();
   goals.forEach((goal) => {
@@ -35,159 +43,123 @@ function calculateStreak(goals) {
     const prev = loggedDays[i - 1];
     const curr = loggedDays[i];
     const diff = Math.floor((prev.getTime() - curr.getTime()) / dayMs);
-    if (diff === 1) {
-      streak += 1;
-    } else if (diff > 1) {
-      break;
-    }
+    if (diff === 1) streak += 1;
+    else if (diff > 1) break;
   }
 
   return streak;
 }
 
-// Local storage can be empty or broken; this keeps app startup safe.
-function parseStoredGoals(raw) {
-  if (!raw) return [];
-  try {
-    const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
 export function GoalsProvider({ children }) {
-  const [goals, setGoals] = useState(() => parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
+  const [goals, setGoals] = useState([]);
 
-  // Persist every change so data survives page refresh.
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
-  }, [goals]);
+    const fetchGoals = async () => {
+      const q = query(collection(db, "goals"), orderBy("createdAt", "desc"));
+      const snapshot = await getDocs(q);
+      const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+      setGoals(list);
+    };
+    fetchGoals();
+  }, []);
 
-  const createGoal = (payload) => {
+  const createGoal = async (payload) => {
     const now = new Date().toISOString();
-    const target = Number(payload.target) || 1;
     const goal = {
-      id: crypto.randomUUID(),
       title: payload.title?.trim() || "Untitled Goal",
       category: payload.category || "Personal",
       type: payload.type || "daily",
-      target,
+      target: Number(payload.target) || 1,
       progress: 0,
       status: "active",
-      unit: payload.unit || "Sessions",
-      priority: payload.priority || "Medium",
-      startDate: payload.startDate || "",
-      endDate: payload.endDate || "",
-      deadline: payload.deadline || "",
-      frequency: payload.frequency || "",
-      color: payload.color || "#2563eb",
-      notes: payload.notes || "",
-      startTime: payload.startTime || "",
-      endTime: payload.endTime || "",
-      difficulty: payload.difficulty || "",
-      motivation: payload.motivation || "",
-      reminderTime: payload.reminderTime || "",
-      reminderDays: payload.reminderDays || "",
-      estimatedDuration: payload.estimatedDuration || "",
-      milestones: payload.milestones || "",
-      successCriteria: payload.successCriteria || "",
-      reward: payload.reward || "",
-      tags: payload.tags || "",
-      visibility: payload.visibility || "",
       logs: [],
-      completedAt: null,
       createdAt: now,
       updatedAt: now,
+      color: payload.color || "#2563eb",
+      notes: payload.notes || "",
     };
-    // Add newest goals at the top for better visibility.
-    setGoals((prev) => [goal, ...prev]);
-    return goal;
+    const docRef = await addDoc(collection(db, "goals"), goal);
+    setGoals((prev) => [{ ...goal, id: docRef.id }, ...prev]);
+    return { ...goal, id: docRef.id };
   };
 
-  const addProgress = (goalId, amount = 1) => {
-    // Normalize user input to a positive numeric step.
+  const addProgress = async (goalId, amount = 1) => {
     const step = Math.max(1, Number(amount) || 1);
     const now = new Date().toISOString();
-    setGoals((prev) =>
-      prev.map((goal) => {
-        // Do not update paused or already completed goals.
-        if (goal.id !== goalId || goal.status === "paused" || goal.status === "completed") {
-          return goal;
-        }
-        const nextProgress = Math.min(goal.target, goal.progress + step);
-        const becameCompleted = nextProgress >= goal.target && goal.status !== "completed";
-        const status = nextProgress >= goal.target ? "completed" : goal.status;
-        return {
-          ...goal,
-          progress: nextProgress,
-          status,
-          logs: [...(goal.logs || []), { date: now, amount: step }],
-          completedAt: becameCompleted ? now : goal.completedAt,
-          updatedAt: now,
-        };
-      })
-    );
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal || goal.status === "paused" || goal.status === "completed")
+      return;
+
+    const nextProgress = Math.min(goal.target, goal.progress + step);
+    const status = nextProgress >= goal.target ? "completed" : goal.status;
+    const updatedGoal = {
+      ...goal,
+      progress: nextProgress,
+      status,
+      logs: [...(goal.logs || []), { date: now, amount: step }],
+      completedAt: nextProgress >= goal.target ? now : goal.completedAt,
+      updatedAt: now,
+    };
+    const goalRef = doc(db, "goals", goalId);
+    await updateDoc(goalRef, updatedGoal);
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
   };
 
-  const deleteGoal = (goalId) => {
-    setGoals((prev) => prev.filter((goal) => goal.id !== goalId));
+  const deleteGoal = async (goalId) => {
+    await deleteDoc(doc(db, "goals", goalId));
+    setGoals((prev) => prev.filter((g) => g.id !== goalId));
   };
 
-  const togglePause = (goalId) => {
-    setGoals((prev) =>
-      prev.map((goal) => {
-        // Completed goals stay completed.
-        if (goal.id !== goalId || goal.status === "completed") return goal;
-        return {
-          ...goal,
-          status: goal.status === "paused" ? "active" : "paused",
-          updatedAt: new Date().toISOString(),
-        };
-      })
-    );
+  const togglePause = async (goalId) => {
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal || goal.status === "completed") return;
+    const newStatus = goal.status === "paused" ? "active" : "paused";
+    const updatedGoal = {
+      ...goal,
+      status: newStatus,
+      updatedAt: new Date().toISOString(),
+    };
+    await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
   };
 
-  const updateGoal = (goalId, updates) => {
+  const updateGoal = async (goalId, updates) => {
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal) return;
     const now = new Date().toISOString();
-    setGoals((prev) =>
-      prev.map((goal) => {
-        if (goal.id !== goalId) return goal;
-        return {
-          ...goal,
-          ...updates,
-          // Keep target numeric after edits from form fields.
-          target: Number(updates.target ?? goal.target) || goal.target,
-          completedAt:
-            updates.status === "completed"
-              ? goal.completedAt || now
-              : updates.status && updates.status !== "completed"
-              ? null
-              : goal.completedAt,
-          updatedAt: now,
-        };
-      })
-    );
+    const updatedGoal = {
+      ...goal,
+      ...updates,
+      target: Number(updates.target ?? goal.target) || goal.target,
+      completedAt:
+        updates.status === "completed"
+          ? now
+          : updates.status !== "completed"
+          ? null
+          : goal.completedAt,
+      updatedAt: now,
+    };
+    await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
   };
 
   const stats = useMemo(() => {
-    const activeGoals = goals.filter((goal) => goal.status === "active");
-    const pausedGoals = goals.filter((goal) => goal.status === "paused");
-    const completedGoals = goals.filter((goal) => goal.status === "completed");
-
-    // Average progress percentage across all goals.
+    const activeGoals = goals.filter((g) => g.status === "active");
+    const pausedGoals = goals.filter((g) => g.status === "paused");
+    const completedGoals = goals.filter((g) => g.status === "completed");
     const completionRate =
       goals.length === 0
         ? 0
         : Math.round(
-            (goals.reduce((acc, goal) => acc + Math.min(goal.progress / goal.target, 1), 0) /
+            (goals.reduce(
+              (acc, goal) => acc + Math.min(goal.progress / goal.target, 1),
+              0
+            ) /
               goals.length) *
               100
           );
-
     const streak = calculateStreak(goals);
     const { xpTotal, level, streakBonus } = calculateXpStats(goals, streak);
-
     return {
       activeCount: activeGoals.length,
       pausedCount: pausedGoals.length,
@@ -213,13 +185,13 @@ export function GoalsProvider({ children }) {
     [goals, stats]
   );
 
-  return <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>;
+  return (
+    <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>
+  );
 }
 
 export function useGoals() {
   const context = useContext(GoalsContext);
-  if (!context) {
-    throw new Error("useGoals must be used within GoalsProvider");
-  }
+  if (!context) throw new Error("useGoals must be used within GoalsProvider");
   return context;
 }
