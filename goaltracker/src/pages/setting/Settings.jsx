@@ -16,18 +16,24 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  Container,
+  useTheme as useMuiTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useState, useEffect } from "react";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 
-import { useTheme } from "../../context/ThemeContext";
+import { useTheme as useAppTheme } from "../../context/ThemeContext";
 
 export default function Settings() {
   const { t, i18n } = useTranslation();
-  const { mode, toggleMode, primaryColor, setPrimaryColor } = useTheme();
+  const { mode, toggleMode, primaryColor, setPrimaryColor } = useAppTheme();
+  const muiTheme = useMuiTheme();
+  const isDark = muiTheme.palette.mode === "dark";
+  const primary = muiTheme.palette.primary.main;
 
   // Preferences
   const [reminder, setReminder] = useState(
@@ -61,13 +67,38 @@ export default function Settings() {
   ];
 
   return (
-    <Box p={{ xs: 2, sm: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        {t("nav.settings")}
-      </Typography>
+    <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
+      <Stack spacing={3}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: alpha(primary, 0.35),
+            borderRadius: 3.2,
+            background: isDark
+              ? `linear-gradient(120deg, ${alpha(primary, 0.24)}, ${alpha(muiTheme.palette.background.paper, 0.9)})`
+              : `linear-gradient(120deg, ${alpha(primary, 0.12)}, ${alpha("#ffffff", 0.94)})`,
+          }}
+        >
+          <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+            <Stack spacing={0.5}>
+              <Typography variant="h4" fontWeight={900}>
+                {t("nav.settings")}
+              </Typography>
+              <Typography color="text.secondary">{t("settings.subtitle")}</Typography>
+            </Stack>
+          </CardContent>
+        </Card>
 
       {/* Appearance */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: isDark ? "0 10px 26px rgba(2,6,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+          }}
+        >
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {t("settings.appearance")}
@@ -106,7 +137,14 @@ export default function Settings() {
       </Card>
 
       {/* Theme Color */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: isDark ? "0 10px 26px rgba(2,6,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+          }}
+        >
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {t("settings.themeColor")}
@@ -154,7 +192,14 @@ export default function Settings() {
       </Card>
 
       {/* Preferences */}
-      <Card sx={{ mb: 3, boxShadow: 3 }}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: "divider",
+            boxShadow: isDark ? "0 10px 26px rgba(2,6,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+          }}
+        >
         <CardContent>
           <Typography variant="h6" gutterBottom>
             {t("settings.preferences")}
@@ -220,7 +265,14 @@ export default function Settings() {
       </Card>
 
       {/* Danger Zone */}
-      <Card sx={{ boxShadow: 3 }}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: alpha(muiTheme.palette.error.main, 0.35),
+            boxShadow: isDark ? "0 10px 26px rgba(2,6,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+          }}
+        >
         <CardContent>
           <Typography variant="h6" gutterBottom sx={{ color: "error.main" }}>
             {t("settings.dangerZone")}
@@ -252,7 +304,8 @@ export default function Settings() {
             </DialogActions>
           </Dialog>
         </CardContent>
-      </Card>
-    </Box>
+        </Card>
+      </Stack>
+    </Container>
   );
 }

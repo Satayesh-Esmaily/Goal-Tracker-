@@ -176,7 +176,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
       >
         <AutoAwesomeRoundedIcon color="primary" />
         <Typography fontWeight={800}>
-          Goal Builder
+          {t("goalForm.builderTitle")}
         </Typography>
       </Box>
 
@@ -201,10 +201,10 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
               <Grid container spacing={2.5}>
                 <Grid item xs={12} lg={8}>
                   <Box sx={panelSx}>
-                    <Stack spacing={2}>
+                      <Stack spacing={2}>
                       <Stack direction="row" justifyContent="space-between" alignItems="center">
-                        <Typography fontWeight={800}>Required Inputs</Typography>
-                        <Chip size="small" label="Required" color="primary" />
+                        <Typography fontWeight={800}>{t("goalForm.requiredInputs")}</Typography>
+                        <Chip size="small" label={t("goalForm.required")} color="primary" />
                       </Stack>
 
                       <Grid container spacing={2}>
@@ -410,8 +410,8 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                     <Stack spacing={1.5}>
                       <Stack direction="row" justifyContent="space-between" alignItems="center">
                         <Stack direction="row" spacing={1} alignItems="center">
-                          <Typography fontWeight={800}>Optional</Typography>
-                          <Chip size="small" label="Planner" variant="outlined" />
+                          <Typography fontWeight={800}>{t("goalForm.optional")}</Typography>
+                          <Chip size="small" label={t("goalForm.planner")} variant="outlined" />
                         </Stack>
                         <Button
                           variant="text"
@@ -426,7 +426,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                             />
                           }
                         >
-                          {showOptional ? "Hide" : "Show"}
+                          {showOptional ? t("goalForm.hide") : t("goalForm.show")}
                         </Button>
                       </Stack>
 
@@ -453,7 +453,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                   <TextField
                                     {...field}
                                     type="time"
-                                    label="Start Time"
+                                    label={t("goalForm.startTime")}
                                     fullWidth
                                     error={!!errors.startTime}
                                     helperText={errors.startTime?.message}
@@ -485,7 +485,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
                                   <TextField
                                     {...field}
                                     type="time"
-                                    label="End Time"
+                                    label={t("goalForm.endTime")}
                                     fullWidth
                                     error={!!errors.endTime}
                                     helperText={errors.endTime?.message}

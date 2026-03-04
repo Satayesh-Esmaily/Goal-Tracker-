@@ -67,7 +67,12 @@ function CategoryCard({ category, index }) {
                 {category.name}
               </Typography>
             </Stack>
-            <Chip size="small" label={`${category.total} goals`} color="primary" variant="outlined" />
+            <Chip
+              size="small"
+              label={t("categoriesPage.cards.goalsCount", { count: category.total })}
+              color="primary"
+              variant="outlined"
+            />
           </Stack>
 
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -94,7 +99,7 @@ function CategoryCard({ category, index }) {
               <Stack direction="row" spacing={0.75} alignItems="center">
                 <AutoGraphRoundedIcon sx={{ fontSize: 18, color: barColor }} />
                 <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
-                  Progress
+                  {t("categoriesPage.cards.progress")}
                 </Typography>
               </Stack>
               <Typography variant="caption" sx={{ fontWeight: 800 }}>
@@ -115,7 +120,10 @@ function CategoryCard({ category, index }) {
               }}
             />
             <Typography variant="caption" color="text.secondary" sx={{ mt: 0.7, display: "block" }}>
-              {Math.round(category.progressSum)} / {Math.round(category.targetSum)} tracked units
+              {t("categoriesPage.cards.trackedUnits", {
+                progress: Math.round(category.progressSum),
+                target: Math.round(category.targetSum),
+              })}
             </Typography>
           </Box>
         </Stack>
@@ -125,13 +133,14 @@ function CategoryCard({ category, index }) {
 }
 
 const SORT_OPTIONS = [
-  { value: "progress_desc", label: "Progress: High to Low" },
-  { value: "progress_asc", label: "Progress: Low to High" },
-  { value: "goals_desc", label: "Goals: Most First" },
-  { value: "name_asc", label: "Name: A-Z" },
+  { value: "progress_desc", key: "categoriesPage.sort.progressDesc" },
+  { value: "progress_asc", key: "categoriesPage.sort.progressAsc" },
+  { value: "goals_desc", key: "categoriesPage.sort.goalsDesc" },
+  { value: "name_asc", key: "categoriesPage.sort.nameAsc" },
 ];
 
 export default function CategoriesCardsGrid({ categories }) {
+  const { t } = useTranslation();
   const [filter, setFilter] = useState("all");
   const [query, setQuery] = useState("");
   const [sortBy, setSortBy] = useState("progress_desc");
@@ -170,10 +179,18 @@ export default function CategoriesCardsGrid({ categories }) {
   }, [categories, filter, query, sortBy]);
 
   const filterPills = [
-    { key: "all", label: "All", icon: null },
-    { key: "active", label: "Active", icon: <FlagCircleOutlinedIcon sx={{ fontSize: 16 }} /> },
-    { key: "completed", label: "Completed", icon: <TaskAltRoundedIcon sx={{ fontSize: 16 }} /> },
-    { key: "attention", label: "Needs Attention", icon: <WarningAmberRoundedIcon sx={{ fontSize: 16 }} /> },
+    { key: "all", label: t("categoriesPage.filters.all"), icon: null },
+    { key: "active", label: t("categoriesPage.filters.active"), icon: <FlagCircleOutlinedIcon sx={{ fontSize: 16 }} /> },
+    {
+      key: "completed",
+      label: t("categoriesPage.filters.completed"),
+      icon: <TaskAltRoundedIcon sx={{ fontSize: 16 }} />,
+    },
+    {
+      key: "attention",
+      label: t("categoriesPage.filters.attention"),
+      icon: <WarningAmberRoundedIcon sx={{ fontSize: 16 }} />,
+    },
   ];
 
   return (
@@ -214,7 +231,7 @@ export default function CategoriesCardsGrid({ categories }) {
               fullWidth
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Search categories..."
+              placeholder={t("categoriesPage.searchPlaceholder")}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">
@@ -232,7 +249,7 @@ export default function CategoriesCardsGrid({ categories }) {
             >
               {SORT_OPTIONS.map((option) => (
                 <MenuItem key={option.value} value={option.value}>
-                  {option.label}
+                  {t(option.key)}
                 </MenuItem>
               ))}
             </TextField>
@@ -241,7 +258,10 @@ export default function CategoriesCardsGrid({ categories }) {
       </Box>
 
       <Typography variant="body2" color="text.secondary">
-        Showing {filteredCategories.length} of {categories.length} categories
+        {t("categoriesPage.showingCount", {
+          shown: filteredCategories.length,
+          total: categories.length,
+        })}
       </Typography>
 
       <Grid container spacing={2}>

@@ -2,6 +2,7 @@ import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
 import { alpha } from "@mui/material/styles";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
+import { useTranslation } from "react-i18next";
 import SectionCard from "../common/SectionCard";
 
 function shortLabel(text, max = 12) {
@@ -10,6 +11,7 @@ function shortLabel(text, max = 12) {
 }
 
 export default function CategoriesProgressChart({ categories }) {
+  const { t } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
@@ -35,8 +37,14 @@ export default function CategoriesProgressChart({ categories }) {
 
   return (
     <SectionCard
-      title="Category Comparison"
-      action={<Chip size="small" icon={<AutoGraphRoundedIcon sx={{ fontSize: 16 }} />} label="Analytics" />}
+      title={t("categoriesPage.progressChart.categoryComparison")}
+      action={
+        <Chip
+          size="small"
+          icon={<AutoGraphRoundedIcon sx={{ fontSize: 16 }} />}
+          label={t("categoriesPage.progressChart.analytics")}
+        />
+      }
       sx={{
         height: "100%",
         width: "100%",
@@ -51,25 +59,28 @@ export default function CategoriesProgressChart({ categories }) {
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       {chartItems.length === 0 ? (
-        <Typography color="text.secondary">No category data yet.</Typography>
+        <Typography color="text.secondary">{t("categoriesPage.noDataYet")}</Typography>
       ) : (
         <Stack spacing={1.15} sx={{ minHeight: 330, flex: 1 }}>
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
             <Chip
               size="small"
-              label={`Top: ${topCategory?.name || "-"} (${topCategory?.progressRate || 0}%)`}
+              label={t("categoriesPage.progressChart.topChip", {
+                name: topCategory?.name || "-",
+                value: topCategory?.progressRate || 0,
+              })}
               sx={{ fontWeight: 700, borderRadius: 1.5 }}
             />
             <Chip
               size="small"
               variant="outlined"
-              label={`Avg Progress: ${avgProgress}%`}
+              label={t("categoriesPage.progressChart.avgProgressChip", { value: avgProgress })}
               sx={{ fontWeight: 700, borderRadius: 1.5 }}
             />
             <Chip
               size="small"
               variant="outlined"
-              label={`Avg Completed: ${avgCompletion}%`}
+              label={t("categoriesPage.progressChart.avgCompletedChip", { value: avgCompletion })}
               sx={{ fontWeight: 700, borderRadius: 1.5 }}
             />
           </Stack>
@@ -98,8 +109,13 @@ export default function CategoriesProgressChart({ categories }) {
               xAxis={[{ min: 0, max: 100 }]}
               margin={{ top: 18, right: 22, bottom: 20, left: 120 }}
               series={[
-                { data: progressSeries, label: "Progress %", color: primary, borderRadius: 6 },
-                { data: completeSeries, label: "Completed %", color: theme.palette.success.main, borderRadius: 6 },
+                { data: progressSeries, label: t("categoriesPage.progressChart.progressPercent"), color: primary, borderRadius: 6 },
+                {
+                  data: completeSeries,
+                  label: t("categoriesPage.progressChart.completedPercent"),
+                  color: theme.palette.success.main,
+                  borderRadius: 6,
+                },
               ]}
               grid={{ horizontal: true }}
               slotProps={{

@@ -27,8 +27,13 @@ import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import VisibilityOffRoundedIcon from "@mui/icons-material/VisibilityOffRounded";
 import LockRoundedIcon from "@mui/icons-material/LockRounded";
 import PersonRoundedIcon from "@mui/icons-material/PersonRounded";
+import TranslateRoundedIcon from "@mui/icons-material/TranslateRounded";
+import LightModeRoundedIcon from "@mui/icons-material/LightModeRounded";
+import DarkModeRoundedIcon from "@mui/icons-material/DarkModeRounded";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme as useAppTheme } from "../../context/ThemeContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -37,6 +42,8 @@ export default function LoginPage() {
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
   const { isAuthenticated, loginFake } = useAuth();
+  const { t, i18n } = useTranslation();
+  const { mode, toggleMode } = useAppTheme();
 
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -57,17 +64,17 @@ export default function LoginPage() {
     setError("");
 
     if (!name.trim()) {
-      setError("Please enter your full name.");
+      setError(t("loginPage.errors.fullNameRequired"));
       return;
     }
 
     if (!email.trim()) {
-      setError("Please enter your email.");
+      setError(t("loginPage.errors.emailRequired"));
       return;
     }
 
     if (password.trim().length < 4) {
-      setError("Password should be at least 4 characters.");
+      setError(t("loginPage.errors.passwordMin"));
       return;
     }
 
@@ -75,7 +82,7 @@ export default function LoginPage() {
       await loginFake(displayName);
       navigate(from, { replace: true });
     } catch {
-      setError("Login failed. Please try again.");
+      setError(t("loginPage.errors.loginFailed"));
     }
   };
 
@@ -128,22 +135,22 @@ export default function LoginPage() {
             >
               <Box>
                 <Typography variant="h5" fontWeight={900}>
-                  Goal Tracker
+                  {t("loginPage.brand")}
                 </Typography>
                 <Typography sx={{ mt: 1, opacity: 0.86 }}>
-                  Sign in to access your goals, streak, XP, and archive.
+                  {t("loginPage.sideSubtitle")}
                 </Typography>
               </Box>
 
               <Stack spacing={1}>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  Create and edit goals
+                  {t("loginPage.featureCreate")}
                 </Typography>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  Track progress and streak
+                  {t("loginPage.featureTrack")}
                 </Typography>
                 <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                  Restore completed and deleted goals
+                  {t("loginPage.featureRestore")}
                 </Typography>
               </Stack>
             </Box>
@@ -152,16 +159,37 @@ export default function LoginPage() {
           <Grid item xs={12} md={7}>
             <CardContent sx={{ p: { xs: 2.5, md: 3 } }}>
               <Stack spacing={2}>
+                <Stack direction="row" justifyContent="flex-end" spacing={1}>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={<TranslateRoundedIcon fontSize="small" />}
+                    onClick={() => i18n.changeLanguage(i18n.language === "fa" ? "en" : "fa")}
+                    sx={{ borderRadius: 999, minWidth: 94, textTransform: "none", fontWeight: 700 }}
+                  >
+                    {i18n.language === "fa" ? "EN" : "FA"}
+                  </Button>
+                  <Button
+                    size="small"
+                    variant="outlined"
+                    startIcon={mode === "dark" ? <LightModeRoundedIcon fontSize="small" /> : <DarkModeRoundedIcon fontSize="small" />}
+                    onClick={toggleMode}
+                    sx={{ borderRadius: 999, minWidth: 104, textTransform: "none", fontWeight: 700 }}
+                  >
+                    {mode === "dark" ? t("common.light") : t("common.dark")}
+                  </Button>
+                </Stack>
+
                 <Typography variant="h4" fontWeight={900}>
-                  Welcome Back
+                  {t("loginPage.title")}
                 </Typography>
                 <Typography color="text.secondary">
-                  Log in to continue your Goal Tracker journey.
+                  {t("loginPage.subtitle")}
                 </Typography>
 
                 <TextField
                   fullWidth
-                  label="Full name"
+                  label={t("loginPage.fullName")}
                   value={name}
                   onChange={(event) => setName(event.target.value)}
                   InputProps={{
@@ -176,15 +204,15 @@ export default function LoginPage() {
                 <TextField
                   fullWidth
                   type="email"
-                  label="Email"
+                  label={t("loginPage.email")}
                   value={email}
                   onChange={(event) => setEmail(event.target.value)}
                 />
 
                 <FormControl fullWidth>
-                  <InputLabel>Password</InputLabel>
+                  <InputLabel>{t("loginPage.password")}</InputLabel>
                   <OutlinedInput
-                    label="Password"
+                    label={t("loginPage.password")}
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(event) => setPassword(event.target.value)}
@@ -209,17 +237,17 @@ export default function LoginPage() {
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                   <FormControl fullWidth>
-                    <InputLabel id="focus-label">Main focus</InputLabel>
+                    <InputLabel id="focus-label">{t("loginPage.mainFocus")}</InputLabel>
                     <Select
                       labelId="focus-label"
                       value={focusArea}
-                      label="Main focus"
+                      label={t("loginPage.mainFocus")}
                       onChange={(event) => setFocusArea(event.target.value)}
                     >
-                      <MenuItem value="study">Study</MenuItem>
-                      <MenuItem value="work">Work</MenuItem>
-                      <MenuItem value="health">Health</MenuItem>
-                      <MenuItem value="personal">Personal</MenuItem>
+                      <MenuItem value="study">{t("loginPage.focus.study")}</MenuItem>
+                      <MenuItem value="work">{t("loginPage.focus.work")}</MenuItem>
+                      <MenuItem value="health">{t("loginPage.focus.health")}</MenuItem>
+                      <MenuItem value="personal">{t("loginPage.focus.personal")}</MenuItem>
                     </Select>
                   </FormControl>
 
@@ -231,7 +259,7 @@ export default function LoginPage() {
                           onChange={(event) => setRememberMe(event.target.checked)}
                         />
                       }
-                      label="Remember me"
+                      label={t("loginPage.rememberMe")}
                     />
                   </Box>
                 </Stack>
@@ -245,12 +273,12 @@ export default function LoginPage() {
                   onClick={handleLogin}
                   sx={{ borderRadius: 2.5, textTransform: "none", fontWeight: 800, py: 1.1 }}
                 >
-                  Continue to Dashboard
+                  {t("loginPage.continue")}
                 </Button>
 
                 <Divider />
                 <Typography variant="caption" color="text.secondary">
-                  Note: This is a demo login flow for the Goal Tracker project.
+                  {t("loginPage.note")}
                 </Typography>
               </Stack>
             </CardContent>
