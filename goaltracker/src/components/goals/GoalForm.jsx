@@ -40,8 +40,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { createGoal } = useGoals();
-  const { t, i18n } = useTranslation();
-  const isFa = i18n.language === "fa";
+  const { t } = useTranslation();
   const [showOptional, setShowOptional] = useState(true);
   const schema = useMemo(() => createGoalFormSchema(t), [t]);
 
