@@ -1,4 +1,5 @@
 import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
+import { alpha } from "@mui/material/styles";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { BarChart } from "@mui/x-charts/BarChart";
 import SectionCard from "../common/SectionCard";
@@ -11,6 +12,7 @@ function shortLabel(text, max = 12) {
 export default function CategoriesProgressChart({ categories }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const primary = theme.palette.primary.main;
   const chartItems = categories.slice(0, 7);
   const labels = chartItems.map((item) => shortLabel(item.name));
   const progressSeries = chartItems.map((item) => item.progressRate);
@@ -35,7 +37,17 @@ export default function CategoriesProgressChart({ categories }) {
     <SectionCard
       title="Category Comparison"
       action={<Chip size="small" icon={<AutoGraphRoundedIcon sx={{ fontSize: 16 }} />} label="Analytics" />}
-      sx={{ height: "100%", width: "100%" }}
+      sx={{
+        height: "100%",
+        width: "100%",
+        borderColor: alpha(primary, 0.24),
+        background: isDark
+          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.9)}, ${alpha(
+              theme.palette.background.paper,
+              0.78
+            )})`
+          : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
+      }}
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       {chartItems.length === 0 ? (
@@ -66,10 +78,12 @@ export default function CategoriesProgressChart({ categories }) {
             sx={{
               borderRadius: 2.25,
               p: { xs: 0.75, md: 1.2 },
-              bgcolor: isDark ? "rgba(15,23,42,0.28)" : "rgba(248,250,252,0.66)",
+              bgcolor: isDark
+                ? alpha(theme.palette.background.paper, 0.35)
+                : alpha(theme.palette.background.paper, 0.84),
               flex: 1,
               border: "1px solid",
-              borderColor: "divider",
+              borderColor: alpha(primary, 0.24),
               minHeight: 320,
               width: "100%",
               maxWidth: 560,
@@ -84,8 +98,8 @@ export default function CategoriesProgressChart({ categories }) {
               xAxis={[{ min: 0, max: 100 }]}
               margin={{ top: 18, right: 22, bottom: 20, left: 120 }}
               series={[
-                { data: progressSeries, label: "Progress %", color: "#1976d2", borderRadius: 6 },
-                { data: completeSeries, label: "Completed %", color: "#2e7d32", borderRadius: 6 },
+                { data: progressSeries, label: "Progress %", color: primary, borderRadius: 6 },
+                { data: completeSeries, label: "Completed %", color: theme.palette.success.main, borderRadius: 6 },
               ]}
               grid={{ horizontal: true }}
               slotProps={{

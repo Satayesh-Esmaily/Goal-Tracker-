@@ -1,15 +1,23 @@
 import InsightsRoundedIcon from "@mui/icons-material/InsightsRounded";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
+import { alpha } from "@mui/material/styles";
 import { Box, Chip, Stack, Typography, useTheme } from "@mui/material";
 import { PieChart } from "@mui/x-charts/PieChart";
 import SectionCard from "../common/SectionCard";
 
-const COLORS = ["#1976d2", "#2e7d32", "#ed6c02", "#7b1fa2", "#0288d1", "#d81b60"];
-
 export default function CategoriesDonutChart({ categories }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const primary = theme.palette.primary.main;
+  const COLORS = [
+    primary,
+    theme.palette.success.main,
+    theme.palette.warning.main,
+    theme.palette.secondary.main,
+    theme.palette.info.main,
+    theme.palette.error.main,
+  ];
   const chartItems = categories.slice(0, 6);
 
   const chartData = chartItems.map((item, index) => ({
@@ -37,7 +45,17 @@ export default function CategoriesDonutChart({ categories }) {
     <SectionCard
       title="Progress Share"
       action={<Chip size="small" icon={<InsightsRoundedIcon sx={{ fontSize: 16 }} />} label="Insights" />}
-      sx={{ height: "100%", width: "100%" }}
+      sx={{
+        height: "100%",
+        width: "100%",
+        borderColor: alpha(primary, 0.24),
+        background: isDark
+          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.9)}, ${alpha(
+              theme.palette.background.paper,
+              0.78
+            )})`
+          : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
+      }}
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       {chartItems.length === 0 ? (
@@ -61,8 +79,8 @@ export default function CategoriesDonutChart({ categories }) {
               mx: "auto",
               borderRadius: "50%",
               background: isDark
-                ? "radial-gradient(circle, rgba(37,99,235,0.16) 0%, rgba(15,23,42,0) 68%)"
-                : "radial-gradient(circle, rgba(37,99,235,0.12) 0%, rgba(248,250,252,0) 68%)",
+                ? `radial-gradient(circle, ${alpha(primary, 0.16)} 0%, rgba(15,23,42,0) 68%)`
+                : `radial-gradient(circle, ${alpha(primary, 0.12)} 0%, rgba(248,250,252,0) 68%)`,
             }}
           >
             <PieChart
@@ -141,7 +159,9 @@ export default function CategoriesDonutChart({ categories }) {
                 borderRadius: 2,
                 border: "1px solid",
                 borderColor: "divider",
-                bgcolor: isDark ? "rgba(15,23,42,0.3)" : "rgba(248,250,252,0.68)",
+                bgcolor: isDark
+                  ? alpha(theme.palette.background.paper, 0.42)
+                  : alpha(theme.palette.background.paper, 0.84),
               }}
             >
               <Typography variant="subtitle2" fontWeight={800} sx={{ mb: 1 }}>
@@ -156,11 +176,11 @@ export default function CategoriesDonutChart({ categories }) {
                     p: 0.9,
                     borderRadius: 1.4,
                     border: "1px solid",
-                    borderColor: isDark ? "rgba(34,197,94,0.34)" : "rgba(22,163,74,0.28)",
-                    bgcolor: isDark ? "rgba(22,101,52,0.16)" : "rgba(220,252,231,0.75)",
+                    borderColor: alpha(theme.palette.success.main, 0.36),
+                    bgcolor: alpha(theme.palette.success.main, isDark ? 0.16 : 0.14),
                   }}
                 >
-                  <WorkspacePremiumRoundedIcon sx={{ fontSize: 17, color: "#2e7d32" }} />
+                  <WorkspacePremiumRoundedIcon sx={{ fontSize: 17, color: theme.palette.success.main }} />
                   <Typography variant="body2" fontWeight={700} noWrap>
                     {topCategory?.name || "-"} ({topCategory?.progressRate || 0}%)
                   </Typography>
@@ -174,11 +194,11 @@ export default function CategoriesDonutChart({ categories }) {
                     p: 0.9,
                     borderRadius: 1.4,
                     border: "1px solid",
-                    borderColor: isDark ? "rgba(245,158,11,0.35)" : "rgba(217,119,6,0.3)",
-                    bgcolor: isDark ? "rgba(146,64,14,0.17)" : "rgba(255,237,213,0.78)",
+                    borderColor: alpha(theme.palette.warning.main, 0.38),
+                    bgcolor: alpha(theme.palette.warning.main, isDark ? 0.17 : 0.14),
                   }}
                 >
-                  <WarningAmberRoundedIcon sx={{ fontSize: 17, color: "#ed6c02" }} />
+                  <WarningAmberRoundedIcon sx={{ fontSize: 17, color: theme.palette.warning.main }} />
                   <Typography variant="body2" fontWeight={700} noWrap>
                     {lowestCategory?.name || "-"} ({lowestCategory?.progressRate || 0}%)
                   </Typography>

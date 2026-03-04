@@ -1,18 +1,19 @@
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   Box,
-  Container,
-  Stack,
-  Typography,
-  Grid,
   Card,
   CardContent,
-  Select,
-  MenuItem,
-  FormControl,
-  InputLabel,
-  Chip,
+  Container,
+  Grid,
+  Stack,
+  Typography,
+  useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
+import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
+import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
+import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
 import { useGoals } from "../../context/GoalsContext";
 import { useTranslation } from "react-i18next";
 import CategoriesDonutChart from "../../components/categories/CategoriesDonutChart";
@@ -23,182 +24,222 @@ import SectionCard from "../../components/common/SectionCard";
 export default function CategoriesPage() {
   const { goals } = useGoals();
   const { t } = useTranslation();
-  const [sortBy, setSortBy] = useState("progress");
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
+  const primary = theme.palette.primary.main;
 
   const categories = useMemo(() => {
     const map = new Map();
 
-    goals.forEach((goal) => {
-      const name = goal.category || "Uncategorized";
-      const current = map.get(name) || {
-        name,
-        active: 0,
-        completed: 0,
-        paused: 0,
-        total: 0,
-        progressSum: 0,
-        targetSum: 0,
-      };
+    goals
+      .filter((goal) => goal.status !== "deleted")
+      .forEach((goal) => {
+        const name = goal.category || "Uncategorized";
+        const current = map.get(name) || {
+          name,
+          active: 0,
+          completed: 0,
+          paused: 0,
+          total: 0,
+          progressSum: 0,
+          targetSum: 0,
+        };
 
-      const target = Math.max(1, Number(goal.target) || 1);
-      const progress = Math.max(
-        0,
-        Math.min(target, Number(goal.progress) || 0)
-      );
+        const target = Math.max(1, Number(goal.target) || 1);
+        const progress = Math.max(0, Math.min(target, Number(goal.progress) || 0));
 
-      current.total += 1;
-      current.progressSum += progress;
-      current.targetSum += target;
-      if (goal.status === "completed") current.completed += 1;
-      if (goal.status === "active") current.active += 1;
-      if (goal.status === "paused") current.paused += 1;
+        current.total += 1;
+        current.progressSum += progress;
+        current.targetSum += target;
+        if (goal.status === "completed") current.completed += 1;
+        if (goal.status === "active") current.active += 1;
+        if (goal.status === "paused") current.paused += 1;
 
-      map.set(name, current);
-    });
+        map.set(name, current);
+      });
 
     return [...map.values()]
-      .map((item) => {
-        const progressRate =
-          item.targetSum === 0
-            ? 0
-            : Math.round((item.progressSum / item.targetSum) * 100);
+      .map((item) => ({
+        ...item,
+        progressRate: item.targetSum === 0 ? 0 : Math.round((item.progressSum / item.targetSum) * 100),
+      }))
+      .sort((a, b) => b.progressRate - a.progressRate || b.total - a.total);
+  }, [goals]);
 
-        const completionRate =
-          item.total === 0
-            ? 0
-            : Math.round((item.completed / item.total) * 100);
+  const totalCategories = categories.length;
+  const totalGoals = categories.reduce((acc, item) => acc + item.total, 0);
+  const activeGoals = categories.reduce((acc, item) => acc + item.active, 0);
+  const completedGoals = categories.reduce((acc, item) => acc + item.completed, 0);
+  const avgProgress =
+    categories.length === 0
+      ? 0
+      : Math.round(categories.reduce((acc, item) => acc + item.progressRate, 0) / categories.length);
 
-        const healthScore = Math.round(
-          progressRate * 0.6 + completionRate * 0.4
-        );
-
-        return {
-          ...item,
-          progressRate,
-          completionRate,
-          healthScore,
-        };
-      })
-      .sort((a, b) => {
-        if (sortBy === "health") return b.healthScore - a.healthScore;
-        if (sortBy === "total") return b.total - a.total;
-        if (sortBy === "completion") return b.completionRate - a.completionRate;
-        return b.progressRate - a.progressRate;
-      });
-  }, [goals, sortBy]);
-
-  const strongestCategory = categories[0];
+  const statCardSx = {
+    border: "1px solid",
+    borderColor: "divider",
+    borderRadius: 3,
+    height: "100%",
+    background: isDark
+      ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.92)}, ${alpha(
+          theme.palette.background.paper,
+          0.72
+        )})`
+      : `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.96)}, ${alpha("#f8fafc", 0.94)})`,
+    boxShadow: isDark ? "0 12px 30px rgba(2,6,23,0.32)" : "0 8px 24px rgba(15,23,42,0.08)",
+    transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+    "&:hover": {
+      transform: "translateY(-2px)",
+      borderColor: alpha(primary, 0.55),
+      boxShadow: isDark ? "0 16px 34px rgba(2,6,23,0.44)" : "0 12px 28px rgba(15,23,42,0.12)",
+    },
+  };
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Stack spacing={4}>
-        <Stack
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
+    <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
+      <Stack spacing={3}>
+        <Card
+          elevation={0}
+          sx={{
+            border: "1px solid",
+            borderColor: alpha(primary, 0.35),
+            borderRadius: 3.2,
+            background: isDark
+              ? `linear-gradient(120deg, ${alpha(primary, 0.24)}, ${alpha(theme.palette.background.paper, 0.9)})`
+              : `linear-gradient(120deg, ${alpha(primary, 0.12)}, ${alpha("#ffffff", 0.94)})`,
+          }}
         >
-          <Stack>
-            <Typography variant="h4" fontWeight={800}>
-              {t("categoriesPage.title")}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t("categoriesPage.subtitle")}
-            </Typography>
-          </Stack>
-
-          <FormControl size="small">
-            <InputLabel>Sort By</InputLabel>
-            <Select
-              value={sortBy}
-              label="Sort By"
-              onChange={(e) => setSortBy(e.target.value)}
-            >
-              <MenuItem value="progress">Progress %</MenuItem>
-              <MenuItem value="completion">Completion Rate</MenuItem>
-              <MenuItem value="health">Health Score</MenuItem>
-              <MenuItem value="total">Total Goals</MenuItem>
-            </Select>
-          </FormControl>
-        </Stack>
+          <CardContent sx={{ p: { xs: 2, md: 3 } }}>
+            <Stack spacing={0.5}>
+              <Typography variant="h4" fontWeight={900}>
+                {t("categoriesPage.title")}
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                {t("categoriesPage.subtitle")}
+              </Typography>
+            </Stack>
+          </CardContent>
+        </Card>
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={4}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card elevation={0} sx={statCardSx}>
               <CardContent>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Total Categories
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <CategoryRoundedIcon sx={{ color: primary }} fontSize="small" />
+                  <Typography variant="body2" color="text.secondary">
+                    Categories
+                  </Typography>
+                </Stack>
+                <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
+                  {totalCategories}
                 </Typography>
-                <Typography variant="h5" fontWeight={700}>
-                  {categories.length}
+                <Typography variant="caption" color="text.secondary">
+                  {totalGoals} goals tracked
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card elevation={0} sx={statCardSx}>
               <CardContent>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Strongest Category
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <FlagCircleOutlinedIcon sx={{ color: theme.palette.warning.main }} fontSize="small" />
+                  <Typography variant="body2" color="text.secondary">
+                    {t("categoriesPage.active")}
+                  </Typography>
+                </Stack>
+                <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
+                  {activeGoals}
                 </Typography>
-                <Typography variant="h6" fontWeight={700}>
-                  {strongestCategory?.name || "-"}
+                <Typography variant="caption" color="text.secondary">
+                  currently in progress
                 </Typography>
-                {strongestCategory && (
-                  <Chip
-                    label={`Health Score: ${strongestCategory.healthScore}`}
-                    color="success"
-                    size="small"
-                  />
-                )}
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid item xs={12} md={4}>
-            <Card>
+          <Grid item xs={12} sm={6} md={3}>
+            <Card elevation={0} sx={statCardSx}>
               <CardContent>
-                <Typography variant="subtitle2" color="text.secondary">
-                  Total Goals
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <TaskAltRoundedIcon sx={{ color: theme.palette.success.main }} fontSize="small" />
+                  <Typography variant="body2" color="text.secondary">
+                    {t("categoriesPage.completed")}
+                  </Typography>
+                </Stack>
+                <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
+                  {completedGoals}
                 </Typography>
-                <Typography variant="h5" fontWeight={700}>
-                  {goals.length}
+                <Typography variant="caption" color="text.secondary">
+                  finished goals
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={12} sm={6} md={3}>
+            <Card elevation={0} sx={statCardSx}>
+              <CardContent>
+                <Stack direction="row" alignItems="center" spacing={1}>
+                  <AutoGraphRoundedIcon sx={{ color: primary }} fontSize="small" />
+                  <Typography variant="body2" color="text.secondary">
+                    Avg Progress
+                  </Typography>
+                </Stack>
+                <Typography variant="h4" fontWeight={800} sx={{ mt: 1 }}>
+                  {avgProgress}%
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  across all categories
                 </Typography>
               </CardContent>
             </Card>
           </Grid>
         </Grid>
 
-        {categories.length > 0 && (
-          <Box
+        {categories.length === 0 ? (
+          <Card
+            elevation={0}
             sx={{
-              display: "grid",
-              gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
-              gap: 2,
+              border: "1px dashed",
+              borderColor: "divider",
+              borderRadius: 3,
+              py: 6,
+              textAlign: "center",
+              background: isDark
+                ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.85)}, ${alpha(
+                    theme.palette.background.paper,
+                    0.65
+                  )})`
+                : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
             }}
           >
-            <CategoriesDonutChart categories={categories} />
-            <CategoriesProgressChart categories={categories} />
-          </Box>
-        )}
-
-        <SectionCard title="All Categories">
-          <CategoriesCardsGrid categories={categories} />
-        </SectionCard>
-
-        {strongestCategory && (
-          <Card sx={{ bgcolor: "background.default" }}>
-            <CardContent>
-              <Typography variant="subtitle1" fontWeight={700}>
-                📊 Insight
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                Your strongest focus is on{" "}
-                <strong>{strongestCategory.name}</strong> with a health score of{" "}
-                {strongestCategory.healthScore}. Keep building momentum 🚀
-              </Typography>
-            </CardContent>
+            <Typography color="text.secondary">{t("categoriesPage.noCategories")}</Typography>
           </Card>
+        ) : (
+          <Stack spacing={2}>
+            <Box
+              sx={{
+                display: "grid",
+                gridTemplateColumns: { xs: "1fr", lg: "1fr 1fr" },
+                gap: 2,
+                alignItems: "stretch",
+              }}
+            >
+              <Box sx={{ minWidth: 0, display: "flex" }}>
+                <CategoriesDonutChart categories={categories} />
+              </Box>
+              <Box sx={{ minWidth: 0, display: "flex" }}>
+                <CategoriesProgressChart categories={categories} />
+              </Box>
+            </Box>
+
+            <SectionCard title={t("categoriesPage.allCategories")}>
+              <CategoriesCardsGrid categories={categories} />
+            </SectionCard>
+          </Stack>
         )}
       </Stack>
     </Container>

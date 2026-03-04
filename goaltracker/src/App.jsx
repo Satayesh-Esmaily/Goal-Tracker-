@@ -11,6 +11,7 @@ import Settings from "./pages/setting/Settings";
 import { GoalsProvider } from "./context/GoalsContext";
 import GoalsListPage from "./pages/goal/GoalsListPage";
 import CategoriesPage from "./pages/goal/CategoriesPage";
+import ArchivePage from "./pages/goal/ArchivePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import AppShell from "./components/layout/AppShell";
 import SplashScreen from "./components/common/SplashScreen";
@@ -50,6 +51,7 @@ function AppInner() {
             <Route path="/" element={<DashboardPage />} />
             <Route path="/dashboard" element={<Navigate to="/" replace />} />
             <Route path="/goals" element={<GoalsListPage />} />
+            <Route path="/archive" element={<ArchivePage />} />
             <Route path="/goals/new" element={<CreateGoalPage />} />
             <Route path="/goals/:id/edit" element={<EditGoalPage />} />
             <Route path="/categories" element={<CategoriesPage />} />

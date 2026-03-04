@@ -45,6 +45,7 @@ export default function AppShell({ children, mode, toggleTheme }) {
   const links = [
     { label: t("nav.dashboard"), to: "/" },
     { label: t("nav.goals"), to: "/goals" },
+    { label: t("nav.archive"), to: "/archive" },
     { label: t("nav.categories"), to: "/categories" },
     { label: t("nav.settings"), to: "/settings" },
   ];
@@ -216,4 +217,3 @@ export default function AppShell({ children, mode, toggleTheme }) {
     </Box>
   );
 }
-

@@ -4,7 +4,6 @@ import {
   addDoc,
   doc,
   updateDoc,
-  deleteDoc,
   getDocs,
   query,
   orderBy,
@@ -13,6 +12,17 @@ import { db } from "../firebase";
 import { calculateXpStats } from "../components/xp/XpRules";
 
 const GoalsContext = createContext(null);
+const STORAGE_KEY = "goal-tracker-goals-v1";
+
+function parseStoredGoals(raw) {
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
 
 function toDayKey(input = new Date()) {
   const date = typeof input === "string" ? new Date(input) : input;
@@ -35,7 +45,6 @@ function calculateStreak(goals) {
   const today = new Date(toDayKey());
   const latest = loggedDays[0];
   const gap = Math.floor((today.getTime() - latest.getTime()) / dayMs);
-
   if (gap > 1) return 0;
 
   let streak = 1;
@@ -51,15 +60,26 @@ function calculateStreak(goals) {
 }
 
 export function GoalsProvider({ children }) {
-  const [goals, setGoals] = useState([]);
+  const [goals, setGoals] = useState(() => parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
+
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
+  }, [goals]);
 
   useEffect(() => {
     const fetchGoals = async () => {
-      const q = query(collection(db, "goals"), orderBy("createdAt", "desc"));
-      const snapshot = await getDocs(q);
-      const list = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setGoals(list);
+      try {
+        const q = query(collection(db, "goals"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        const list = snapshot.docs.map((item) => ({ id: item.id, ...item.data() }));
+        setGoals(list);
+      } catch (error) {
+        console.error("Failed to fetch goals from Firestore:", error);
+        // Keep local copy if cloud is unavailable.
+        setGoals(parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
+      }
     };
+
     fetchGoals();
   }, []);
 
@@ -72,26 +92,49 @@ export function GoalsProvider({ children }) {
       target: Number(payload.target) || 1,
       progress: 0,
       status: "active",
-      logs: [],
-      createdAt: now,
-      updatedAt: now,
+      unit: payload.unit || "Sessions",
+      priority: payload.priority || "Medium",
+      startDate: payload.startDate || "",
+      endDate: payload.endDate || "",
+      deadline: payload.deadline || "",
+      frequency: payload.frequency || "",
       color: payload.color || "#2563eb",
       notes: payload.notes || "",
+      logs: [],
+      completedAt: null,
+      deletedAt: null,
+      previousStatus: null,
+      createdAt: now,
+      updatedAt: now,
     };
-    const docRef = await addDoc(collection(db, "goals"), goal);
-    setGoals((prev) => [{ ...goal, id: docRef.id }, ...prev]);
-    return { ...goal, id: docRef.id };
+
+    const tempId = crypto.randomUUID();
+    const localGoal = { ...goal, id: tempId };
+    setGoals((prev) => [localGoal, ...prev]);
+
+    try {
+      const docRef = await addDoc(collection(db, "goals"), goal);
+      const cloudGoal = { ...goal, id: docRef.id };
+      setGoals((prev) => prev.map((g) => (g.id === tempId ? cloudGoal : g)));
+      return cloudGoal;
+    } catch (error) {
+      console.error("Failed to create goal in Firestore, using local fallback:", error);
+      return localGoal;
+    }
   };
 
   const addProgress = async (goalId, amount = 1) => {
     const step = Math.max(1, Number(amount) || 1);
     const now = new Date().toISOString();
     const goal = goals.find((g) => g.id === goalId);
-    if (!goal || goal.status === "paused" || goal.status === "completed")
+
+    if (!goal || goal.status === "paused" || goal.status === "completed" || goal.status === "deleted") {
       return;
+    }
 
     const nextProgress = Math.min(goal.target, goal.progress + step);
     const status = nextProgress >= goal.target ? "completed" : goal.status;
+
     const updatedGoal = {
       ...goal,
       progress: nextProgress,
@@ -100,32 +143,101 @@ export function GoalsProvider({ children }) {
       completedAt: nextProgress >= goal.target ? now : goal.completedAt,
       updatedAt: now,
     };
-    const goalRef = doc(db, "goals", goalId);
-    await updateDoc(goalRef, updatedGoal);
+
     setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
+    try {
+      await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    } catch (error) {
+      console.error("Failed to sync progress to Firestore:", error);
+    }
   };
 
   const deleteGoal = async (goalId) => {
-    await deleteDoc(doc(db, "goals", goalId));
-    setGoals((prev) => prev.filter((g) => g.id !== goalId));
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal || goal.status === "deleted") return;
+
+    const now = new Date().toISOString();
+    const updatedGoal = {
+      ...goal,
+      previousStatus: goal.status,
+      status: "deleted",
+      deletedAt: now,
+      updatedAt: now,
+    };
+
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
+    try {
+      await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    } catch (error) {
+      console.error("Failed to sync delete to Firestore:", error);
+    }
   };
 
   const togglePause = async (goalId) => {
     const goal = goals.find((g) => g.id === goalId);
-    if (!goal || goal.status === "completed") return;
-    const newStatus = goal.status === "paused" ? "active" : "paused";
+    if (!goal || goal.status === "completed" || goal.status === "deleted") return;
+
     const updatedGoal = {
       ...goal,
-      status: newStatus,
+      status: goal.status === "paused" ? "active" : "paused",
       updatedAt: new Date().toISOString(),
     };
-    await updateDoc(doc(db, "goals", goalId), updatedGoal);
+
     setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
+    try {
+      await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    } catch (error) {
+      console.error("Failed to sync pause/resume to Firestore:", error);
+    }
+  };
+
+  const restoreGoal = async (goalId) => {
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal || goal.status !== "deleted") return;
+
+    const now = new Date().toISOString();
+    const restoredStatus =
+      goal.previousStatus && goal.previousStatus !== "deleted" ? goal.previousStatus : "active";
+
+    const updatedGoal = {
+      ...goal,
+      status: restoredStatus,
+      previousStatus: null,
+      deletedAt: null,
+      updatedAt: now,
+    };
+
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
+    try {
+      await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    } catch (error) {
+      console.error("Failed to sync restore to Firestore:", error);
+    }
+  };
+
+  const restoreCompletedGoal = async (goalId) => {
+    const goal = goals.find((g) => g.id === goalId);
+    if (!goal || goal.status !== "completed") return;
+
+    const updatedGoal = {
+      ...goal,
+      status: "active",
+      completedAt: null,
+      updatedAt: new Date().toISOString(),
+    };
+
+    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
+    try {
+      await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    } catch (error) {
+      console.error("Failed to sync completed-restore to Firestore:", error);
+    }
   };
 
   const updateGoal = async (goalId, updates) => {
     const goal = goals.find((g) => g.id === goalId);
     if (!goal) return;
+
     const now = new Date().toISOString();
     const updatedGoal = {
       ...goal,
@@ -133,33 +245,39 @@ export function GoalsProvider({ children }) {
       target: Number(updates.target ?? goal.target) || goal.target,
       completedAt:
         updates.status === "completed"
-          ? now
-          : updates.status !== "completed"
+          ? goal.completedAt || now
+          : updates.status && updates.status !== "completed"
           ? null
           : goal.completedAt,
       updatedAt: now,
     };
-    await updateDoc(doc(db, "goals", goalId), updatedGoal);
+
     setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
+    try {
+      await updateDoc(doc(db, "goals", goalId), updatedGoal);
+    } catch (error) {
+      console.error("Failed to sync goal update to Firestore:", error);
+    }
   };
 
   const stats = useMemo(() => {
-    const activeGoals = goals.filter((g) => g.status === "active");
-    const pausedGoals = goals.filter((g) => g.status === "paused");
-    const completedGoals = goals.filter((g) => g.status === "completed");
+    const visibleGoals = goals.filter((g) => g.status !== "deleted");
+    const activeGoals = visibleGoals.filter((g) => g.status === "active");
+    const pausedGoals = visibleGoals.filter((g) => g.status === "paused");
+    const completedGoals = visibleGoals.filter((g) => g.status === "completed");
+
     const completionRate =
-      goals.length === 0
+      visibleGoals.length === 0
         ? 0
         : Math.round(
-            (goals.reduce(
-              (acc, goal) => acc + Math.min(goal.progress / goal.target, 1),
-              0
-            ) /
-              goals.length) *
+            (visibleGoals.reduce((acc, goal) => acc + Math.min(goal.progress / goal.target, 1), 0) /
+              visibleGoals.length) *
               100
           );
-    const streak = calculateStreak(goals);
-    const { xpTotal, level, streakBonus } = calculateXpStats(goals, streak);
+
+    const streak = calculateStreak(visibleGoals);
+    const { xpTotal, level, streakBonus } = calculateXpStats(visibleGoals, streak);
+
     return {
       activeCount: activeGoals.length,
       pausedCount: pausedGoals.length,
@@ -179,15 +297,15 @@ export function GoalsProvider({ children }) {
       addProgress,
       deleteGoal,
       togglePause,
+      restoreGoal,
+      restoreCompletedGoal,
       updateGoal,
       stats,
     }),
     [goals, stats]
   );
 
-  return (
-    <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>
-  );
+  return <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>;
 }
 
 export function useGoals() {

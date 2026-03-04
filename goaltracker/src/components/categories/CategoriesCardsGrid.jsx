@@ -5,6 +5,7 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
+  alpha,
   Box,
   Card,
   CardContent,
@@ -27,7 +28,11 @@ function CategoryCard({ category, index }) {
   const isDark = theme.palette.mode === "dark";
   const progressPercent = category.progressRate;
   const barColor =
-    progressPercent >= 70 ? "#2e7d32" : progressPercent >= 40 ? "#1976d2" : "#ed6c02";
+    progressPercent >= 70
+      ? theme.palette.success.main
+      : progressPercent >= 40
+      ? theme.palette.primary.main
+      : theme.palette.warning.main;
 
   return (
     <Card
@@ -39,8 +44,17 @@ function CategoryCard({ category, index }) {
         height: "100%",
         overflow: "hidden",
         background: isDark
-          ? "linear-gradient(180deg, rgba(15,23,42,0.95), rgba(15,23,42,0.75))"
+          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.95)}, ${alpha(
+              theme.palette.background.paper,
+              0.75
+            )})`
           : "linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,0.9))",
+        boxShadow: isDark ? "0 12px 28px rgba(2,6,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+        transition: "transform 180ms ease, border-color 180ms ease",
+        "&:hover": {
+          transform: "translateY(-2px)",
+          borderColor: alpha(theme.palette.primary.main, 0.5),
+        },
       }}
     >
       <Box sx={{ height: 4, width: "100%", bgcolor: barColor }} />
@@ -169,8 +183,10 @@ export default function CategoriesCardsGrid({ categories }) {
           p: 1.25,
           borderRadius: 2,
           border: "1px solid",
-          borderColor: "divider",
-          bgcolor: isDark ? "rgba(15,23,42,0.48)" : "rgba(248,250,252,0.85)",
+          borderColor: alpha(theme.palette.primary.main, 0.22),
+          bgcolor: isDark
+            ? alpha(theme.palette.background.paper, 0.5)
+            : alpha(theme.palette.background.paper, 0.86),
         }}
       >
         <Stack spacing={1.1}>

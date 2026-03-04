@@ -116,11 +116,12 @@ export default function DashboardPage() {
   const isFa = i18n.language === "fa";
   const [goalToDelete, setGoalToDelete] = useState(null);
 
+  const visibleGoals = goals.filter((goal) => goal.status !== "deleted");
   // Split goals for dashboard sections.
-  const activeGoals = goals.filter((goal) => goal.status !== "completed");
-  const completedGoals = goals.filter((goal) => goal.status === "completed").slice(0, 5);
+  const activeGoals = visibleGoals.filter((goal) => goal.status !== "completed");
+  const completedGoals = visibleGoals.filter((goal) => goal.status === "completed").slice(0, 5);
   // Build a short "recent activity" list from all goal logs.
-  const recentLogs = goals
+  const recentLogs = visibleGoals
     .flatMap((goal) =>
       (goal.logs || []).map((log, index) => ({
         id: `${goal.id}-${log.date}-${index}`,
@@ -169,9 +170,9 @@ export default function DashboardPage() {
                 </Typography>
                 <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} useFlexGap flexWrap="wrap">
                   {/* Small chips summarize key counts at a glance. */}
-                  <Chip
+                    <Chip
                     size="small"
-                    label={t("dashboard.totalGoals", { count: goals.length })}
+                    label={t("dashboard.totalGoals", { count: visibleGoals.length })}
                     sx={{
                       borderRadius: 999,
                       fontWeight: 700,
@@ -323,7 +324,7 @@ export default function DashboardPage() {
                     </Box>
                     <Box sx={{ flex: 1 }}>
                       <Typography variant="body2" color="text.secondary">
-                        {t("dashboard.completedFrom", { completed: stats.completedCount, total: goals.length })}
+                        {t("dashboard.completedFrom", { completed: stats.completedCount, total: visibleGoals.length })}
                       </Typography>
                       <LinearProgress
                         variant="determinate"

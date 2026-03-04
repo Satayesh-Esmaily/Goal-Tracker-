@@ -49,6 +49,7 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
     control,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: goalFormDefaultValues,
@@ -95,17 +96,30 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
     });
   }, [initialData, reset]);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     const payload = {
       ...data,
       target: Number(data.target),
       status: "active",
     };
 
-    if (onSubmitGoal) onSubmitGoal(payload);
-    else createGoal(payload);
+    try {
+      if (onSubmitGoal) {
+        await onSubmitGoal(payload);
+        navigate("/", { replace: true });
+        return;
+      }
 
-    navigate("/");
+      // For create flow, trigger save and navigate immediately to dashboard.
+      createGoal(payload);
+      navigate("/", { replace: true });
+    } catch (error) {
+      console.error("Failed to save goal:", error);
+      setError("root", {
+        type: "manual",
+        message: t("goalForm.saveFailed"),
+      });
+    }
   };
 
   const panelSx = {
@@ -180,6 +194,11 @@ export default function GoalForm({ initialData = null, onSubmitGoal = null, subm
 
           <form onSubmit={handleSubmit(onSubmit)} style={{ width: "100%" }}>
             <Stack spacing={2.5}>
+              {errors.root?.message && (
+                <Typography color="error" variant="body2">
+                  {errors.root.message}
+                </Typography>
+              )}
               <Grid container spacing={2.5}>
                 <Grid item xs={12} lg={8}>
                   <Box sx={panelSx}>
