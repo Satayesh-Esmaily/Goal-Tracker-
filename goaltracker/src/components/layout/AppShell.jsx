@@ -18,14 +18,17 @@ import GitHubIcon from "@mui/icons-material/GitHub";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 import TranslateOutlinedIcon from "@mui/icons-material/TranslateOutlined";
+import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
 import { NavLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useEffect } from "react";
 import logoImage from "../../assets/logo.jpg";
+import { useAuth } from "../../context/AuthContext";
 
 export default function AppShell({ children, mode, toggleTheme }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { t, i18n } = useTranslation();
+  const { logout } = useAuth();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const isFa = i18n.language === "fa";
@@ -171,6 +174,12 @@ export default function AppShell({ children, mode, toggleTheme }) {
               sx={{ color: isDark ? "#cbd5e1" : "#334155" }}
             >
               <GitHubIcon />
+            </IconButton>
+          </Tooltip>
+
+          <Tooltip title="Logout">
+            <IconButton sx={{ color: isDark ? "#cbd5e1" : "#334155" }} onClick={logout}>
+              <LogoutRoundedIcon />
             </IconButton>
           </Tooltip>
         </Toolbar>

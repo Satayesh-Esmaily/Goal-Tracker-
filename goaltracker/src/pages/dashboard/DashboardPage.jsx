@@ -24,6 +24,7 @@ import GoalCard from "../../components/dashboard/GoalCard";
 import LiveDateTimeCard from "../../components/dashboard/LiveDateTimeCard";
 import ConfirmDialog from "../../components/common/ConfirmDialog";
 import { useGoals } from "../../context/GoalsContext";
+import { useAuth } from "../../context/AuthContext";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
@@ -112,6 +113,7 @@ export default function DashboardPage() {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { goals, stats, addProgress, togglePause, deleteGoal } = useGoals();
+  const { user } = useAuth();
   const { t, i18n } = useTranslation();
   const isFa = i18n.language === "fa";
   const [goalToDelete, setGoalToDelete] = useState(null);
@@ -162,6 +164,18 @@ export default function DashboardPage() {
               spacing={2}
             >
               <Box>
+                {user?.name && (
+                  <Typography
+                    variant="subtitle2"
+                    sx={{
+                      mb: 0.45,
+                      color: isDark ? "rgba(191,219,254,0.92)" : "rgba(30,64,175,0.86)",
+                      fontWeight: 700,
+                    }}
+                  >
+                    Welcome, {user.name}
+                  </Typography>
+                )}
                 <Typography variant="h4" fontWeight={800}>
                   {t("dashboard.title")}
                 </Typography>
