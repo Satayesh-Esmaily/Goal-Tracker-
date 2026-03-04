@@ -22,7 +22,8 @@ import { useGoals } from "../../context/GoalsContext";
 export default function EditGoalPage() {
   const { id } = useParams();
   const { t } = useTranslation();
-  const { goals, updateGoal } = useGoals();
+  const { goals, updateGoal, deleteGoal } = useGoals();
+  const [openDelete, setOpenDelete] = useState(false);
   // Find the goal from URL id.
   const goal = goals.find((item) => item.id === id && item.status !== "deleted");
 

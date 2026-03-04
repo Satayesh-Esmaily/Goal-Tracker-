@@ -1,9 +1,8 @@
+/* eslint-disable react-refresh/only-export-components */
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 import {
   collection,
   addDoc,
-  doc,
-  updateDoc,
   getDocs,
   query,
   orderBy,
