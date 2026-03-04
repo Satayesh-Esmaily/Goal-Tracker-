@@ -79,7 +79,7 @@ export default function LoginPage() {
     }
 
     try {
-      await loginFake(displayName);
+      await loginFake(displayName, { email, focusArea });
       navigate(from, { replace: true });
     } catch {
       setError(t("loginPage.errors.loginFailed"));

@@ -31,6 +31,8 @@ export function AuthProvider({ children }) {
           const authUser = {
             uid: firebaseUser.uid,
             name: localUser?.name || firebaseUser.displayName || "",
+            email: localUser?.email || "",
+            focusArea: localUser?.focusArea || "study",
             provider: "firebase",
           };
           setUser(authUser);
@@ -51,12 +53,16 @@ export function AuthProvider({ children }) {
     return unsubscribe;
   }, []);
 
-  const loginFake = async (name = "") => {
+  const loginFake = async (name = "", options = {}) => {
+    const email = String(options.email || "").trim();
+    const focusArea = options.focusArea || "study";
     try {
       const cred = await signInAnonymously(auth);
       const authUser = {
         uid: cred.user.uid,
         name: name.trim(),
+        email,
+        focusArea,
         provider: "firebase",
       };
       setUser(authUser);
@@ -67,6 +73,8 @@ export function AuthProvider({ children }) {
       const localUser = {
         uid: crypto.randomUUID(),
         name: name.trim(),
+        email,
+        focusArea,
         provider: "local-fallback",
       };
       setUser(localUser);
@@ -85,6 +93,20 @@ export function AuthProvider({ children }) {
     setUser(null);
   };
 
+  const updateProfile = (updates = {}) => {
+    setUser((prev) => {
+      if (!prev?.uid) return prev;
+      const next = {
+        ...prev,
+        ...updates,
+        name: typeof updates.name === "string" ? updates.name.trim() : prev.name,
+        email: typeof updates.email === "string" ? updates.email.trim() : prev.email,
+      };
+      localStorage.setItem(LOCAL_FAKE_AUTH_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
   const value = useMemo(
     () => ({
       user,
@@ -92,6 +114,7 @@ export function AuthProvider({ children }) {
       isAuthenticated: Boolean(user?.uid),
       loginFake,
       logout,
+      updateProfile,
     }),
     [user, loading]
   );

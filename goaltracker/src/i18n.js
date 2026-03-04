@@ -254,6 +254,16 @@ const resources = {
       },
       settings: {
         subtitle: "Personalize language, theme, and experience preferences.",
+        profile: {
+          title: "Profile",
+          subtitle: "Update your personal information used in the app.",
+          name: "Full name",
+          email: "Email",
+          mainFocus: "Main focus",
+          save: "Save profile",
+          saved: "Profile updated successfully.",
+          helper: "Changes are stored locally for this account.",
+        },
         appearance: "Appearance",
         darkMode: "Dark Mode",
         lightMode: "Light Mode",
@@ -533,6 +543,16 @@ const resources = {
       },
       settings: {
         subtitle: "زبان، تم و ترجیحات تجربه کاربری را شخصی‌سازی کنید.",
+        profile: {
+          title: "پروفایل",
+          subtitle: "اطلاعات شخصی کاربر را برای استفاده در برنامه به‌روزرسانی کنید.",
+          name: "نام کامل",
+          email: "ایمیل",
+          mainFocus: "تمرکز اصلی",
+          save: "ذخیره پروفایل",
+          saved: "پروفایل با موفقیت به‌روزرسانی شد.",
+          helper: "تغییرات برای این حساب به صورت لوکال ذخیره می‌شود.",
+        },
         appearance: "ظاهر",
         darkMode: "حالت تاریک",
         lightMode: "حالت روشن",
