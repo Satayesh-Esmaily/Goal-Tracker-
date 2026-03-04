@@ -33,28 +33,6 @@ export default function GoalsListPage() {
   const [sortBy, setSortBy] = useState("newest");
   const [goalToDelete, setGoalToDelete] = useState(null);
   const visibleGoals = useMemo(() => goals.filter((goal) => goal.status !== "deleted"), [goals]);
-  const stats = useMemo(() => {
-    const active = visibleGoals.filter((goal) => goal.status === "active").length;
-    const completed = visibleGoals.filter((goal) => goal.status === "completed").length;
-    const paused = visibleGoals.filter((goal) => goal.status === "paused").length;
-    const avgProgress =
-      visibleGoals.length === 0
-        ? 0
-        : Math.round(
-            visibleGoals.reduce(
-              (acc, goal) => acc + Math.min((Number(goal.progress) || 0) / Math.max(1, Number(goal.target) || 1), 1),
-              0
-            ) / visibleGoals.length * 100
-          );
-
-    return {
-      total: visibleGoals.length,
-      active,
-      completed,
-      paused,
-      avgProgress,
-    };
-  }, [visibleGoals]);
 
   // Recompute only when input values change.
   const filteredGoals = useMemo(() => {

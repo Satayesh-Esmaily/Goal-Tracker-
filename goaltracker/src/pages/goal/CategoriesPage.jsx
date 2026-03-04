@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import {
+  alpha,
   Box,
   Card,
   CardContent,
@@ -9,7 +10,6 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import { alpha } from "@mui/material/styles";
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
@@ -34,16 +34,16 @@ export default function CategoriesPage() {
     goals
       .filter((goal) => goal.status !== "deleted")
       .forEach((goal) => {
-        const name = goal.category || "Uncategorized";
-        const current = map.get(name) || {
-          name,
-          active: 0,
-          completed: 0,
-          paused: 0,
-          total: 0,
-          progressSum: 0,
-          targetSum: 0,
-        };
+      const name = goal.category || "Uncategorized";
+      const current = map.get(name) || {
+        name,
+        active: 0,
+        completed: 0,
+        paused: 0,
+        total: 0,
+        progressSum: 0,
+        targetSum: 0,
+      };
 
         const target = Math.max(1, Number(goal.target) || 1);
         const progress = Math.max(0, Math.min(target, Number(goal.progress) || 0));
@@ -65,7 +65,6 @@ export default function CategoriesPage() {
       }))
       .sort((a, b) => b.progressRate - a.progressRate || b.total - a.total);
   }, [goals]);
-
   const totalCategories = categories.length;
   const totalGoals = categories.reduce((acc, item) => acc + item.total, 0);
   const activeGoals = categories.reduce((acc, item) => acc + item.active, 0);
@@ -140,7 +139,6 @@ export default function CategoriesPage() {
               </CardContent>
             </Card>
           </Grid>
-
           <Grid item xs={12} sm={6} md={3}>
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
@@ -159,7 +157,6 @@ export default function CategoriesPage() {
               </CardContent>
             </Card>
           </Grid>
-
           <Grid item xs={12} sm={6} md={3}>
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
@@ -178,7 +175,6 @@ export default function CategoriesPage() {
               </CardContent>
             </Card>
           </Grid>
-
           <Grid item xs={12} sm={6} md={3}>
             <Card elevation={0} sx={statCardSx}>
               <CardContent>

@@ -126,146 +126,124 @@ export function GoalsProvider({ children }) {
   const addProgress = async (goalId, amount = 1) => {
     const step = Math.max(1, Number(amount) || 1);
     const now = new Date().toISOString();
-    const goal = goals.find((g) => g.id === goalId);
-
-    if (!goal || goal.status === "paused" || goal.status === "completed" || goal.status === "deleted") {
-      return;
-    }
-
-    const nextProgress = Math.min(goal.target, goal.progress + step);
-    const status = nextProgress >= goal.target ? "completed" : goal.status;
-
-    const updatedGoal = {
-      ...goal,
-      progress: nextProgress,
-      status,
-      logs: [...(goal.logs || []), { date: now, amount: step }],
-      completedAt: nextProgress >= goal.target ? now : goal.completedAt,
-      updatedAt: now,
-    };
-
-    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
-    try {
-      await updateDoc(doc(db, "goals", goalId), updatedGoal);
-    } catch (error) {
-      console.error("Failed to sync progress to Firestore:", error);
-    }
+    setGoals((prev) =>
+      prev.map((goal) => {
+        // Do not update paused, deleted, or already completed goals.
+        if (
+          goal.id !== goalId ||
+          goal.status === "paused" ||
+          goal.status === "completed" ||
+          goal.status === "deleted"
+        ) {
+          return goal;
+        }
+        const nextProgress = Math.min(goal.target, goal.progress + step);
+        const becameCompleted = nextProgress >= goal.target && goal.status !== "completed";
+        const status = nextProgress >= goal.target ? "completed" : goal.status;
+        return {
+          ...goal,
+          progress: nextProgress,
+          status,
+          logs: [...(goal.logs || []), { date: now, amount: step }],
+          completedAt: becameCompleted ? now : goal.completedAt,
+          updatedAt: now,
+        };
+      })
+    );
   };
 
-  const deleteGoal = async (goalId) => {
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal || goal.status === "deleted") return;
-
+  const deleteGoal = (goalId) => {
     const now = new Date().toISOString();
-    const updatedGoal = {
-      ...goal,
-      previousStatus: goal.status,
-      status: "deleted",
-      deletedAt: now,
-      updatedAt: now,
-    };
-
-    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
-    try {
-      await updateDoc(doc(db, "goals", goalId), updatedGoal);
-    } catch (error) {
-      console.error("Failed to sync delete to Firestore:", error);
-    }
+    setGoals((prev) =>
+      prev.map((goal) => {
+        if (goal.id !== goalId || goal.status === "deleted") return goal;
+        return {
+          ...goal,
+          previousStatus: goal.status,
+          status: "deleted",
+          deletedAt: now,
+          updatedAt: now,
+        };
+      })
+    );
   };
 
-  const togglePause = async (goalId) => {
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal || goal.status === "completed" || goal.status === "deleted") return;
-
-    const updatedGoal = {
-      ...goal,
-      status: goal.status === "paused" ? "active" : "paused",
-      updatedAt: new Date().toISOString(),
-    };
-
-    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
-    try {
-      await updateDoc(doc(db, "goals", goalId), updatedGoal);
-    } catch (error) {
-      console.error("Failed to sync pause/resume to Firestore:", error);
-    }
+  const togglePause = (goalId) => {
+    setGoals((prev) =>
+      prev.map((goal) => {
+        // Completed and deleted goals stay unchanged.
+        if (goal.id !== goalId || goal.status === "completed" || goal.status === "deleted") return goal;
+        return {
+          ...goal,
+          status: goal.status === "paused" ? "active" : "paused",
+          updatedAt: new Date().toISOString(),
+        };
+      })
+    );
   };
 
-  const restoreGoal = async (goalId) => {
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal || goal.status !== "deleted") return;
-
+  const restoreGoal = (goalId) => {
     const now = new Date().toISOString();
-    const restoredStatus =
-      goal.previousStatus && goal.previousStatus !== "deleted" ? goal.previousStatus : "active";
-
-    const updatedGoal = {
-      ...goal,
-      status: restoredStatus,
-      previousStatus: null,
-      deletedAt: null,
-      updatedAt: now,
-    };
-
-    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
-    try {
-      await updateDoc(doc(db, "goals", goalId), updatedGoal);
-    } catch (error) {
-      console.error("Failed to sync restore to Firestore:", error);
-    }
+    setGoals((prev) =>
+      prev.map((goal) => {
+        if (goal.id !== goalId || goal.status !== "deleted") return goal;
+        const restoredStatus =
+          goal.previousStatus && goal.previousStatus !== "deleted" ? goal.previousStatus : "active";
+        return {
+          ...goal,
+          status: restoredStatus,
+          previousStatus: null,
+          deletedAt: null,
+          updatedAt: now,
+        };
+      })
+    );
   };
 
-  const restoreCompletedGoal = async (goalId) => {
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal || goal.status !== "completed") return;
-
-    const updatedGoal = {
-      ...goal,
-      status: "active",
-      completedAt: null,
-      updatedAt: new Date().toISOString(),
-    };
-
-    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
-    try {
-      await updateDoc(doc(db, "goals", goalId), updatedGoal);
-    } catch (error) {
-      console.error("Failed to sync completed-restore to Firestore:", error);
-    }
-  };
-
-  const updateGoal = async (goalId, updates) => {
-    const goal = goals.find((g) => g.id === goalId);
-    if (!goal) return;
-
+  const restoreCompletedGoal = (goalId) => {
     const now = new Date().toISOString();
-    const updatedGoal = {
-      ...goal,
-      ...updates,
-      target: Number(updates.target ?? goal.target) || goal.target,
-      completedAt:
-        updates.status === "completed"
-          ? goal.completedAt || now
-          : updates.status && updates.status !== "completed"
-          ? null
-          : goal.completedAt,
-      updatedAt: now,
-    };
+    setGoals((prev) =>
+      prev.map((goal) => {
+        if (goal.id !== goalId || goal.status !== "completed") return goal;
+        return {
+          ...goal,
+          status: "active",
+          completedAt: null,
+          updatedAt: now,
+        };
+      })
+    );
+  };
 
-    setGoals((prev) => prev.map((g) => (g.id === goalId ? updatedGoal : g)));
-    try {
-      await updateDoc(doc(db, "goals", goalId), updatedGoal);
-    } catch (error) {
-      console.error("Failed to sync goal update to Firestore:", error);
-    }
+  const updateGoal = (goalId, updates) => {
+    const now = new Date().toISOString();
+    setGoals((prev) =>
+      prev.map((goal) => {
+        if (goal.id !== goalId) return goal;
+        return {
+          ...goal,
+          ...updates,
+          // Keep target numeric after edits from form fields.
+          target: Number(updates.target ?? goal.target) || goal.target,
+          completedAt:
+            updates.status === "completed"
+              ? goal.completedAt || now
+              : updates.status && updates.status !== "completed"
+              ? null
+              : goal.completedAt,
+          updatedAt: now,
+        };
+      })
+    );
   };
 
   const stats = useMemo(() => {
-    const visibleGoals = goals.filter((g) => g.status !== "deleted");
-    const activeGoals = visibleGoals.filter((g) => g.status === "active");
-    const pausedGoals = visibleGoals.filter((g) => g.status === "paused");
-    const completedGoals = visibleGoals.filter((g) => g.status === "completed");
+    const visibleGoals = goals.filter((goal) => goal.status !== "deleted");
+    const activeGoals = visibleGoals.filter((goal) => goal.status === "active");
+    const pausedGoals = visibleGoals.filter((goal) => goal.status === "paused");
+    const completedGoals = visibleGoals.filter((goal) => goal.status === "completed");
 
+    // Average progress percentage across visible goals.
     const completionRate =
       visibleGoals.length === 0
         ? 0
