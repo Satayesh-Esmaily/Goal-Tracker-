@@ -3,8 +3,9 @@ import { alpha } from "@mui/material/styles";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
-export default function GoalsPageHeader({ isFa }) {
-  const { t } = useTranslation();
+export default function GoalsPageHeader() {
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;

@@ -15,6 +15,7 @@ export default function CategoriesProgressChart({ categories }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
+
   const chartItems = categories.slice(0, 7);
   const labels = chartItems.map((item) => shortLabel(item.name));
   const progressSeries = chartItems.map((item) => item.progressRate);
@@ -22,17 +23,24 @@ export default function CategoriesProgressChart({ categories }) {
     item.total === 0 ? 0 : Math.round((item.completed / item.total) * 100)
   );
   const chartHeight = Math.max(300, chartItems.length * 42 + 88);
+
   const topCategory = chartItems[0];
   const avgProgress =
     chartItems.length === 0
       ? 0
-      : Math.round(chartItems.reduce((acc, item) => acc + item.progressRate, 0) / chartItems.length);
+      : Math.round(
+          chartItems.reduce((acc, item) => acc + item.progressRate, 0) /
+            chartItems.length
+        );
   const avgCompletion =
     chartItems.length === 0
       ? 0
       : Math.round(
-          chartItems.reduce((acc, item) => acc + (item.total ? (item.completed / item.total) * 100 : 0), 0) /
-            chartItems.length
+          chartItems.reduce(
+            (acc, item) =>
+              acc + (item.total ? (item.completed / item.total) * 100 : 0),
+            0
+          ) / chartItems.length
         );
 
   return (
@@ -50,11 +58,14 @@ export default function CategoriesProgressChart({ categories }) {
         width: "100%",
         borderColor: alpha(primary, 0.24),
         background: isDark
-          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.9)}, ${alpha(
+          ? `linear-gradient(180deg, ${alpha(
               theme.palette.background.paper,
-              0.78
-            )})`
-          : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
+              0.9
+            )}, ${alpha(theme.palette.background.paper, 0.78)})`
+          : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha(
+              "#f8fafc",
+              0.9
+            )})`,
       }}
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
@@ -99,7 +110,9 @@ export default function CategoriesProgressChart({ categories }) {
               width: "100%",
               maxWidth: 560,
               mx: "auto",
-              boxShadow: isDark ? "0 10px 24px rgba(2,8,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+              boxShadow: isDark
+                ? "0 10px 24px rgba(2,8,23,0.32)"
+                : "0 8px 20px rgba(15,23,42,0.08)",
             }}
           >
             <BarChart
@@ -109,7 +122,12 @@ export default function CategoriesProgressChart({ categories }) {
               xAxis={[{ min: 0, max: 100 }]}
               margin={{ top: 18, right: 22, bottom: 20, left: 120 }}
               series={[
-                { data: progressSeries, label: t("categoriesPage.progressChart.progressPercent"), color: primary, borderRadius: 6 },
+                {
+                  data: progressSeries,
+                  label: t("categoriesPage.progressChart.progressPercent"),
+                  color: primary,
+                  borderRadius: 6,
+                },
                 {
                   data: completeSeries,
                   label: t("categoriesPage.progressChart.completedPercent"),
