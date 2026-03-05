@@ -126,7 +126,7 @@ export default function Settings() {
           </Typography>
 
           <Stack
-            spacing={2}
+            gap={1.5}
             direction={{ xs: "column", sm: "row" }}
             alignItems={{ xs: "stretch", sm: "center" }}
           >

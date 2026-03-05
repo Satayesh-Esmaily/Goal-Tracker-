@@ -103,7 +103,7 @@ export default function LoginPage() {
         elevation={0}
         sx={{
           width: "100%",
-          maxWidth: 880,
+          maxWidth: { xs: "100%", sm: 400, md: 880 },
           border: "1px solid",
           borderColor: alpha(primary, 0.32),
           borderRadius: 4,

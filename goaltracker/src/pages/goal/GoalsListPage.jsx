@@ -214,7 +214,8 @@ export default function GoalsListPage() {
                     : "Manage, filter, and track all your goals."}
                 </Typography>
               </Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+              <Stack direction={{ xs: "column", sm: "row" }} 
+              gap={1.5}>
                 <Button
                   variant="contained"
                   startIcon={<AddRoundedIcon />}
@@ -379,7 +380,8 @@ export default function GoalsListPage() {
               />
             </Tabs>
 
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+            <Stack direction={{ xs: "column", md: "row" }} 
+            gap={1.5}>
               <TextField
                 fullWidth
                 label={t("goalsPage.searchByTitle")}

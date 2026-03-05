@@ -499,7 +499,7 @@ export default function GoalForm({
                         justifyContent="space-between"
                         alignItems="center"
                       >
-                        <Stack direction="row" spacing={1} alignItems="center">
+                        <Stack direction="row" gap={1.5} alignItems="center">
                           <Typography fontWeight={800}>
                             {t("goalForm.optional")}
                           </Typography>
@@ -664,7 +664,7 @@ export default function GoalForm({
 
               <Stack
                 direction={{ xs: "column", sm: "row" }}
-                spacing={1.25}
+                gap={1.5}
                 justifyContent="flex-end"
               >
                 <Button

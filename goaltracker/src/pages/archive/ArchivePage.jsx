@@ -205,7 +205,8 @@ export default function ArchivePage() {
               : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
           }}
           action={
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={1}>
+            <Stack direction={{ xs: "column", sm: "row" }} 
+            gap={1.5}>
               <Button
                 size="small"
                 variant="outlined"
@@ -252,7 +253,8 @@ export default function ArchivePage() {
               <Tab value="deleted" label={t("archivePage.tabs.deleted")} />
             </Tabs>
 
-            <Stack direction={{ xs: "column", md: "row" }} spacing={2}>
+            <Stack direction={{ xs: "column", md: "row" }} 
+            gap={1.5}>
               <TextField
                 fullWidth
                 label={t("archivePage.search")}

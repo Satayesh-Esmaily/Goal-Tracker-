@@ -83,42 +83,42 @@ function AppShell({ children, mode, toggleTheme }) {
             <MenuIcon />
           </IconButton>
 
-<Stack
-  direction="row"
-  alignItems="center"
-  gap={1.5}
-  sx={{
-    mr: isFa ? 2 : 1,
-    flexShrink: 0,
-  }}
->
-  <Box
-    component="img"
-    src={logoImage}
-    alt="Goal Tracker Logo"
-    sx={{
-      width: 36,
-      height: 36,
-      borderRadius: 1.5,
-      objectFit: "cover",
-      border: "1px solid",
-      borderColor: isDark
-        ? "rgba(255,255,255,0.2)"
-        : "rgba(15,23,42,0.15)",
-    }}
-  />
+          <Stack
+            direction="row"
+            alignItems="center"
+            gap={1.5}
+            sx={{
+              mr: isFa ? 2 : 1,
+              flexShrink: 0,
+            }}
+          >
+            <Box
+              component="img"
+              src={logoImage}
+              alt="Goal Tracker Logo"
+              sx={{
+                width: 36,
+                height: 36,
+                borderRadius: 1.5,
+                objectFit: "cover",
+                border: "1px solid",
+                borderColor: isDark
+                  ? "rgba(255,255,255,0.2)"
+                  : "rgba(15,23,42,0.15)",
+              }}
+            />
 
-  <Box
-    sx={{
-      color: isDark ? "#e2e8f0" : "#1e293b",
-      fontWeight: 700,
-      fontSize: { xs: 18, sm: 20 },
-      whiteSpace: "nowrap",
-    }}
-  >
-    {isFa ? "Goal Tracker" : "Goal Tracker"}
-  </Box>
-</Stack>
+            <Box
+              sx={{
+                color: isDark ? "#e2e8f0" : "#1e293b",
+                fontWeight: 700,
+                fontSize: { xs: 18, sm: 20 },
+                whiteSpace: "nowrap",
+              }}
+            >
+              {isFa ? "Goal Tracker" : "Goal Tracker"}
+            </Box>
+          </Stack>
 
           <Stack direction="row" spacing={isFa ? 1.35 : 0.5} sx={{ display: { xs: "none", md: "flex" } }}>
             {links.map((item) => (
