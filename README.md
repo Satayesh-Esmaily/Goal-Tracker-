@@ -323,5 +323,14 @@ Goal Tracker
 
 
   ______________________________________________________________________________________________________________________
+  
+Screenshots:
 
-![image alt]([goaltracker/src/readme images/photo_2026-03-05_14-26-03.jpg](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/6f4eff1e74de1fa5c8c2509c418b1541d9e11f4c/goaltracker/src/readme%20images/photo_2026-03-05_14-26-03.jpg))
+1. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/6f4eff1e74de1fa5c8c2509c418b1541d9e11f4c/goaltracker/src/readme%20images/photo_2026-03-05_14-26-03.jpg)
+2. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_14-26-52.jpg)
+3. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-03.jpg)
+4. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-10.jpg)
+5. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-17.jpg)
+6. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-27.jpg)
+7. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-36.jpg)
+8. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-43.jpg)
