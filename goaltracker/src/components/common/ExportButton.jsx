@@ -5,8 +5,9 @@ import { useTranslation } from "react-i18next";
 export default function ExportButton({
   goals,
   fileName = "goals_export.json",
+  disabled = false,
 }) {
-  const { t, i18n } = useTranslation();
+  const { i18n } = useTranslation();
   const isFa = i18n.language === "fa";
 
   const handleExport = () => {
@@ -45,6 +46,7 @@ export default function ExportButton({
     const downloadAnchorNode = document.createElement("a");
     downloadAnchorNode.setAttribute("href", dataStr);
     downloadAnchorNode.setAttribute("download", fileName);
+
     document.body.appendChild(downloadAnchorNode);
     downloadAnchorNode.click();
     downloadAnchorNode.remove();
@@ -55,6 +57,7 @@ export default function ExportButton({
       variant="outlined"
       startIcon={<DownloadRoundedIcon />}
       onClick={handleExport}
+      disabled={disabled}
       sx={{ px: isFa ? 2.75 : 2 }}
     >
       {isFa ? "خروجی گرفتن" : "Export"}

@@ -4,9 +4,19 @@ import ArrowOutwardRoundedIcon from "@mui/icons-material/ArrowOutwardRounded";
 import { Link as RouterLink } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import SectionCard from "../common/SectionCard";
+import ExportButton from "../common/ExportButton";
+import { useGoals } from "../../context/GoalsContext";
 
-export default function DashboardHero({ totalGoals, completedCount, streak, isFa, isDark, userName }) {
+export default function DashboardHero({
+  totalGoals,
+  completedCount,
+  streak,
+  isFa,
+  isDark,
+  userName,
+}) {
   const { t } = useTranslation();
+  const { goals } = useGoals();
 
   return (
     <SectionCard
@@ -28,20 +38,31 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
               variant="subtitle2"
               sx={{
                 mb: 0.45,
-                color: isDark ? "rgba(191,219,254,0.92)" : "rgba(30,64,175,0.86)",
+                color: isDark
+                  ? "rgba(191,219,254,0.92)"
+                  : "rgba(30,64,175,0.86)",
                 fontWeight: 700,
               }}
             >
               {t("dashboard.welcome", { name: userName })}
             </Typography>
           )}
+
           <Typography variant="h4" fontWeight={800}>
             {t("dashboard.title")}
           </Typography>
+
           <Typography color="text.secondary" sx={{ mt: 0.75 }}>
             {t("dashboard.subtitle")}
           </Typography>
-          <Stack direction="row" spacing={1} sx={{ mt: 1.5 }} useFlexGap flexWrap="wrap">
+
+          <Stack
+            direction="row"
+            spacing={1}
+            sx={{ mt: 1.5 }}
+            useFlexGap
+            flexWrap="wrap"
+          >
             <Chip
               size="small"
               label={t("dashboard.totalGoals", { count: totalGoals })}
@@ -78,7 +99,11 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
           </Stack>
         </Box>
 
-        <Stack direction={{ xs: "column", sm: "row" }} gap={{ xs: 2, sm: isFa ? 3 : 2 }}>
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={isFa ? 2.75 : 1.25}
+          gap={{ xs: 2, sm: isFa ? 3 : 2 }}
+        >
           <Button
             variant="contained"
             component={RouterLink}
@@ -98,6 +123,12 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
           >
             {t("dashboard.manageGoals")}
           </Button>
+
+          <ExportButton
+            goals={goals}
+            fileName="dashboard_goals.json"
+            disabled={goals.length === 0}
+          />
         </Stack>
       </Stack>
     </SectionCard>
