@@ -54,13 +54,13 @@ export default function SplashScreen({ onFinish }) {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        minHeight: "100dvh",
         position: "fixed",
         inset: 0,
         zIndex: 1700,
         display: "grid",
         placeItems: "center",
-        px: 2,
+        px: { xs: 1.5, sm: 2 },
         overflow: "hidden",
         bgcolor: isDark ? "#050b14" : "#f3f6fb",
         backgroundImage: isDark
@@ -98,12 +98,13 @@ export default function SplashScreen({ onFinish }) {
       <Box
         sx={{
           position: "absolute",
-          width: 300,
-          height: 300,
+          width: { xs: 220, sm: 280, md: 300 },
+          height: { xs: 220, sm: 280, md: 300 },
           borderRadius: "50%",
           filter: "blur(28px)",
-          top: "16%",
-          left: "calc(50% - 150px)",
+          top: { xs: "10%", sm: "14%", md: "16%" },
+          left: "50%",
+          transform: "translateX(-50%)",
           bgcolor: isDark ? "rgba(66,165,245,0.22)" : "rgba(25,118,210,0.18)",
           animation: "orbPulse 2.2s ease-in-out infinite",
           "@keyframes orbPulse": {
@@ -116,8 +117,8 @@ export default function SplashScreen({ onFinish }) {
       <Box
         sx={{
           position: "absolute",
-          inset: 24,
-          borderRadius: 8,
+          inset: { xs: 10, sm: 16, md: 24 },
+          borderRadius: { xs: 4, sm: 6, md: 8 },
           border: "1px solid",
           borderColor: isDark ? "rgba(148,163,184,0.14)" : "rgba(15,23,42,0.08)",
           background: isDark ? "rgba(15,23,42,0.24)" : "rgba(255,255,255,0.52)",
@@ -127,13 +128,17 @@ export default function SplashScreen({ onFinish }) {
         }}
       />
 
-      <Stack alignItems="center" spacing={2.4} sx={{ position: "relative", zIndex: 1, px: 2 }}>
+      <Stack
+        alignItems="center"
+        spacing={{ xs: 1.8, sm: 2.2, md: 2.4 }}
+        sx={{ position: "relative", zIndex: 1, px: { xs: 1, sm: 2 }, width: "100%", maxWidth: 560 }}
+      >
         <Box
           sx={{
-            width: 114,
-            height: 114,
-            borderRadius: 4,
-            p: 0.85,
+            width: { xs: 84, sm: 102, md: 114 },
+            height: { xs: 84, sm: 102, md: 114 },
+            borderRadius: { xs: 3, sm: 3.5, md: 4 },
+            p: { xs: 0.6, sm: 0.75, md: 0.85 },
             position: "relative",
             bgcolor: isDark ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.9)",
             border: "1px solid",
@@ -176,7 +181,16 @@ export default function SplashScreen({ onFinish }) {
           />
         </Box>
 
-        <Stack direction="row" sx={{ fontSize: { xs: 36, md: 44 }, fontWeight: 900, lineHeight: 1 }}>
+        <Stack
+          direction="row"
+          sx={{
+            fontSize: { xs: 30, sm: 36, md: 44 },
+            fontWeight: 900,
+            lineHeight: 1,
+            flexWrap: "wrap",
+            justifyContent: "center",
+          }}
+        >
           {titleText.split("").map((ch, idx) => (
             <Box
               key={`${ch}-${idx}`}
@@ -202,14 +216,15 @@ export default function SplashScreen({ onFinish }) {
           sx={{
             color: isDark ? "rgba(203,213,225,0.9)" : "rgba(51,65,85,0.9)",
             textAlign: "center",
-            maxWidth: 500,
-            fontSize: "0.98rem",
+            maxWidth: { xs: 290, sm: 500 },
+            fontSize: { xs: "0.86rem", sm: "0.98rem" },
+            px: { xs: 0.5, sm: 0 },
           }}
         >
           Build consistency, ship progress, and protect your streak every day.
         </Typography>
 
-        <Box sx={{ width: { xs: 240, sm: 300 }, mt: 0.5 }}>
+        <Box sx={{ width: { xs: "min(92vw, 280px)", sm: 300 }, mt: 0.5 }}>
           <LinearProgress
             variant="determinate"
             value={progress}
@@ -241,4 +256,3 @@ export default function SplashScreen({ onFinish }) {
     </Box>
   );
 }
-

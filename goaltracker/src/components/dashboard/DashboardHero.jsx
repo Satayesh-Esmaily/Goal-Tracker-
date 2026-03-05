@@ -78,7 +78,7 @@ export default function DashboardHero({ totalGoals, completedCount, streak, isFa
           </Stack>
         </Box>
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={isFa ? 2.75 : 1.25}>
+        <Stack direction={{ xs: "column", sm: "row" }} gap={{ xs: 2, sm: isFa ? 3 : 2 }}>
           <Button
             variant="contained"
             component={RouterLink}

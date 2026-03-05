@@ -1,23 +1,12 @@
 import { useMemo, useEffect, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import { Routes, Route, Navigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 import { getTheme } from "./theme/theme";
-import DashboardPage from "./pages/dashboard/DashboardPage";
-import CreateGoalPage from "./pages/create goal/CreateGoalPage";
-import EditGoalPage from "./pages/create goal/EditGoalPage";
-import Settings from "./pages/setting/Settings";
 import { GoalsProvider } from "./context/GoalsContext";
-import GoalsListPage from "./pages/goal/GoalsListPage";
-import CategoriesPage from "./pages/category/CategoriesPage";
-import ArchivePage from "./pages/archive/ArchivePage";
-import NotFoundPage from "./pages/not found/NotFoundPage";
-import AppShell from "./components/layout/AppShell";
 import SplashScreen from "./components/common/SplashScreen";
-import LoginPage from "./pages/auth/LoginPage";
-import ProtectedRoute from "./components/auth/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import AppRoutes from "./routes/AppRoutes";
 
 import { ThemeProviderCustom, useTheme } from "./context/ThemeContext";
 
@@ -50,39 +39,12 @@ function AppInner() {
     <ThemeProvider theme={theme}>
       <AuthProvider>
         <GoalsProvider>
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route
-              path="*"
-              element={
-                <ProtectedRoute>
-                  <AppShell mode={mode} toggleTheme={toggleMode}>
-                    <Routes>
-                      <Route path="/" element={<DashboardPage />} />
-                      <Route path="/dashboard" element={<Navigate to="/" replace />} />
-                      <Route path="/goals" element={<GoalsListPage />} />
-                      <Route path="/archive" element={<ArchivePage />} />
-                      <Route path="/goals/new" element={<CreateGoalPage />} />
-                      <Route path="/goals/:id/edit" element={<EditGoalPage />} />
-                      <Route path="/categories" element={<CategoriesPage />} />
-                      <Route
-                        path="/settings"
-                        element={
-                          <Settings
-                            currentTheme={mode}
-                            toggleTheme={toggleMode}
-                            primaryColor={primaryColor}
-                            setPrimaryColor={setPrimaryColor}
-                          />
-                        }
-                      />
-                      <Route path="*" element={<NotFoundPage />} />
-                    </Routes>
-                  </AppShell>
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+          <AppRoutes
+            mode={mode}
+            toggleMode={toggleMode}
+            primaryColor={primaryColor}
+            setPrimaryColor={setPrimaryColor}
+          />
         </GoalsProvider>
       </AuthProvider>
 

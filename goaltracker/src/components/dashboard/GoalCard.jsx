@@ -4,6 +4,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
 import {
+  Box,
   Card,
   CardContent,
   Chip,
@@ -74,6 +75,7 @@ export default function GoalCard({
     fontWeight: 700,
     fontSize: "0.86rem",
     letterSpacing: 0,
+    width: "100%",
   };
 
   return (
@@ -81,6 +83,7 @@ export default function GoalCard({
       elevation={0}
       sx={{
         borderRadius: 3.5,
+        width: "100%",
         height: "100%",
         border: "1px solid",
         borderColor: isDark ? "rgba(148,163,184,0.3)" : "rgba(15,23,42,0.12)",
@@ -197,13 +200,15 @@ export default function GoalCard({
             </Stack>
           )}
 
-          <Stack
-            direction={{ xs: "column", sm: "row" }}
-            spacing={1}
-            flexWrap="wrap"
+          <Box
+            sx={{
+              display: "grid",
+              gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4, minmax(0, 1fr))" },
+              gap: 1,
+            }}
           >
             <Tooltip title={t("goalCard.markProgress")} arrow>
-              <span>
+              <span style={{ gridColumn: "1 / -1" }}>
                 <Button
                   size="small"
                   variant="contained"
@@ -212,6 +217,7 @@ export default function GoalCard({
                   disabled={goal.status === "paused" || isCompleted}
                   sx={{
                     ...chipButtonSx,
+                    justifyContent: "center",
                     bgcolor: theme.palette.primary.main,
                     color: theme.palette.primary.contrastText,
                     border: "1px solid transparent",
@@ -257,6 +263,7 @@ export default function GoalCard({
                   disabled={isCompleted}
                   sx={{
                     ...chipButtonSx,
+                    justifyContent: "center",
                     color: isDark ? "#fde68a" : "#92400e",
                     bgcolor: isDark
                       ? "rgba(146,64,14,0.45)"
@@ -288,6 +295,7 @@ export default function GoalCard({
                   onClick={onEdit}
                   sx={{
                     ...chipButtonSx,
+                    justifyContent: "center",
                     color: isDark ? "#bbf7d0" : "#166534",
                     bgcolor: isDark
                       ? "rgba(22,101,52,0.45)"
@@ -318,6 +326,7 @@ export default function GoalCard({
                   onClick={onDelete}
                   sx={{
                     ...chipButtonSx,
+                    justifyContent: "center",
                     borderColor: isDark
                       ? "rgba(239,68,68,0.82)"
                       : "rgba(220,38,38,0.45)",
@@ -337,7 +346,7 @@ export default function GoalCard({
                 </Button>
               </span>
             </Tooltip>
-          </Stack>
+          </Box>
         </Stack>
       </CardContent>
     </Card>
