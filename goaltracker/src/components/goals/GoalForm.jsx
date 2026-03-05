@@ -19,7 +19,7 @@ import AutoAwesomeRoundedIcon from "@mui/icons-material/AutoAwesomeRounded";
 import ExpandMoreRoundedIcon from "@mui/icons-material/ExpandMoreRounded";
 import CalendarMonthRoundedIcon from "@mui/icons-material/CalendarMonthRounded";
 import AccessTimeRoundedIcon from "@mui/icons-material/AccessTimeRounded";
-import { useForm, Controller, useWatch } from "react-hook-form";
+import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useNavigate } from "react-router-dom";
 import { useGoals } from "../../context/GoalsContext";
@@ -62,42 +62,6 @@ export default function GoalForm({
     reValidateMode: "onChange",
   });
 
-  const [
-    watchedTitle,
-    watchedCategory,
-    watchedType,
-    watchedTarget,
-    watchedUnit,
-    watchedPriority,
-    watchedStartDate,
-    watchedEndDate,
-    watchedDeadline,
-  ] = useWatch({
-    control,
-    name: [
-      "title",
-      "category",
-      "type",
-      "target",
-      "unit",
-      "priority",
-      "startDate",
-      "endDate",
-      "deadline",
-    ],
-  });
-
-  const isCreateEnabled =
-    String(watchedTitle || "").trim() !== "" &&
-    String(watchedCategory || "").trim() !== "" &&
-    String(watchedType || "").trim() !== "" &&
-    String(watchedTarget || "").trim() !== "" &&
-    String(watchedUnit || "").trim() !== "" &&
-    String(watchedPriority || "").trim() !== "" &&
-    String(watchedStartDate || "").trim() !== "" &&
-    String(watchedEndDate || "").trim() !== "" &&
-    String(watchedDeadline || "").trim() !== "";
-
   useEffect(() => {
     if (!initialData) return;
     reset({
@@ -133,8 +97,10 @@ export default function GoalForm({
         return;
       }
 
-      // For create flow, trigger save and navigate immediately to dashboard.
-      createGoal(payload);
+      // For create flow, navigate immediately and let the async save continue.
+      createGoal(payload).catch((error) => {
+        console.error("Failed to save goal after navigation:", error);
+      });
       navigate("/", { replace: true });
     } catch (error) {
       console.error("Failed to save goal:", error);
@@ -677,7 +643,7 @@ export default function GoalForm({
                 <Button
                   type="submit"
                   variant="contained"
-                  disabled={!isCreateEnabled || isSubmitting}
+                  disabled={isSubmitting}
                   sx={{
                     borderRadius: 2.5,
                     px: 2.75,

@@ -4,10 +4,13 @@ import {
   addDoc,
   getDocs,
   query,
-  orderBy,
+  where,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import { calculateXpStats } from "../components/xp/XpRules";
+import { useAuth } from "./AuthContext";
 
 const GoalsContext = createContext(null);
 const STORAGE_KEY = "goal-tracker-goals-v1";
@@ -58,37 +61,70 @@ function calculateStreak(goals) {
 }
 
 export function GoalsProvider({ children }) {
+  const { user, loading: authLoading } = useAuth();
+  const storageKey = user?.uid ? `${STORAGE_KEY}:${user.uid}` : STORAGE_KEY;
   const [goals, setGoals] = useState(() =>
-    parseStoredGoals(localStorage.getItem(STORAGE_KEY))
+    parseStoredGoals(localStorage.getItem(storageKey))
   );
 
   useEffect(() => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(goals));
-  }, [goals]);
+    localStorage.setItem(storageKey, JSON.stringify(goals));
+  }, [goals, storageKey]);
 
   useEffect(() => {
     const fetchGoals = async () => {
+      if (authLoading) return;
+
+      if (!user?.uid) {
+        setGoals(parseStoredGoals(localStorage.getItem(storageKey)));
+        return;
+      }
+
       try {
-        const q = query(collection(db, "goals"), orderBy("createdAt", "desc"));
+        const q = query(
+          collection(db, "goals"),
+          where("userId", "==", user.uid)
+        );
         const snapshot = await getDocs(q);
         const list = snapshot.docs.map((item) => ({
           id: item.id,
           ...item.data(),
         }));
-        setGoals(list);
+        const sortedCloudGoals = list.sort(
+          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+        );
+        const localGoals = parseStoredGoals(localStorage.getItem(storageKey));
+
+        // Protect against accidental wipe if cloud returns empty while local still has data.
+        if (sortedCloudGoals.length === 0 && localGoals.length > 0) {
+          setGoals(localGoals);
+          return;
+        }
+
+        setGoals(sortedCloudGoals);
       } catch (error) {
         console.error("Failed to fetch goals from Firestore:", error);
 
-        setGoals(parseStoredGoals(localStorage.getItem(STORAGE_KEY)));
+        setGoals(parseStoredGoals(localStorage.getItem(storageKey)));
       }
     };
 
     fetchGoals();
-  }, []);
+  }, [user?.uid, storageKey, authLoading]);
+
+  const persistGoalPatch = async (goalId, patch) => {
+    if (!user?.uid || !goalId) return;
+    try {
+      await updateDoc(doc(db, "goals", goalId), patch);
+    } catch (error) {
+      console.error("Failed to sync goal update to Firestore:", error);
+    }
+  };
 
   const createGoal = async (payload) => {
     const now = new Date().toISOString();
     const goal = {
+      userId: user?.uid || null,
       title: payload.title?.trim() || "Untitled Goal",
       category: payload.category || "Personal",
       type: payload.type || "daily",
@@ -114,6 +150,8 @@ export function GoalsProvider({ children }) {
     const tempId = crypto.randomUUID();
     const localGoal = { ...goal, id: tempId };
     setGoals((prev) => [localGoal, ...prev]);
+
+    if (!user?.uid) return localGoal;
 
     try {
       const docRef = await addDoc(collection(db, "goals"), goal);
@@ -156,6 +194,19 @@ export function GoalsProvider({ children }) {
         };
       })
     );
+    const targetGoal = goals.find((goal) => goal.id === goalId);
+    if (!targetGoal) return;
+    const nextProgress = Math.min(targetGoal.target, targetGoal.progress + step);
+    const becameCompleted =
+      nextProgress >= targetGoal.target && targetGoal.status !== "completed";
+    const status = nextProgress >= targetGoal.target ? "completed" : targetGoal.status;
+    await persistGoalPatch(goalId, {
+      progress: nextProgress,
+      status,
+      logs: [...(targetGoal.logs || []), { date: now, amount: step }],
+      completedAt: becameCompleted ? now : targetGoal.completedAt,
+      updatedAt: now,
+    });
   };
 
   const deleteGoal = (goalId) => {
@@ -172,9 +223,16 @@ export function GoalsProvider({ children }) {
         };
       })
     );
+    persistGoalPatch(goalId, {
+      status: "deleted",
+      deletedAt: now,
+      updatedAt: now,
+    });
   };
 
   const togglePause = (goalId) => {
+    const now = new Date().toISOString();
+    const targetGoal = goals.find((goal) => goal.id === goalId);
     setGoals((prev) =>
       prev.map((goal) => {
         if (
@@ -186,10 +244,17 @@ export function GoalsProvider({ children }) {
         return {
           ...goal,
           status: goal.status === "paused" ? "active" : "paused",
-          updatedAt: new Date().toISOString(),
+          updatedAt: now,
         };
       })
     );
+    if (!targetGoal || targetGoal.status === "completed" || targetGoal.status === "deleted") {
+      return;
+    }
+    persistGoalPatch(goalId, {
+      status: targetGoal.status === "paused" ? "active" : "paused",
+      updatedAt: now,
+    });
   };
 
   const restoreGoal = (goalId) => {
@@ -210,6 +275,17 @@ export function GoalsProvider({ children }) {
         };
       })
     );
+    const targetGoal = goals.find((goal) => goal.id === goalId);
+    const restoredStatus =
+      targetGoal?.previousStatus && targetGoal.previousStatus !== "deleted"
+        ? targetGoal.previousStatus
+        : "active";
+    persistGoalPatch(goalId, {
+      status: restoredStatus,
+      previousStatus: null,
+      deletedAt: null,
+      updatedAt: now,
+    });
   };
 
   const restoreCompletedGoal = (goalId) => {
@@ -225,6 +301,11 @@ export function GoalsProvider({ children }) {
         };
       })
     );
+    persistGoalPatch(goalId, {
+      status: "active",
+      completedAt: null,
+      updatedAt: now,
+    });
   };
 
   const updateGoal = (goalId, updates) => {
@@ -247,6 +328,20 @@ export function GoalsProvider({ children }) {
         };
       })
     );
+    const targetGoal = goals.find((goal) => goal.id === goalId);
+    if (!targetGoal) return;
+    const nextStatus = updates.status ?? targetGoal.status;
+    persistGoalPatch(goalId, {
+      ...updates,
+      target: Number(updates.target ?? targetGoal.target) || targetGoal.target,
+      completedAt:
+        nextStatus === "completed"
+          ? targetGoal.completedAt || now
+          : nextStatus !== "completed"
+          ? null
+          : targetGoal.completedAt,
+      updatedAt: now,
+    });
   };
 
   const stats = useMemo(() => {
@@ -298,20 +393,17 @@ export function GoalsProvider({ children }) {
     };
   }, [goals]);
 
-  const value = useMemo(
-    () => ({
-      goals,
-      createGoal,
-      addProgress,
-      deleteGoal,
-      togglePause,
-      restoreGoal,
-      restoreCompletedGoal,
-      updateGoal,
-      stats,
-    }),
-    [goals, stats]
-  );
+  const value = {
+    goals,
+    createGoal,
+    addProgress,
+    deleteGoal,
+    togglePause,
+    restoreGoal,
+    restoreCompletedGoal,
+    updateGoal,
+    stats,
+  };
 
   return (
     <GoalsContext.Provider value={value}>{children}</GoalsContext.Provider>
