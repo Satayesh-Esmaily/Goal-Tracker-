@@ -162,6 +162,7 @@ export default function Settings() {
                 variant="outlined"
                 startIcon={mode === "dark" ? <DarkModeIcon /> : <LightModeIcon />}
                 sx={{
+                  gap: 1,
                   borderRadius: 999,
                   px: 2.2,
                   minHeight: 42,
@@ -174,6 +175,9 @@ export default function Settings() {
                   "&:hover": {
                     borderColor: primary,
                     bgcolor: isDark ? alpha(primary, 0.2) : alpha(primary, 0.12),
+                  },
+                  "& .MuiButton-startIcon": {
+                    margin: 0,
                   },
                 }}
               >
