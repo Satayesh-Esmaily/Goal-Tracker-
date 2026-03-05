@@ -1,4 +1,12 @@
-import { Button, Card, CardContent, Chip, Stack, Typography, useTheme } from "@mui/material";
+import {
+  Button,
+  Card,
+  CardContent,
+  Chip,
+  Stack,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import RestoreRoundedIcon from "@mui/icons-material/RestoreRounded";
 import { useTranslation } from "react-i18next";
@@ -33,8 +41,12 @@ export default function ArchiveGoalCard({ goal, type, onRestore }) {
   const isDark = theme.palette.mode === "dark";
   const isDeleted = type === "deleted";
   const statusDate = isDeleted ? goal.deletedAt : goal.completedAt;
-  const statusLabel = isDeleted ? t("archivePage.deletedAt") : t("archivePage.completedAt");
-  const statusColor = isDeleted ? theme.palette.error.main : theme.palette.success.main;
+  const statusLabel = isDeleted
+    ? t("archivePage.deletedAt")
+    : t("archivePage.completedAt");
+  const statusColor = isDeleted
+    ? theme.palette.error.main
+    : theme.palette.success.main;
   const restoreColor = theme.palette.primary.main;
 
   return (
@@ -42,27 +54,42 @@ export default function ArchiveGoalCard({ goal, type, onRestore }) {
       elevation={0}
       sx={{
         border: "1px solid",
-        borderColor: isDark ? "rgba(148,163,184,0.35)" : "rgba(148,163,184,0.3)",
+        borderColor: isDark
+          ? "rgba(148,163,184,0.35)"
+          : "rgba(148,163,184,0.3)",
         borderRadius: 3,
         height: "100%",
         background: isDark
-          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.92)}, ${alpha(
+          ? `linear-gradient(180deg, ${alpha(
               theme.palette.background.paper,
-              0.72
-            )})`
-          : `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.96)}, ${alpha("#f8fafc", 0.94)})`,
-        boxShadow: isDark ? "0 14px 36px rgba(2,6,23,0.32)" : "0 10px 30px rgba(15,23,42,0.08)",
-        transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+              0.92
+            )}, ${alpha(theme.palette.background.paper, 0.72)})`
+          : `linear-gradient(180deg, ${alpha(
+              theme.palette.background.paper,
+              0.96
+            )}, ${alpha("#f8fafc", 0.94)})`,
+        boxShadow: isDark
+          ? "0 14px 36px rgba(2,6,23,0.32)"
+          : "0 10px 30px rgba(15,23,42,0.08)",
+        transition:
+          "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
         "&:hover": {
           transform: "translateY(-3px)",
           borderColor: alpha(restoreColor, 0.58),
-          boxShadow: isDark ? "0 18px 40px rgba(2,6,23,0.45)" : "0 16px 36px rgba(15,23,42,0.12)",
+          boxShadow: isDark
+            ? "0 18px 40px rgba(2,6,23,0.45)"
+            : "0 16px 36px rgba(15,23,42,0.12)",
         },
       }}
     >
       <CardContent sx={{ p: 2.25 }}>
         <Stack spacing={1.25}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center" spacing={1}>
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={1}
+          >
             <Typography variant="subtitle1" fontWeight={800}>
               {goal.title}
             </Typography>
@@ -81,11 +108,16 @@ export default function ArchiveGoalCard({ goal, type, onRestore }) {
 
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
             <Chip size="small" label={goal.category} variant="outlined" />
-            <Chip size="small" label={`${goal.progress}/${goal.target} ${goal.unit}`} variant="outlined" />
+            <Chip
+              size="small"
+              label={`${goal.progress}/${goal.target} ${goal.unit}`}
+              variant="outlined"
+            />
           </Stack>
 
           <Typography variant="caption" color="text.secondary">
-            {statusLabel}: {formatDate(statusDate)} - {getRelativeTimeLabel(statusDate)}
+            {statusLabel}: {formatDate(statusDate)} -{" "}
+            {getRelativeTimeLabel(statusDate)}
           </Typography>
 
           <Typography variant="caption" color="text.secondary">
@@ -111,7 +143,9 @@ export default function ArchiveGoalCard({ goal, type, onRestore }) {
               },
             }}
           >
-            {isDeleted ? t("archivePage.restoreGoal") : t("archivePage.restoreToActive")}
+            {isDeleted
+              ? t("archivePage.restoreGoal")
+              : t("archivePage.restoreToActive")}
           </Button>
         </Stack>
       </CardContent>

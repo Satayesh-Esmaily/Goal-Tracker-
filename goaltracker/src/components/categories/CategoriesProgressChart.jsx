@@ -70,7 +70,9 @@ export default function CategoriesProgressChart({ categories }) {
       contentSx={{ height: "100%", display: "flex", flexDirection: "column" }}
     >
       {chartItems.length === 0 ? (
-        <Typography color="text.secondary">{t("categoriesPage.noDataYet")}</Typography>
+        <Typography color="text.secondary">
+          {t("categoriesPage.noDataYet")}
+        </Typography>
       ) : (
         <Stack spacing={1.15} sx={{ minHeight: 330, flex: 1 }}>
           <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
@@ -85,13 +87,17 @@ export default function CategoriesProgressChart({ categories }) {
             <Chip
               size="small"
               variant="outlined"
-              label={t("categoriesPage.progressChart.avgProgressChip", { value: avgProgress })}
+              label={t("categoriesPage.progressChart.avgProgressChip", {
+                value: avgProgress,
+              })}
               sx={{ fontWeight: 700, borderRadius: 1.5 }}
             />
             <Chip
               size="small"
               variant="outlined"
-              label={t("categoriesPage.progressChart.avgCompletedChip", { value: avgCompletion })}
+              label={t("categoriesPage.progressChart.avgCompletedChip", {
+                value: avgCompletion,
+              })}
               sx={{ fontWeight: 700, borderRadius: 1.5 }}
             />
           </Stack>

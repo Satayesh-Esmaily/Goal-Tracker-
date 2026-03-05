@@ -116,7 +116,8 @@ const resources = {
       },
       categoriesPage: {
         title: "Categories",
-        subtitle: "Track category performance with progress and completion insights.",
+        subtitle:
+          "Track category performance with progress and completion insights.",
         allCategories: "All Categories",
         noCategories: "No categories yet. Create your first goal.",
         noDataYet: "No category data yet.",
@@ -169,7 +170,8 @@ const resources = {
       },
       archivePage: {
         title: "Archive",
-        subtitle: "View completed and deleted goals, then restore any goal when needed.",
+        subtitle:
+          "View completed and deleted goals, then restore any goal when needed.",
         totalArchived: "Total Archived",
         completedOnly: "Completed Only",
         deletedOnly: "Deleted Only",
@@ -198,7 +200,8 @@ const resources = {
         restoreGoal: "Restore Goal",
         restoreToActive: "Restore to Active",
         emptyTitle: "No archived goals found",
-        emptyDesc: "Try changing filters or move goals to archive from the goals page.",
+        emptyDesc:
+          "Try changing filters or move goals to archive from the goals page.",
         goToGoals: "Go to Goals",
       },
       createGoalPage: {
@@ -240,7 +243,8 @@ const resources = {
         color: "Color",
         notes: "Notes",
         createGoal: "Create Goal",
-        saveFailed: "Failed to save goal. Check your internet/Firebase rules and try again.",
+        saveFailed:
+          "Failed to save goal. Check your internet/Firebase rules and try again.",
       },
       notFound: {
         title: "Page not found",
@@ -458,7 +462,8 @@ const resources = {
       },
       archivePage: {
         title: "آرشیو",
-        subtitle: "اهداف تکمیل‌شده و حذف‌شده را ببینید و هر زمان نیاز بود آن‌ها را بازیابی کنید.",
+        subtitle:
+          "اهداف تکمیل‌شده و حذف‌شده را ببینید و هر زمان نیاز بود آن‌ها را بازیابی کنید.",
         totalArchived: "کل آرشیو",
         completedOnly: "فقط تکمیل‌شده",
         deletedOnly: "فقط حذف‌شده",
@@ -487,7 +492,8 @@ const resources = {
         restoreGoal: "بازیابی هدف",
         restoreToActive: "بازگردانی به فعال",
         emptyTitle: "هدفی در آرشیو یافت نشد",
-        emptyDesc: "فیلترها را تغییر بدهید یا از صفحه اهداف، هدفی را به آرشیو منتقل کنید.",
+        emptyDesc:
+          "فیلترها را تغییر بدهید یا از صفحه اهداف، هدفی را به آرشیو منتقل کنید.",
         goToGoals: "رفتن به صفحه اهداف",
       },
       createGoalPage: {
@@ -529,7 +535,8 @@ const resources = {
         color: "رنگ",
         notes: "یادداشت",
         createGoal: "ایجاد هدف",
-        saveFailed: "ذخیره هدف انجام نشد. اینترنت یا قوانین Firebase را بررسی کرده و دوباره تلاش کنید.",
+        saveFailed:
+          "ذخیره هدف انجام نشد. اینترنت یا قوانین Firebase را بررسی کرده و دوباره تلاش کنید.",
       },
       notFound: {
         title: "صفحه پیدا نشد",
@@ -545,7 +552,8 @@ const resources = {
         subtitle: "زبان، تم و ترجیحات تجربه کاربری را شخصی‌سازی کنید.",
         profile: {
           title: "پروفایل",
-          subtitle: "اطلاعات شخصی کاربر را برای استفاده در برنامه به‌روزرسانی کنید.",
+          subtitle:
+            "اطلاعات شخصی کاربر را برای استفاده در برنامه به‌روزرسانی کنید.",
           name: "نام کامل",
           email: "ایمیل",
           mainFocus: "تمرکز اصلی",
@@ -572,8 +580,8 @@ const resources = {
         confirmText: "تمام اطلاعات ذخیره‌شده حذف خواهد شد.",
         colors: {
           blue: "اعمال تم آبی",
-          green: "اعمال تم مبز",
-          purple: "عمال تم بنفش",
+          green: "اعمال تم سبز",
+          purple: "اعمال تم بنفش",
           pink: "اعمال تم صورتی",
         },
       },
@@ -589,4 +597,3 @@ i18n.use(initReactI18next).init({
 });
 
 export default i18n;
-

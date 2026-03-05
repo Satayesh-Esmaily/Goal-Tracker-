@@ -235,7 +235,10 @@ export default function GoalCard({
           <Box
             sx={{
               display: "grid",
-              gridTemplateColumns: { xs: "1fr 1fr", sm: "repeat(4, minmax(0, 1fr))" },
+              gridTemplateColumns: {
+                xs: "1fr 1fr",
+                sm: "repeat(4, minmax(0, 1fr))",
+              },
               gap: 1,
             }}
           >

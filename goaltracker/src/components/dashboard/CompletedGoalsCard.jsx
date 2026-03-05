@@ -8,11 +8,18 @@ export default function CompletedGoalsCard({ goals }) {
   return (
     <SectionCard title={t("dashboard.completedPreview")}>
       {goals.length === 0 ? (
-        <Typography color="text.secondary">{t("dashboard.noCompleted")}</Typography>
+        <Typography color="text.secondary">
+          {t("dashboard.noCompleted")}
+        </Typography>
       ) : (
         <Stack spacing={1}>
           {goals.map((goal) => (
-            <Stack key={goal.id} direction="row" justifyContent="space-between" alignItems="center">
+            <Stack
+              key={goal.id}
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+            >
               <Typography variant="body2">{goal.title}</Typography>
               <Chip size="small" label={t("common.done")} color="success" />
             </Stack>
@@ -22,4 +29,3 @@ export default function CompletedGoalsCard({ goals }) {
     </SectionCard>
   );
 }
-

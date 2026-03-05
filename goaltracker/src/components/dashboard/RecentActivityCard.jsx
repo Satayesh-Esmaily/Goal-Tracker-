@@ -18,14 +18,23 @@ export default function RecentActivityCard({ recentLogs }) {
       }
     >
       {recentLogs.length === 0 ? (
-        <Typography color="text.secondary">{t("dashboard.noActivity")}</Typography>
+        <Typography color="text.secondary">
+          {t("dashboard.noActivity")}
+        </Typography>
       ) : (
         <Stack spacing={1}>
           {recentLogs.map((log, index) => (
             <Box key={log.id}>
-              <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Stack
+                direction="row"
+                justifyContent="space-between"
+                alignItems="center"
+              >
                 <Typography variant="body2">
-                  {t("dashboard.activityItem", { amount: log.amount, title: log.title })}
+                  {t("dashboard.activityItem", {
+                    amount: log.amount,
+                    title: log.title,
+                  })}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
                   {log.date.toLocaleDateString()}
@@ -39,4 +48,3 @@ export default function RecentActivityCard({ recentLogs }) {
     </SectionCard>
   );
 }
-

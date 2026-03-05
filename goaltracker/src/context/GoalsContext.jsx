@@ -91,7 +91,8 @@ export function GoalsProvider({ children }) {
           ...item.data(),
         }));
         const sortedCloudGoals = list.sort(
-          (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+          (a, b) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
         );
         const localGoals = parseStoredGoals(localStorage.getItem(storageKey));
 
@@ -198,10 +199,14 @@ export function GoalsProvider({ children }) {
     );
     const targetGoal = goals.find((goal) => goal.id === goalId);
     if (!targetGoal) return;
-    const nextProgress = Math.min(targetGoal.target, targetGoal.progress + step);
+    const nextProgress = Math.min(
+      targetGoal.target,
+      targetGoal.progress + step
+    );
     const becameCompleted =
       nextProgress >= targetGoal.target && targetGoal.status !== "completed";
-    const status = nextProgress >= targetGoal.target ? "completed" : targetGoal.status;
+    const status =
+      nextProgress >= targetGoal.target ? "completed" : targetGoal.status;
     await persistGoalPatch(goalId, {
       progress: nextProgress,
       status,
@@ -250,7 +255,11 @@ export function GoalsProvider({ children }) {
         };
       })
     );
-    if (!targetGoal || targetGoal.status === "completed" || targetGoal.status === "deleted") {
+    if (
+      !targetGoal ||
+      targetGoal.status === "completed" ||
+      targetGoal.status === "deleted"
+    ) {
       return;
     }
     persistGoalPatch(goalId, {

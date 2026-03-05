@@ -1,15 +1,30 @@
-import { Box, CircularProgress, LinearProgress, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  LinearProgress,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { useTranslation } from "react-i18next";
 import SectionCard from "../common/SectionCard";
 
-export default function CompletionInsightCard({ completedCount, totalGoals, percent }) {
+export default function CompletionInsightCard({
+  completedCount,
+  totalGoals,
+  percent,
+}) {
   const { t } = useTranslation();
 
   return (
     <SectionCard title={t("dashboard.completionInsight")}>
       <Stack direction="row" spacing={2} alignItems="center">
         <Box sx={{ position: "relative", display: "inline-flex" }}>
-          <CircularProgress variant="determinate" value={percent} size={92} thickness={4.8} />
+          <CircularProgress
+            variant="determinate"
+            value={percent}
+            size={92}
+            thickness={4.8}
+          />
           <Box
             sx={{
               top: 0,
@@ -29,16 +44,23 @@ export default function CompletionInsightCard({ completedCount, totalGoals, perc
         </Box>
         <Box sx={{ flex: 1 }}>
           <Typography variant="body2" color="text.secondary">
-            {t("dashboard.completedFrom", { completed: completedCount, total: totalGoals })}
+            {t("dashboard.completedFrom", {
+              completed: completedCount,
+              total: totalGoals,
+            })}
           </Typography>
           <LinearProgress
             variant="determinate"
             value={percent}
-            sx={{ mt: 1, height: 8, borderRadius: 999, bgcolor: "action.hover" }}
+            sx={{
+              mt: 1,
+              height: 8,
+              borderRadius: 999,
+              bgcolor: "action.hover",
+            }}
           />
         </Box>
       </Stack>
     </SectionCard>
   );
 }
-

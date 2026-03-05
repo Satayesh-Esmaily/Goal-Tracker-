@@ -27,7 +27,10 @@ export default function AppRoutes({
             <AppShell mode={mode} toggleTheme={toggleMode}>
               <Routes>
                 <Route path="/" element={<DashboardPage />} />
-                <Route path="/dashboard" element={<Navigate to="/" replace />} />
+                <Route
+                  path="/dashboard"
+                  element={<Navigate to="/" replace />}
+                />
                 <Route path="/goals" element={<GoalsListPage />} />
                 <Route path="/archive" element={<ArchivePage />} />
                 <Route path="/goals/new" element={<CreateGoalPage />} />
@@ -53,4 +56,3 @@ export default function AppRoutes({
     </Routes>
   );
 }
-

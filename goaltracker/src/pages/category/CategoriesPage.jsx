@@ -34,19 +34,22 @@ export default function CategoriesPage() {
     goals
       .filter((goal) => goal.status !== "deleted")
       .forEach((goal) => {
-      const name = goal.category || "Uncategorized";
-      const current = map.get(name) || {
-        name,
-        active: 0,
-        completed: 0,
-        paused: 0,
-        total: 0,
-        progressSum: 0,
-        targetSum: 0,
-      };
+        const name = goal.category || "Uncategorized";
+        const current = map.get(name) || {
+          name,
+          active: 0,
+          completed: 0,
+          paused: 0,
+          total: 0,
+          progressSum: 0,
+          targetSum: 0,
+        };
 
         const target = Math.max(1, Number(goal.target) || 1);
-        const progress = Math.max(0, Math.min(target, Number(goal.progress) || 0));
+        const progress = Math.max(
+          0,
+          Math.min(target, Number(goal.progress) || 0)
+        );
 
         current.total += 1;
         current.progressSum += progress;
@@ -61,18 +64,27 @@ export default function CategoriesPage() {
     return [...map.values()]
       .map((item) => ({
         ...item,
-        progressRate: item.targetSum === 0 ? 0 : Math.round((item.progressSum / item.targetSum) * 100),
+        progressRate:
+          item.targetSum === 0
+            ? 0
+            : Math.round((item.progressSum / item.targetSum) * 100),
       }))
       .sort((a, b) => b.progressRate - a.progressRate || b.total - a.total);
   }, [goals]);
   const totalCategories = categories.length;
   const totalGoals = categories.reduce((acc, item) => acc + item.total, 0);
   const activeGoals = categories.reduce((acc, item) => acc + item.active, 0);
-  const completedGoals = categories.reduce((acc, item) => acc + item.completed, 0);
+  const completedGoals = categories.reduce(
+    (acc, item) => acc + item.completed,
+    0
+  );
   const avgProgress =
     categories.length === 0
       ? 0
-      : Math.round(categories.reduce((acc, item) => acc + item.progressRate, 0) / categories.length);
+      : Math.round(
+          categories.reduce((acc, item) => acc + item.progressRate, 0) /
+            categories.length
+        );
 
   const statCardSx = {
     border: "1px solid",
@@ -80,17 +92,25 @@ export default function CategoriesPage() {
     borderRadius: 3,
     height: "100%",
     background: isDark
-      ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.92)}, ${alpha(
+      ? `linear-gradient(180deg, ${alpha(
           theme.palette.background.paper,
-          0.72
-        )})`
-      : `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.96)}, ${alpha("#f8fafc", 0.94)})`,
-    boxShadow: isDark ? "0 12px 30px rgba(2,6,23,0.32)" : "0 8px 24px rgba(15,23,42,0.08)",
-    transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
+          0.92
+        )}, ${alpha(theme.palette.background.paper, 0.72)})`
+      : `linear-gradient(180deg, ${alpha(
+          theme.palette.background.paper,
+          0.96
+        )}, ${alpha("#f8fafc", 0.94)})`,
+    boxShadow: isDark
+      ? "0 12px 30px rgba(2,6,23,0.32)"
+      : "0 8px 24px rgba(15,23,42,0.08)",
+    transition:
+      "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
     "&:hover": {
       transform: "translateY(-2px)",
       borderColor: alpha(primary, 0.55),
-      boxShadow: isDark ? "0 16px 34px rgba(2,6,23,0.44)" : "0 12px 28px rgba(15,23,42,0.12)",
+      boxShadow: isDark
+        ? "0 16px 34px rgba(2,6,23,0.44)"
+        : "0 12px 28px rgba(15,23,42,0.12)",
     },
   };
 
@@ -104,8 +124,14 @@ export default function CategoriesPage() {
             borderColor: alpha(primary, 0.35),
             borderRadius: 3.2,
             background: isDark
-              ? `linear-gradient(120deg, ${alpha(primary, 0.24)}, ${alpha(theme.palette.background.paper, 0.9)})`
-              : `linear-gradient(120deg, ${alpha(primary, 0.12)}, ${alpha("#ffffff", 0.94)})`,
+              ? `linear-gradient(120deg, ${alpha(primary, 0.24)}, ${alpha(
+                  theme.palette.background.paper,
+                  0.9
+                )})`
+              : `linear-gradient(120deg, ${alpha(primary, 0.12)}, ${alpha(
+                  "#ffffff",
+                  0.94
+                )})`,
           }}
         >
           <CardContent sx={{ p: { xs: 2, md: 3 } }}>
@@ -125,7 +151,10 @@ export default function CategoriesPage() {
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <CategoryRoundedIcon sx={{ color: primary }} fontSize="small" />
+                  <CategoryRoundedIcon
+                    sx={{ color: primary }}
+                    fontSize="small"
+                  />
                   <Typography variant="body2" color="text.secondary">
                     {t("categoriesPage.stats.categories")}
                   </Typography>
@@ -134,7 +163,9 @@ export default function CategoriesPage() {
                   {totalCategories}
                 </Typography>
                 <Typography variant="caption" color="text.secondary">
-                  {t("categoriesPage.stats.goalsTracked", { count: totalGoals })}
+                  {t("categoriesPage.stats.goalsTracked", {
+                    count: totalGoals,
+                  })}
                 </Typography>
               </CardContent>
             </Card>
@@ -143,7 +174,10 @@ export default function CategoriesPage() {
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <FlagCircleOutlinedIcon sx={{ color: theme.palette.warning.main }} fontSize="small" />
+                  <FlagCircleOutlinedIcon
+                    sx={{ color: theme.palette.warning.main }}
+                    fontSize="small"
+                  />
                   <Typography variant="body2" color="text.secondary">
                     {t("categoriesPage.active")}
                   </Typography>
@@ -161,7 +195,10 @@ export default function CategoriesPage() {
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <TaskAltRoundedIcon sx={{ color: theme.palette.success.main }} fontSize="small" />
+                  <TaskAltRoundedIcon
+                    sx={{ color: theme.palette.success.main }}
+                    fontSize="small"
+                  />
                   <Typography variant="body2" color="text.secondary">
                     {t("categoriesPage.completed")}
                   </Typography>
@@ -179,7 +216,10 @@ export default function CategoriesPage() {
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <AutoGraphRoundedIcon sx={{ color: primary }} fontSize="small" />
+                  <AutoGraphRoundedIcon
+                    sx={{ color: primary }}
+                    fontSize="small"
+                  />
                   <Typography variant="body2" color="text.secondary">
                     {t("categoriesPage.stats.avgProgress")}
                   </Typography>
@@ -205,14 +245,19 @@ export default function CategoriesPage() {
               py: 6,
               textAlign: "center",
               background: isDark
-                ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.85)}, ${alpha(
+                ? `linear-gradient(180deg, ${alpha(
                     theme.palette.background.paper,
-                    0.65
-                  )})`
-                : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha("#f8fafc", 0.9)})`,
+                    0.85
+                  )}, ${alpha(theme.palette.background.paper, 0.65)})`
+                : `linear-gradient(180deg, ${alpha("#ffffff", 0.96)}, ${alpha(
+                    "#f8fafc",
+                    0.9
+                  )})`,
             }}
           >
-            <Typography color="text.secondary">{t("categoriesPage.noCategories")}</Typography>
+            <Typography color="text.secondary">
+              {t("categoriesPage.noCategories")}
+            </Typography>
           </Card>
         ) : (
           <Stack spacing={2}>

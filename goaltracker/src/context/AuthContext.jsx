@@ -94,8 +94,10 @@ export function AuthProvider({ children }) {
       const next = {
         ...prev,
         ...updates,
-        name: typeof updates.name === "string" ? updates.name.trim() : prev.name,
-        email: typeof updates.email === "string" ? updates.email.trim() : prev.email,
+        name:
+          typeof updates.name === "string" ? updates.name.trim() : prev.name,
+        email:
+          typeof updates.email === "string" ? updates.email.trim() : prev.email,
       };
       localStorage.setItem(LOCAL_FAKE_AUTH_KEY, JSON.stringify(next));
       return next;

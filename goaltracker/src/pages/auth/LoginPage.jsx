@@ -111,8 +111,14 @@ export default function LoginPage() {
         px: 2,
         bgcolor: "background.default",
         backgroundImage: isDark
-          ? `radial-gradient(900px 360px at 80% 10%, ${alpha(primary, 0.2)}, transparent 70%)`
-          : `radial-gradient(900px 360px at 80% 10%, ${alpha(primary, 0.12)}, transparent 70%)`,
+          ? `radial-gradient(900px 360px at 80% 10%, ${alpha(
+              primary,
+              0.2
+            )}, transparent 70%)`
+          : `radial-gradient(900px 360px at 80% 10%, ${alpha(
+              primary,
+              0.12
+            )}, transparent 70%)`,
       }}
     >
       <Card
@@ -125,12 +131,14 @@ export default function LoginPage() {
           borderRadius: 4,
           overflow: "hidden",
           background: isDark
-            ? `linear-gradient(140deg, ${alpha(theme.palette.background.paper, 0.95)}, ${alpha(
+            ? `linear-gradient(140deg, ${alpha(
                 theme.palette.background.paper,
-                0.82
-              )})`
+                0.95
+              )}, ${alpha(theme.palette.background.paper, 0.82)})`
             : `linear-gradient(140deg, #ffffff, ${alpha("#f8fafc", 0.92)})`,
-          boxShadow: isDark ? "0 24px 48px rgba(2,6,23,0.46)" : "0 20px 40px rgba(15,23,42,0.12)",
+          boxShadow: isDark
+            ? "0 24px 48px rgba(2,6,23,0.46)"
+            : "0 20px 40px rgba(15,23,42,0.12)",
         }}
       >
         <Grid container>
@@ -142,8 +150,14 @@ export default function LoginPage() {
                 p: 3,
                 color: isDark ? "#dbeafe" : "#0f172a",
                 background: isDark
-                  ? `linear-gradient(145deg, ${alpha(primary, 0.28)}, ${alpha("#0f172a", 0.86)})`
-                  : `linear-gradient(145deg, ${alpha(primary, 0.16)}, ${alpha("#e2e8f0", 0.56)})`,
+                  ? `linear-gradient(145deg, ${alpha(primary, 0.28)}, ${alpha(
+                      "#0f172a",
+                      0.86
+                    )})`
+                  : `linear-gradient(145deg, ${alpha(primary, 0.16)}, ${alpha(
+                      "#e2e8f0",
+                      0.56
+                    )})`,
                 display: "flex",
                 flexDirection: "column",
                 justifyContent: "space-between",
@@ -180,17 +194,35 @@ export default function LoginPage() {
                     size="small"
                     variant="outlined"
                     startIcon={<TranslateRoundedIcon fontSize="small" />}
-                    onClick={() => i18n.changeLanguage(i18n.language === "fa" ? "en" : "fa")}
-                    sx={{ borderRadius: 999, minWidth: 94, textTransform: "none", fontWeight: 700 }}
+                    onClick={() =>
+                      i18n.changeLanguage(i18n.language === "fa" ? "en" : "fa")
+                    }
+                    sx={{
+                      borderRadius: 999,
+                      minWidth: 94,
+                      textTransform: "none",
+                      fontWeight: 700,
+                    }}
                   >
                     {i18n.language === "fa" ? "EN" : "FA"}
                   </Button>
                   <Button
                     size="small"
                     variant="outlined"
-                    startIcon={mode === "dark" ? <LightModeRoundedIcon fontSize="small" /> : <DarkModeRoundedIcon fontSize="small" />}
+                    startIcon={
+                      mode === "dark" ? (
+                        <LightModeRoundedIcon fontSize="small" />
+                      ) : (
+                        <DarkModeRoundedIcon fontSize="small" />
+                      )
+                    }
                     onClick={toggleMode}
-                    sx={{ borderRadius: 999, minWidth: 104, textTransform: "none", fontWeight: 700 }}
+                    sx={{
+                      borderRadius: 999,
+                      minWidth: 104,
+                      textTransform: "none",
+                      fontWeight: 700,
+                    }}
                   >
                     {mode === "dark" ? t("common.light") : t("common.dark")}
                   </Button>
@@ -244,7 +276,11 @@ export default function LoginPage() {
                           onClick={() => setShowPassword((prev) => !prev)}
                           onMouseDown={(event) => event.preventDefault()}
                         >
-                          {showPassword ? <VisibilityOffRoundedIcon /> : <VisibilityRoundedIcon />}
+                          {showPassword ? (
+                            <VisibilityOffRoundedIcon />
+                          ) : (
+                            <VisibilityRoundedIcon />
+                          )}
                         </IconButton>
                       </InputAdornment>
                     }
@@ -253,26 +289,44 @@ export default function LoginPage() {
 
                 <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5}>
                   <FormControl fullWidth>
-                    <InputLabel id="focus-label">{t("loginPage.mainFocus")}</InputLabel>
+                    <InputLabel id="focus-label">
+                      {t("loginPage.mainFocus")}
+                    </InputLabel>
                     <Select
                       labelId="focus-label"
                       value={focusArea}
                       label={t("loginPage.mainFocus")}
                       onChange={(event) => setFocusArea(event.target.value)}
                     >
-                      <MenuItem value="study">{t("loginPage.focus.study")}</MenuItem>
-                      <MenuItem value="work">{t("loginPage.focus.work")}</MenuItem>
-                      <MenuItem value="health">{t("loginPage.focus.health")}</MenuItem>
-                      <MenuItem value="personal">{t("loginPage.focus.personal")}</MenuItem>
+                      <MenuItem value="study">
+                        {t("loginPage.focus.study")}
+                      </MenuItem>
+                      <MenuItem value="work">
+                        {t("loginPage.focus.work")}
+                      </MenuItem>
+                      <MenuItem value="health">
+                        {t("loginPage.focus.health")}
+                      </MenuItem>
+                      <MenuItem value="personal">
+                        {t("loginPage.focus.personal")}
+                      </MenuItem>
                     </Select>
                   </FormControl>
 
-                  <Box sx={{ minWidth: 180, display: "flex", alignItems: "center" }}>
+                  <Box
+                    sx={{
+                      minWidth: 180,
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
                     <FormControlLabel
                       control={
                         <Checkbox
                           checked={rememberMe}
-                          onChange={(event) => setRememberMe(event.target.checked)}
+                          onChange={(event) =>
+                            setRememberMe(event.target.checked)
+                          }
                         />
                       }
                       label={t("loginPage.rememberMe")}
@@ -287,7 +341,12 @@ export default function LoginPage() {
                   size="large"
                   startIcon={<LoginRoundedIcon />}
                   onClick={handleLogin}
-                  sx={{ borderRadius: 2.5, textTransform: "none", fontWeight: 800, py: 1.1 }}
+                  sx={{
+                    borderRadius: 2.5,
+                    textTransform: "none",
+                    fontWeight: 800,
+                    py: 1.1,
+                  }}
                 >
                   {t("loginPage.continue")}
                 </Button>

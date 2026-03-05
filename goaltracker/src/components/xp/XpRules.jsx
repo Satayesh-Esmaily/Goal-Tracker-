@@ -26,7 +26,9 @@ export function getGoalLogXp(goal) {
   const typeKey = (goal.type || "daily").toLowerCase();
   const priorityMultiplier = PRIORITY_MULTIPLIER[priorityKey] ?? 1.2;
   const typeMultiplier = TYPE_MULTIPLIER[typeKey] ?? 1;
-  const xpPerLog = Math.round(BASE_XP_PER_LOG * priorityMultiplier * typeMultiplier);
+  const xpPerLog = Math.round(
+    BASE_XP_PER_LOG * priorityMultiplier * typeMultiplier
+  );
 
   return (goal.logs || []).reduce((acc) => acc + xpPerLog, 0);
 }
@@ -52,7 +54,10 @@ export function getGoalCompletionXp(goal) {
 
 export function calculateXpStats(goals, streak) {
   const logsXp = goals.reduce((acc, goal) => acc + getGoalLogXp(goal), 0);
-  const completionXp = goals.reduce((acc, goal) => acc + getGoalCompletionXp(goal), 0);
+  const completionXp = goals.reduce(
+    (acc, goal) => acc + getGoalCompletionXp(goal),
+    0
+  );
   const streakBonus = getStreakBonus(streak);
   const xpTotal = logsXp + completionXp + streakBonus;
   const level = Math.floor(Math.sqrt(xpTotal / 100)) + 1;
@@ -65,4 +70,3 @@ export function calculateXpStats(goals, streak) {
     completionXp,
   };
 }
-

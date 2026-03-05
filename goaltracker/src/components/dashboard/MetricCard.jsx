@@ -13,14 +13,31 @@ export default function MetricCard({ title, value, icon, color, subtitle }) {
         overflow: "hidden",
       }}
     >
-      <Box sx={{ position: "absolute", insetInlineStart: 0, top: 0, width: "100%", height: 3, bgcolor: color }} />
+      <Box
+        sx={{
+          position: "absolute",
+          insetInlineStart: 0,
+          top: 0,
+          width: "100%",
+          height: 3,
+          bgcolor: color,
+        }}
+      />
       <CardContent sx={{ p: 2.25 }}>
-        <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+        <Stack
+          direction="row"
+          justifyContent="space-between"
+          alignItems="flex-start"
+        >
           <Box>
             <Typography variant="body2" color="text.secondary">
               {title}
             </Typography>
-            <Typography variant="h4" fontWeight={800} sx={{ mt: 0.5, lineHeight: 1.1 }}>
+            <Typography
+              variant="h4"
+              fontWeight={800}
+              sx={{ mt: 0.5, lineHeight: 1.1 }}
+            >
               {value}
             </Typography>
             <Typography variant="caption" color="text.secondary">
@@ -45,4 +62,3 @@ export default function MetricCard({ title, value, icon, color, subtitle }) {
     </Card>
   );
 }
-

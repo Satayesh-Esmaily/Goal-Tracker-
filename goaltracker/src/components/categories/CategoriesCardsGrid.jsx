@@ -44,12 +44,14 @@ function CategoryCard({ category, index }) {
         height: "100%",
         overflow: "hidden",
         background: isDark
-          ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.95)}, ${alpha(
+          ? `linear-gradient(180deg, ${alpha(
               theme.palette.background.paper,
-              0.75
-            )})`
+              0.95
+            )}, ${alpha(theme.palette.background.paper, 0.75)})`
           : "linear-gradient(180deg, rgba(255,255,255,1), rgba(248,250,252,0.9))",
-        boxShadow: isDark ? "0 12px 28px rgba(2,6,23,0.32)" : "0 8px 20px rgba(15,23,42,0.08)",
+        boxShadow: isDark
+          ? "0 12px 28px rgba(2,6,23,0.32)"
+          : "0 8px 20px rgba(15,23,42,0.08)",
         transition: "transform 180ms ease, border-color 180ms ease",
         "&:hover": {
           transform: "translateY(-2px)",
@@ -60,16 +62,26 @@ function CategoryCard({ category, index }) {
       <Box sx={{ height: 4, width: "100%", bgcolor: barColor }} />
       <CardContent sx={{ p: 2.25 }}>
         <Stack spacing={1.35}>
-          <Stack direction="row" justifyContent="space-between" alignItems="center">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+          >
             <Stack direction="row" spacing={1} alignItems="center">
-              <Chip size="small" label={`#${index + 1}`} sx={{ fontWeight: 700 }} />
+              <Chip
+                size="small"
+                label={`#${index + 1}`}
+                sx={{ fontWeight: 700 }}
+              />
               <Typography variant="h6" fontWeight={800}>
                 {category.name}
               </Typography>
             </Stack>
             <Chip
               size="small"
-              label={t("categoriesPage.cards.goalsCount", { count: category.total })}
+              label={t("categoriesPage.cards.goalsCount", {
+                count: category.total,
+              })}
               color="primary"
               variant="outlined"
             />
@@ -95,10 +107,19 @@ function CategoryCard({ category, index }) {
           <Divider />
 
           <Box>
-            <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.55 }}>
+            <Stack
+              direction="row"
+              justifyContent="space-between"
+              alignItems="center"
+              sx={{ mb: 0.55 }}
+            >
               <Stack direction="row" spacing={0.75} alignItems="center">
                 <AutoGraphRoundedIcon sx={{ fontSize: 18, color: barColor }} />
-                <Typography variant="caption" color="text.secondary" sx={{ fontWeight: 700 }}>
+                <Typography
+                  variant="caption"
+                  color="text.secondary"
+                  sx={{ fontWeight: 700 }}
+                >
                   {t("categoriesPage.cards.progress")}
                 </Typography>
               </Stack>
@@ -119,7 +140,11 @@ function CategoryCard({ category, index }) {
                 },
               }}
             />
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.7, display: "block" }}>
+            <Typography
+              variant="caption"
+              color="text.secondary"
+              sx={{ mt: 0.7, display: "block" }}
+            >
               {t("categoriesPage.cards.trackedUnits", {
                 progress: Math.round(category.progressSum),
                 target: Math.round(category.targetSum),
@@ -152,7 +177,8 @@ export default function CategoriesCardsGrid({ categories }) {
       all: categories.length,
       active: categories.filter((category) => category.active > 0).length,
       completed: categories.filter((category) => category.completed > 0).length,
-      attention: categories.filter((category) => category.progressRate < 40).length,
+      attention: categories.filter((category) => category.progressRate < 40)
+        .length,
     }),
     [categories]
   );
@@ -160,27 +186,39 @@ export default function CategoriesCardsGrid({ categories }) {
   const filteredCategories = useMemo(() => {
     let result = categories;
 
-    if (filter === "active") result = result.filter((category) => category.active > 0);
-    if (filter === "completed") result = result.filter((category) => category.completed > 0);
-    if (filter === "attention") result = result.filter((category) => category.progressRate < 40);
+    if (filter === "active")
+      result = result.filter((category) => category.active > 0);
+    if (filter === "completed")
+      result = result.filter((category) => category.completed > 0);
+    if (filter === "attention")
+      result = result.filter((category) => category.progressRate < 40);
 
     if (query.trim()) {
       const q = query.trim().toLowerCase();
-      result = result.filter((category) => category.name.toLowerCase().includes(q));
+      result = result.filter((category) =>
+        category.name.toLowerCase().includes(q)
+      );
     }
 
     const sorted = [...result];
-    if (sortBy === "progress_desc") sorted.sort((a, b) => b.progressRate - a.progressRate);
-    if (sortBy === "progress_asc") sorted.sort((a, b) => a.progressRate - b.progressRate);
+    if (sortBy === "progress_desc")
+      sorted.sort((a, b) => b.progressRate - a.progressRate);
+    if (sortBy === "progress_asc")
+      sorted.sort((a, b) => a.progressRate - b.progressRate);
     if (sortBy === "goals_desc") sorted.sort((a, b) => b.total - a.total);
-    if (sortBy === "name_asc") sorted.sort((a, b) => a.name.localeCompare(b.name));
+    if (sortBy === "name_asc")
+      sorted.sort((a, b) => a.name.localeCompare(b.name));
 
     return sorted;
   }, [categories, filter, query, sortBy]);
 
   const filterPills = [
     { key: "all", label: t("categoriesPage.filters.all"), icon: null },
-    { key: "active", label: t("categoriesPage.filters.active"), icon: <FlagCircleOutlinedIcon sx={{ fontSize: 16 }} /> },
+    {
+      key: "active",
+      label: t("categoriesPage.filters.active"),
+      icon: <FlagCircleOutlinedIcon sx={{ fontSize: 16 }} />,
+    },
     {
       key: "completed",
       label: t("categoriesPage.filters.completed"),
