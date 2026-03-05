@@ -1,5 +1,8 @@
 Goal Tracker
 
+    Goal Tracker is a multi-page React web application designed to help users create goals,
+    track progress, and visualize their achievements through an interactive dashboard.
+
  📊Features:
  
   1: Dashboard Features:
@@ -164,7 +167,7 @@ Goal Tracker
 
    ______________________________________________________________________________________________________________________
 
-  4: Goal Form Page/Edit Form Page:
+  5: Goal Form Page/Edit Form Page:
 
      1️⃣ Structured Goal Form
 
@@ -190,7 +193,7 @@ Goal Tracker
              Notes 
  ______________________________________________________________________________________________________________________
 
-   5: Settings Page:
+   6: Settings Page:
     
         1️⃣ Language & Theme
 
@@ -217,7 +220,7 @@ Goal Tracker
            Allows users to clear or reset stored data when needed
   ______________________________________________________________________________________________________________________
 
-   6: Fake Login Page:
+   7: Fake Login Page:
 
      Fake Login Page
        The application includes a demo login page to simulate user authentication.
@@ -233,7 +236,7 @@ Goal Tracker
            Health
    ______________________________________________________________________________________________________________________
 
-   7: Navigation Bar Features
+   8: Navigation Bar Features
    
        The application includes a navigation bar that provides quick access to important actions and tools.
           Quick Access Tools
@@ -245,4 +248,65 @@ Goal Tracker
              A global search bar that allows users to quickly search within the application.
           Branding
               Displays the application name and logo for clear branding and identity.
+
+  ______________________________________________________________________________________________________________________
+
+  How to run:
   
+      1. Navigate to the Folder 
+      cd goaltracker
+      2. Install dependencies
+      npm install (i)
+      3. Run the Project
+      npm run dev 
+      and open the localhost on your browser
+  ______________________________________________________________________________________________________________________
+
+  Language & Direction Support (RTL / LTR)
+
+      The application supports both Left-to-Right (LTR) and Right-to-Left (RTL) languages to provide a better experience for       different users.
+      Supported Languages
+         English (LTR)
+         Persian / Farsi (RTL)
+      Automatic Layout Direction
+      When the user changes the language, the layout direction automatically adjusts:
+         English → LTR layout
+         Persian → RTL layout
+      This ensures that:
+        Text alignment - UI components - Navigation flow
+        all adapt correctly to the selected language.
+ ______________________________________________________________________________________________________________________
+
+ ⭐ XP & Streak System
+
+    The app uses a gamified system where users earn XP from progress logs and completed goals, plus a streak bonus for           consistency.
+    XP Rules
+     - Every progress log starts with a base of **10 XP**.
+     - XP per log is scaled by:
+     - **Priority multiplier**: `low=1`, `medium=1.2`, `high=1.5`
+     - **Type multiplier**: `daily=1`, `count=1.1`, `time=1.2`
+     - Formula:
+     - `xpPerLog = round(10 × priorityMultiplier × typeMultiplier)`
+     - Goal log XP:
+     - `goalLogXp = xpPerLog × numberOfLogs`
+     - Important:
+     - XP depends on the **number of logs**, not the `amount` value inside each log.
+
+    Completion XP
+     - If a goal is completed: **+50 XP**
+     - If completed on or before deadline: **+20 XP** extra
+
+    **Streak Rules**
+      - Streak is based on unique activity days across logged progress.
+      - Consecutive logged days increase streak.
+      - Streak becomes `0` only if the latest activity is **more than 1 day** behind today.
+      - (So a 1-day gap is still tolerated in this implementation.)
+
+    **Streak Bonus**
+      - `3+ days` → `+5 XP`
+      - `7+ days` → `+10 XP`
+      - `14+ days` → `+20 XP`
+
+    **Total XP and Level**
+     - `xpTotal = logsXp + completionXp + streakBonus`
+     - `level = floor(sqrt(xpTotal / 100)) + 1`
