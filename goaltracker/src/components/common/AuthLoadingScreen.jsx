@@ -40,8 +40,15 @@ export default function AuthLoadingScreen() {
           />
         </Box>
 
-        <Typography fontWeight={800} textAlign="center">
+        <Typography fontWeight={800} 
+           variant="body2"
+          textAlign="center"
+          sx={{
+            mt: -0.5,
+            color: isDark ? "rgba(226,232,240,0.9)" : "text.secondary",
+          }}>
           {isFa ? "لودینگ داشبورد..." : "Loading Dashboard..."}
+          
         </Typography>
         <Typography
           variant="body2"
