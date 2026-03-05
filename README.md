@@ -71,6 +71,22 @@ Goal Tracker
              Total number of goals
              Number of active goals
 
+   ______________________________________________________________________________________________________________________
+
+  Team Contributions:
+
+  This project was developed collaboratively by:
+
+  Satayesh Esmaeily  
+  - Implemented the Dashboard page and Categories page, including Category Progress Charts.  
+  - Created Login page and Archive page.  
+  - Added Splash/loading screen for page load.
+
+  Setayesh Azizi  
+  - Implemented the Goals page and Settings page.  
+  - Added Firebase cloud database integration and charts(Recharts).  
+  - Implemented Export feature to download goals as JSON.
+
     ______________________________________________________________________________________________________________________
 
   2: Goal Page Features:
@@ -310,22 +326,7 @@ Goal Tracker
     **Total XP and Level**
      - `xpTotal = logsXp + completionXp + streakBonus`
      - `level = floor(sqrt(xpTotal / 100)) + 1`
-  ______________________________________________________________________________________________________________________
-
-  Team Contributions:
-
-  This project was developed collaboratively by:
-
-  Satayesh Esmaeily  
-  - Implemented the Dashboard page and Categories page, including Category Progress Charts.  
-  - Created Login page and Archive page.  
-  - Added Splash/loading screen for page load.
-
-  Setayesh Azizi  
-  - Implemented the Goals page and Settings page.  
-  - Added Firebase cloud database integration and charts(Recharts).  
-  - Implemented Export feature to download goals as JSON.
-
+ 
   ______________________________________________________________________________________________________________________
   
 Screenshots:
