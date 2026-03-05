@@ -44,6 +44,11 @@ export default function GoalCard({
     { label: t("goalCard.end"), value: formatDate(goal.endDate) },
     { label: t("goalCard.deadline"), value: formatDate(goal.deadline) },
   ].filter((item) => item.value);
+  const detailItems = [
+    { label: t("goalForm.frequency"), value: goal.frequency },
+    { label: t("goalForm.startTime"), value: goal.startTime },
+    { label: t("goalForm.endTime"), value: goal.endTime },
+  ].filter((item) => String(item.value || "").trim() !== "");
 
   const progressColor = goal.color || "#2563eb";
 
@@ -76,6 +81,10 @@ export default function GoalCard({
     fontSize: "0.86rem",
     letterSpacing: 0,
     width: "100%",
+    columnGap: 0.65,
+    "& .MuiButton-startIcon": {
+      margin: 0,
+    },
   };
 
   return (
@@ -197,6 +206,29 @@ export default function GoalCard({
                   {item.label}: {item.value}
                 </Typography>
               ))}
+            </Stack>
+          )}
+
+          {(detailItems.length > 0 || String(goal.notes || "").trim() !== "") && (
+            <Stack spacing={0.35} sx={{ color: isDark ? "#cbd5e1" : "#334155" }}>
+              {detailItems.map((item) => (
+                <Typography key={item.label} variant="caption" fontWeight={700}>
+                  {item.label}: {item.value}
+                </Typography>
+              ))}
+              {String(goal.notes || "").trim() !== "" && (
+                <Typography
+                  variant="caption"
+                  sx={{
+                    display: "-webkit-box",
+                    WebkitLineClamp: 2,
+                    WebkitBoxOrient: "vertical",
+                    overflow: "hidden",
+                  }}
+                >
+                  {t("goalForm.notes")}: {goal.notes}
+                </Typography>
+              )}
             </Stack>
           )}
 

@@ -137,6 +137,8 @@ export function GoalsProvider({ children }) {
       endDate: payload.endDate || "",
       deadline: payload.deadline || "",
       frequency: payload.frequency || "",
+      startTime: payload.startTime || "",
+      endTime: payload.endTime || "",
       color: payload.color || "#2563eb",
       notes: payload.notes || "",
       logs: [],
