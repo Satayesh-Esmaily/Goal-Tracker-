@@ -310,3 +310,18 @@ Goal Tracker
     **Total XP and Level**
      - `xpTotal = logsXp + completionXp + streakBonus`
      - `level = floor(sqrt(xpTotal / 100)) + 1`
+  ______________________________________________________________________________________________________________________
+
+  Team Contributions:
+
+
+
+
+
+
+
+
+
+  ______________________________________________________________________________________________________________________
+
+![image alt]([goaltracker/src/readme images/photo_2026-03-05_14-26-03.jpg](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/6f4eff1e74de1fa5c8c2509c418b1541d9e11f4c/goaltracker/src/readme%20images/photo_2026-03-05_14-26-03.jpg))
