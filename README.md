@@ -314,13 +314,17 @@ Goal Tracker
 
   Team Contributions:
 
+  This project was developed collaboratively by:
 
+  Satayesh Esmaeily  
+  - Implemented the Dashboard page and Categories page, including Category Progress Charts.  
+  - Created Login page and Archive page.  
+  - Added Splash/loading screen for page load.
 
-
-
-
-
-
+  Setayesh Azizi  
+  - Implemented the Goals page and Settings page.  
+  - Added Firebase cloud database integration and charts(Recharts).  
+  - Implemented Export feature to download goals as JSON.
 
   ______________________________________________________________________________________________________________________
   
