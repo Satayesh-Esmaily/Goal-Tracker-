@@ -11,6 +11,7 @@ import {
   Tabs,
   TextField,
   Typography,
+  InputAdornment,
   useTheme,
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
@@ -21,6 +22,7 @@ import ArchiveRoundedIcon from "@mui/icons-material/ArchiveRounded";
 import DeleteForeverRoundedIcon from "@mui/icons-material/DeleteForeverRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
+import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
@@ -256,6 +258,13 @@ export default function ArchivePage() {
                 label={t("archivePage.search")}
                 value={search}
                 onChange={(event) => setSearch(event.target.value)}
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchRoundedIcon fontSize="small" />
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 select
