@@ -34,6 +34,7 @@ import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme as useAppTheme } from "../../context/ThemeContext";
+import AuthLoadingScreen from "../../components/common/AuthLoadingScreen";
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export default function LoginPage() {
   const [rememberMe, setRememberMe] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
 
   const displayName = useMemo(() => String(name || "").trim(), [name]);
   const from = location.state?.from?.pathname || "/";
@@ -62,6 +64,7 @@ export default function LoginPage() {
 
   const handleLogin = async () => {
     setError("");
+    setIsSigningIn(false);
 
     if (!name.trim()) {
       setError(t("loginPage.errors.fullNameRequired"));
@@ -79,12 +82,25 @@ export default function LoginPage() {
     }
 
     try {
+      const loadingStart = Date.now();
+      const minLoadingMs = 3000;
+      setIsSigningIn(true);
       await loginFake(displayName, { email, focusArea });
+      const elapsed = Date.now() - loadingStart;
+      const remaining = Math.max(0, minLoadingMs - elapsed);
+      if (remaining > 0) {
+        await new Promise((resolve) => window.setTimeout(resolve, remaining));
+      }
       navigate(from, { replace: true });
     } catch {
+      setIsSigningIn(false);
       setError(t("loginPage.errors.loginFailed"));
     }
   };
+
+  if (isSigningIn) {
+    return <AuthLoadingScreen />;
+  }
 
   return (
     <Box
