@@ -11,7 +11,7 @@ export default function DashboardStatsGrid({ stats }) {
 
   return (
     <Grid container spacing={2}>
-      <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+      <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
         <MetricCard
           title={t("dashboard.activeGoals")}
           value={stats.activeCount}
@@ -20,7 +20,7 @@ export default function DashboardStatsGrid({ stats }) {
           icon={<FlagCircleOutlinedIcon fontSize="small" />}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+      <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
         <MetricCard
           title={t("dashboard.completed")}
           value={stats.completedCount}
@@ -29,7 +29,7 @@ export default function DashboardStatsGrid({ stats }) {
           icon={<CheckCircleOutlineRoundedIcon fontSize="small" />}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+      <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
         <MetricCard
           title={t("dashboard.currentStreak")}
           value={`${stats.streak}d`}
@@ -38,7 +38,7 @@ export default function DashboardStatsGrid({ stats }) {
           icon={<LocalFireDepartmentOutlinedIcon fontSize="small" />}
         />
       </Grid>
-      <Grid size={{ xs: 12, sm: 6, lg: 3 }}>
+      <Grid size={{ xs: 6, sm: 6, lg: 3 }}>
         <MetricCard
           title={t("dashboard.totalXP")}
           value={stats.xpTotal}

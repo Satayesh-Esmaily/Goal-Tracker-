@@ -58,7 +58,7 @@ export default function ExportButton({
       startIcon={<DownloadRoundedIcon />}
       onClick={handleExport}
       disabled={disabled}
-      sx={{ px: isFa ? 2.75 : 2 }}
+      sx={{ px: isFa ? 2.75 : 2, minHeight: 44, width: "100%" }}
     >
       {isFa ? "خروجی گرفتن" : "Export"}
     </Button>

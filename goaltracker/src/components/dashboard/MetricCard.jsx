@@ -28,6 +28,7 @@ export default function MetricCard({ title, value, icon, color, subtitle }) {
           direction="row"
           justifyContent="space-between"
           alignItems="flex-start"
+          spacing={1}
         >
           <Box>
             <Typography variant="body2" color="text.secondary">
@@ -36,7 +37,11 @@ export default function MetricCard({ title, value, icon, color, subtitle }) {
             <Typography
               variant="h4"
               fontWeight={800}
-              sx={{ mt: 0.5, lineHeight: 1.1 }}
+              sx={{
+                mt: 0.5,
+                lineHeight: 1.1,
+                fontSize: { xs: "2rem", sm: "2.2rem" },
+              }}
             >
               {value}
             </Typography>
@@ -46,13 +51,14 @@ export default function MetricCard({ title, value, icon, color, subtitle }) {
           </Box>
           <Box
             sx={{
-              width: 38,
-              height: 38,
+              width: { xs: 34, sm: 38 },
+              height: { xs: 34, sm: 38 },
               borderRadius: 2,
               display: "grid",
               placeItems: "center",
               bgcolor: color,
               color: "#fff",
+              flexShrink: 0,
             }}
           >
             {icon}
