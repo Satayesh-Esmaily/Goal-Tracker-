@@ -4,7 +4,8 @@ import { Link as RouterLink } from "react-router-dom";
 import SectionCard from "../common/SectionCard";
 
 export default function CompletedGoalsCard({ goals }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
 
   return (
     <SectionCard
@@ -35,7 +36,12 @@ export default function CompletedGoalsCard({ goals }) {
               alignItems={{ xs: "flex-start", sm: "center" }}
               spacing={0.75}
             >
-              <Stack direction="row" spacing={1} alignItems="center">
+              <Stack
+                direction="row"
+                spacing={isFa ? 1.5 : 1}
+                alignItems="center"
+                sx={{ columnGap: isFa ? 1.25 : 0 }}
+              >
                 <Typography variant="body2">{goal.title}</Typography>
                 <Chip size="small" label={t("common.done")} color="success" />
               </Stack>

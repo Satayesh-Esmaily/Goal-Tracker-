@@ -282,11 +282,17 @@ export default function GoalCard({
                     : alpha(theme.palette.primary.main, 0.1),
                 }}
               >
-                <Stack direction="row" spacing={0.9} alignItems="center">
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  useFlexGap
+                  sx={{ gap: 0.8 }}
+                >
                   <LaunchRoundedIcon
                     sx={{
                       fontSize: 16,
                       color: theme.palette.primary.main,
+                      flexShrink: 0,
                     }}
                   />
                   <Typography
@@ -299,7 +305,7 @@ export default function GoalCard({
                         : theme.palette.primary.dark,
                     }}
                   >
-                    Open Goal Details
+                    {t("goalCard.openGoalDetails")}
                   </Typography>
                 </Stack>
                 <Typography
@@ -311,7 +317,7 @@ export default function GoalCard({
                       : alpha(theme.palette.primary.dark, 0.9),
                   }}
                 >
-                  View
+                  {t("goalCard.view")}
                 </Typography>
               </Stack>
             </Box>
