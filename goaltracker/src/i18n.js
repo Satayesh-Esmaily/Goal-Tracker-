@@ -55,6 +55,8 @@ const resources = {
         noActivity: "No activity yet.",
         activityItem: "+{{amount}} on {{title}}",
         completedPreview: "Completed Preview",
+        openArchive: "Open Archive",
+        openInArchive: "Open in Archive",
         noCompleted: "No completed goals yet.",
       },
       loginPage: {
@@ -372,6 +374,8 @@ const resources = {
         noActivity: "هنوز فعالیتی ثبت نشده.",
         activityItem: "+{{amount}} روی {{title}}",
         completedPreview: "پیش‌نمایش اهداف تکمیل‌شده",
+        openArchive: "رفتن به آرشیو",
+        openInArchive: "نمایش در آرشیو",
         noCompleted: "هنوز هدف تکمیل‌شده‌ای وجود ندارد.",
       },
       loginPage: {
