@@ -263,7 +263,7 @@ function AppShell({ children, mode, toggleTheme }) {
             </Typography>
           </Stack>
 
-          <Stack direction="row" spacing={1} sx={{ mb: 1.25 }}>
+          <Stack direction="row" gap={1.5} sx={{ mb: 1.25 }}>
             <Button
               component="a"
               href="https://github.com/Satayesh-Esmaily/Goal-Tracker-"

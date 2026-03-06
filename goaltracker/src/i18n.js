@@ -14,6 +14,7 @@ const resources = {
         language: "Language",
         theme: "Theme",
         github: "GitHub",
+        logout: "Logout",
       },
       common: {
         dark: "Dark",
@@ -334,6 +335,7 @@ const resources = {
         language: "زبان",
         theme: "تم",
         github: "گیت‌هاب",
+        logout: "خروج",
       },
       common: {
         dark: "تاریک",
