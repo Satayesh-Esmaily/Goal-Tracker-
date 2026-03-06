@@ -39,6 +39,7 @@ export default function ActiveGoalsSection({
                 goal={goal}
                 onAddProgress={() => onAddProgress(goal.id, 1)}
                 onTogglePause={() => onTogglePause(goal.id)}
+                onViewDetails={() => navigate(`/goals/${goal.id}`)}
                 onEdit={() => navigate(`/goals/${goal.id}/edit`)}
                 onDelete={() => onDelete(goal)}
               />

@@ -472,6 +472,7 @@ export default function GoalsListPage() {
               goals={filteredGoals}
               onAddProgress={(goalId) => addProgress(goalId, 1)}
               onTogglePause={togglePause}
+              onViewDetails={(goalId) => navigate(`/goals/${goalId}`)}
               onEdit={(goalId) => navigate(`/goals/${goalId}/edit`)}
               onDelete={(goalId) => {
                 const targetGoal = visibleGoals.find(

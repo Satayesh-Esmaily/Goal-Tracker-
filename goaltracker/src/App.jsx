@@ -41,6 +41,7 @@ function AppInner() {
       "/",
       "/dashboard",
       "/goals",
+      "/goals/:id",
       "/goals/new",
       "/goals/:id/edit",
       "/archive",

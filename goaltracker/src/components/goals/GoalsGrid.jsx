@@ -8,6 +8,7 @@ export default function GoalsGrid({
   onTogglePause,
   onEdit,
   onDelete,
+  onViewDetails,
 }) {
   if (!Array.isArray(goals) || goals.length === 0) {
     return <EmptyState message="No goals found" />;
@@ -23,6 +24,7 @@ export default function GoalsGrid({
             onTogglePause={() => onTogglePause && onTogglePause(goal?.id)}
             onEdit={() => onEdit && onEdit(goal?.id)}
             onDelete={() => onDelete && onDelete(goal?.id)}
+            onViewDetails={() => onViewDetails && onViewDetails(goal?.id)}
           />
         </Grid>
       ))}

@@ -4,6 +4,7 @@ import CreateGoalPage from "../pages/create goal/CreateGoalPage";
 import EditGoalPage from "../pages/create goal/EditGoalPage";
 import Settings from "../pages/setting/Settings";
 import GoalsListPage from "../pages/goal/GoalsListPage";
+import GoalDetailsPage from "../pages/goal/GoalDetailsPage";
 import CategoriesPage from "../pages/category/CategoriesPage";
 import ArchivePage from "../pages/archive/ArchivePage";
 import NotFoundPage from "../pages/not found/NotFoundPage";
@@ -32,6 +33,7 @@ export default function AppRoutes({
                   element={<Navigate to="/" replace />}
                 />
                 <Route path="/goals" element={<GoalsListPage />} />
+                <Route path="/goals/:id" element={<GoalDetailsPage />} />
                 <Route path="/archive" element={<ArchivePage />} />
                 <Route path="/goals/new" element={<CreateGoalPage />} />
                 <Route path="/goals/:id/edit" element={<EditGoalPage />} />

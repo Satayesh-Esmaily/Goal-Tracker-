@@ -3,6 +3,7 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
+import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
 import {
   Box,
   Card,
@@ -17,6 +18,7 @@ import {
   Tooltip,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { useNavigate } from "react-router-dom";
 
 function formatDate(date) {
   if (!date) return null;
@@ -31,10 +33,21 @@ export default function GoalCard({
   onTogglePause,
   onDelete,
   onEdit,
+  onViewDetails,
 }) {
+  const navigate = useNavigate();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { t } = useTranslation();
+  const handleViewDetails = () => {
+    if (typeof onViewDetails === "function") {
+      onViewDetails();
+      return;
+    }
+    if (goal?.id) {
+      navigate(`/goals/${goal.id}`);
+    }
+  };
 
   const percent = Math.round((goal.progress / Math.max(goal.target, 1)) * 100);
   const isCompleted = goal.status === "completed";
@@ -230,6 +243,24 @@ export default function GoalCard({
                 </Typography>
               )}
             </Stack>
+          )}
+
+          {goal?.id && (
+            <Button
+              size="small"
+              variant="text"
+              startIcon={<VisibilityRoundedIcon />}
+              onClick={handleViewDetails}
+              sx={{
+                ...chipButtonSx,
+                width: "fit-content",
+                minHeight: 30,
+                px: 0.5,
+                color: theme.palette.primary.main,
+              }}
+            >
+              View Details
+            </Button>
           )}
 
           <Box
