@@ -1,6 +1,6 @@
 Goal Tracker
 
-[ View Live Demo]() | [ View Code on GitHub]()
+[🌐 View Live Demo](https://goal-tracker-alpha-seven.vercel.app/) | [🎥 View Video Demo]() |  [💻 View Code on GitHub](https://github.com/Satayesh-Esmaily/Goal-Tracker-)
 
    Goal Tracker is a multi page React web application designed to help users create and manage goals, track their progress, and visualize achievements through an interactive dashboard. It provides features such as progress tracking, categories, streak monitoring, and a responsive user interface.
    
@@ -341,4 +341,7 @@ Screenshots:
 6. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-27.jpg)
 7. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-36.jpg)
 8. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-43.jpg)
-9.![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg)
+9. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photodetails_2026-03-06_18-15-19.jpg)
+10. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photo1_2026-03-06_18-15-48.jpg)
+
+11.![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg)
