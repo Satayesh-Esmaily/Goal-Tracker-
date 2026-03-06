@@ -1,7 +1,9 @@
 Goal Tracker
 
-    Goal Tracker is a multi-page React web application designed to help users create goals,
-    track progress, and visualize their achievements through an interactive dashboard.
+[ View Live Demo]() | [ View Code on GitHub]()
+
+   Goal Tracker is a multi page React web application designed to help users create and manage goals, track their progress, and visualize achievements through an interactive dashboard. It provides features such as progress tracking, categories, streak monitoring, and a responsive user interface.
+   
 
  📊Features:
  
@@ -78,7 +80,7 @@ ________________________________________________________________________________
   This project was developed collaboratively by:
 
   Satayesh Esmaeily  
-  - Implemented the Dashboard page and Categories page, including Category Progress Charts.  
+  - Implemented the Dashboard page and Categories pages.  
   - Created Login page and Archive page.  
   - Added Splash/loading screen for page load.
 
@@ -339,4 +341,4 @@ Screenshots:
 6. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-27.jpg)
 7. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-36.jpg)
 8. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-43.jpg)
-9. <img width="1920" height="1021" alt="image" src="https://github.com/user-attachments/assets/531db842-12e9-42ca-b007-f51da439713e" />
+9.![image alt]([https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_16-54-42.jpg](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg))
