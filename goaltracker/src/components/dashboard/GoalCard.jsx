@@ -3,7 +3,7 @@ import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import PlayCircleOutlineRoundedIcon from "@mui/icons-material/PlayCircleOutlineRounded";
-import VisibilityRoundedIcon from "@mui/icons-material/VisibilityRounded";
+import LaunchRoundedIcon from "@mui/icons-material/LaunchRounded";
 import {
   Box,
   Card,
@@ -17,6 +17,7 @@ import {
   useTheme,
   Tooltip,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
@@ -246,29 +247,82 @@ export default function GoalCard({
           )}
 
           {goal?.id && (
-            <Button
-              size="small"
-              variant="text"
-              startIcon={<VisibilityRoundedIcon />}
+            <Box
+              component="button"
               onClick={handleViewDetails}
+              type="button"
               sx={{
-                ...chipButtonSx,
-                width: "fit-content",
-                minHeight: 30,
-                px: 0.5,
-                color: theme.palette.primary.main,
+                mt: 0.25,
+                p: 0,
+                width: "100%",
+                border: "none",
+                outline: "none",
+                cursor: "pointer",
+                borderRadius: 2,
+                textAlign: "left",
+                background: "transparent",
+                transition: "transform 140ms ease",
+                "&:hover": { transform: "translateX(2px)" },
               }}
             >
-              View Details
-            </Button>
+              <Stack
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                sx={{
+                  px: 1.2,
+                  py: 0.9,
+                  borderRadius: 2,
+                  border: "1px solid",
+                  borderColor: isDark
+                    ? alpha(theme.palette.primary.main, 0.45)
+                    : alpha(theme.palette.primary.main, 0.34),
+                  bgcolor: isDark
+                    ? alpha(theme.palette.primary.main, 0.14)
+                    : alpha(theme.palette.primary.main, 0.1),
+                }}
+              >
+                <Stack direction="row" spacing={0.9} alignItems="center">
+                  <LaunchRoundedIcon
+                    sx={{
+                      fontSize: 16,
+                      color: theme.palette.primary.main,
+                    }}
+                  />
+                  <Typography
+                    variant="caption"
+                    sx={{
+                      fontWeight: 800,
+                      letterSpacing: "0.02em",
+                      color: isDark
+                        ? alpha(theme.palette.primary.light, 0.95)
+                        : theme.palette.primary.dark,
+                    }}
+                  >
+                    Open Goal Details
+                  </Typography>
+                </Stack>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    fontWeight: 700,
+                    color: isDark
+                      ? alpha(theme.palette.primary.light, 0.9)
+                      : alpha(theme.palette.primary.dark, 0.9),
+                  }}
+                >
+                  View
+                </Typography>
+              </Stack>
+            </Box>
           )}
 
           <Box
             sx={{
               display: "grid",
               gridTemplateColumns: {
-                xs: "1fr 1fr",
-                sm: "repeat(4, minmax(0, 1fr))",
+                xs: "repeat(3, minmax(0, 1fr))",
+                sm: "repeat(3, minmax(0, 1fr))",
               },
               gap: 1,
             }}
@@ -314,7 +368,7 @@ export default function GoalCard({
               }
               arrow
             >
-              <span>
+              <span style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                 <Button
                   size="small"
                   variant="outlined"
@@ -330,6 +384,8 @@ export default function GoalCard({
                   sx={{
                     ...chipButtonSx,
                     justifyContent: "center",
+                    width: "fit-content",
+                    minWidth: 96,
                     color: isDark ? "#fde68a" : "#92400e",
                     bgcolor: isDark
                       ? "rgba(146,64,14,0.45)"
@@ -353,7 +409,7 @@ export default function GoalCard({
             </Tooltip>
 
             <Tooltip title={t("goalCard.edit")} arrow>
-              <span>
+              <span style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                 <Button
                   size="small"
                   variant="outlined"
@@ -362,6 +418,8 @@ export default function GoalCard({
                   sx={{
                     ...chipButtonSx,
                     justifyContent: "center",
+                    width: "fit-content",
+                    minWidth: 96,
                     color: isDark ? "#bbf7d0" : "#166534",
                     bgcolor: isDark
                       ? "rgba(22,101,52,0.45)"
@@ -383,7 +441,7 @@ export default function GoalCard({
             </Tooltip>
 
             <Tooltip title={t("goalCard.delete")} arrow>
-              <span>
+              <span style={{ width: "100%", display: "flex", justifyContent: "center" }}>
                 <Button
                   size="small"
                   color="error"
@@ -393,6 +451,8 @@ export default function GoalCard({
                   sx={{
                     ...chipButtonSx,
                     justifyContent: "center",
+                    width: "fit-content",
+                    minWidth: 96,
                     borderColor: isDark
                       ? "rgba(239,68,68,0.82)"
                       : "rgba(220,38,38,0.45)",

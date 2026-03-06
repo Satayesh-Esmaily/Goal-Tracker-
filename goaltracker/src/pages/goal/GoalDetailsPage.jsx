@@ -128,6 +128,15 @@ export function GoalDetailsPage() {
       : goal.status === "paused"
       ? "warning"
       : "info";
+  const chipSx = {
+    height: 28,
+    borderRadius: 999,
+    fontWeight: 700,
+    fontSize: "0.78rem",
+    letterSpacing: "0.01em",
+    borderColor: isDark ? "rgba(148,163,184,0.36)" : "rgba(148,163,184,0.45)",
+    bgcolor: isDark ? "rgba(30,41,59,0.48)" : "rgba(241,245,249,0.95)",
+  };
 
   const cardSx = {
     border: "1px solid",
@@ -137,6 +146,17 @@ export function GoalDetailsPage() {
     background: isDark
       ? `linear-gradient(180deg, ${alpha(theme.palette.background.paper, 0.92)}, ${alpha(theme.palette.background.paper, 0.78)})`
       : `linear-gradient(180deg, ${alpha("#ffffff", 0.98)}, ${alpha("#f8fafc", 0.94)})`,
+  };
+  const actionButtonSx = {
+    minHeight: 42,
+    px: 2.25,
+    borderRadius: 2.2,
+    textTransform: "none",
+    fontWeight: 800,
+    letterSpacing: "0.01em",
+    whiteSpace: "nowrap",
+    minWidth: 132,
+    "& .MuiButton-startIcon": { marginRight: 0.7 },
   };
 
   return (
@@ -160,23 +180,92 @@ export function GoalDetailsPage() {
                   {goal.title}
                 </Typography>
                 <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap>
-                  <Chip size="small" label={goal.category || "Personal"} />
-                  <Chip size="small" label={goal.type || "daily"} variant="outlined" />
-                  <Chip size="small" label={goal.priority || "Medium"} variant="outlined" />
+                  <Chip
+                    size="small"
+                    label={goal.category || "Personal"}
+                    variant="outlined"
+                    sx={chipSx}
+                  />
+                  <Chip
+                    size="small"
+                    label={String(goal.type || "daily").replace(/^\w/, (c) => c.toUpperCase())}
+                    variant="outlined"
+                    sx={chipSx}
+                  />
+                  <Chip
+                    size="small"
+                    label={goal.priority || "Medium"}
+                    variant="outlined"
+                    sx={chipSx}
+                  />
                   <Chip
                     size="small"
                     color={statusColor}
                     label={t(`common.${goal.status || "active"}`)}
-                    sx={{ textTransform: "capitalize" }}
+                    sx={{
+                      ...chipSx,
+                      textTransform: "capitalize",
+                      color: isDark ? "#e2e8f0" : "#0f172a",
+                    }}
                   />
                 </Stack>
               </Stack>
 
-              <Stack direction={{ xs: "column", sm: "row" }} gap={1.1} sx={{ width: { xs: "100%", md: "auto" } }}>
-                <Button variant="outlined" startIcon={<ArrowBackRoundedIcon />} onClick={() => navigate("/goals")} fullWidth>
+              <Stack
+                direction={{ xs: "column", sm: "row" }}
+                gap={1}
+                sx={{
+                  width: { xs: "100%", md: "auto" },
+                  p: { xs: 0, sm: 0.6 },
+                  borderRadius: { xs: 0, sm: 2.4 },
+                  border: { xs: "none", sm: "1px solid" },
+                  borderColor: { sm: isDark ? "rgba(148,163,184,0.25)" : "rgba(148,163,184,0.32)" },
+                  bgcolor: {
+                    sm: isDark ? "rgba(15,23,42,0.36)" : "rgba(255,255,255,0.68)",
+                  },
+                  backdropFilter: { sm: "blur(4px)" },
+                }}
+              >
+                <Button
+                  variant="outlined"
+                  startIcon={<ArrowBackRoundedIcon />}
+                  onClick={() => navigate("/goals")}
+                  sx={{
+                    ...actionButtonSx,
+                    width: { xs: "100%", sm: "auto" },
+                    minWidth: { xs: 0, sm: 128 },
+                    color: isDark ? alpha(primary, 0.95) : primary,
+                    borderColor: isDark ? alpha(primary, 0.55) : alpha(primary, 0.42),
+                    bgcolor: isDark ? alpha(primary, 0.12) : alpha(primary, 0.08),
+                    "&:hover": {
+                      borderColor: primary,
+                      bgcolor: isDark ? alpha(primary, 0.2) : alpha(primary, 0.14),
+                    },
+                  }}
+                >
                   {t("goalDetails.back")}
                 </Button>
-                <Button variant="contained" startIcon={<EditRoundedIcon />} onClick={() => navigate(`/goals/${goal.id}/edit`)} fullWidth>
+                <Button
+                  variant="contained"
+                  startIcon={<EditRoundedIcon />}
+                  onClick={() => navigate(`/goals/${goal.id}/edit`)}
+                  sx={{
+                    ...actionButtonSx,
+                    width: { xs: "100%", sm: "auto" },
+                    minWidth: { xs: 0, sm: 156 },
+                    background: `linear-gradient(135deg, ${primary}, ${alpha(primary, 0.72)})`,
+                    color: theme.palette.primary.contrastText,
+                    boxShadow: isDark
+                      ? `0 10px 22px ${alpha(primary, 0.35)}`
+                      : `0 8px 16px ${alpha(primary, 0.24)}`,
+                    "&:hover": {
+                      background: `linear-gradient(135deg, ${primary}, ${alpha(primary, 0.84)})`,
+                      boxShadow: isDark
+                        ? `0 12px 26px ${alpha(primary, 0.42)}`
+                        : `0 10px 20px ${alpha(primary, 0.28)}`,
+                    },
+                  }}
+                >
                   {t("goalDetails.editGoal")}
                 </Button>
               </Stack>
