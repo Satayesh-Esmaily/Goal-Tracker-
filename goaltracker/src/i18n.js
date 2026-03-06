@@ -114,6 +114,30 @@ const resources = {
         noGoalsFound: "No goals found.",
         lastUpdated: "Last updated",
       },
+      goalDetails: {
+        notFoundTitle: "Goal Not Found",
+        notFoundDesc: "This goal does not exist or may have been removed.",
+        backToGoals: "Back To Goals",
+        back: "Back",
+        editGoal: "Edit Goal",
+        progress: "Progress",
+        current: "Current",
+        remaining: "Remaining",
+        logs: "Logs",
+        progressOverview: "Progress Overview",
+        planningSchedule: "Planning & Schedule",
+        startDate: "Start Date",
+        endDate: "End Date",
+        deadline: "Deadline",
+        startTime: "Start Time",
+        endTime: "End Time",
+        frequency: "Frequency",
+        activityTimeline: "Activity Timeline",
+        records: "{{count}} records",
+        noLogs: "No logs yet.",
+        notes: "Notes",
+        noNotes: "No notes added for this goal.",
+      },
       categoriesPage: {
         title: "Categories",
         subtitle:
@@ -407,6 +431,30 @@ const resources = {
         noGoalsFound: "هدفی پیدا نشد.",
         lastUpdated: "آخرین بروزرسانی",
       },
+      goalDetails: {
+        notFoundTitle: "هدف پیدا نشد",
+        notFoundDesc: "این هدف وجود ندارد یا ممکن است حذف شده باشد.",
+        backToGoals: "برگشت به اهداف",
+        back: "برگشت",
+        editGoal: "ویرایش هدف",
+        progress: "پیشرفت",
+        current: "فعلی",
+        remaining: "باقی‌مانده",
+        logs: "لاگ‌ها",
+        progressOverview: "نمای کلی پیشرفت",
+        planningSchedule: "برنامه‌ریزی و زمان‌بندی",
+        startDate: "تاریخ شروع",
+        endDate: "تاریخ پایان",
+        deadline: "ددلاین",
+        startTime: "زمان شروع",
+        endTime: "زمان پایان",
+        frequency: "تکرار",
+        activityTimeline: "تایم‌لاین فعالیت",
+        records: "{{count}} رکورد",
+        noLogs: "هنوز لاگی ثبت نشده است.",
+        notes: "یادداشت‌ها",
+        noNotes: "برای این هدف یادداشتی ثبت نشده است.",
+      },
       categoriesPage: {
         title: "دسته‌بندی‌ها",
         subtitle: "عملکرد دسته‌بندی‌ها را با شاخص پیشرفت و تکمیل پیگیری کنید.",
@@ -597,3 +645,5 @@ i18n.use(initReactI18next).init({
 });
 
 export default i18n;
+
+
