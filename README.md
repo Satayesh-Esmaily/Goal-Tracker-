@@ -1,6 +1,6 @@
 Goal Tracker
 
-[🌐 View Live Demo](https://goal-tracker-alpha-seven.vercel.app/) | [💻 View Code on GitHub](https://goal-tracker-project.vercel.app/)
+[🌐 View Live Demo](https://goal-tracker-project.vercel.app/) | [💻 View Code on GitHub](https://github.com/Satayesh-Esmaily/Goal-Tracker-)
 
    Goal Tracker is a multi page React web application designed to help users create and manage goals, track their progress, and visualize achievements through an interactive dashboard. It provides features such as progress tracking, categories, streak monitoring, and a responsive user interface.
    
@@ -363,4 +363,7 @@ Screenshots:
 10.Moblie Responsive View
 ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photo1_2026-03-06_18-15-48.jpg)
 
-11. Not Found Page (404)![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg)
+11.Tablet Responsive View
+![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photorespon_2026-03-07_12-44-23.jpg)
+
+12. Not Found Page (404)![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg)
