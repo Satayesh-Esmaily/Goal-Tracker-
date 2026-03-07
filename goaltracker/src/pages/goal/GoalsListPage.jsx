@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import { alpha } from "@mui/material/styles";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
-import DownloadRoundedIcon from "@mui/icons-material/DownloadRounded";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
 import PauseCircleOutlineRoundedIcon from "@mui/icons-material/PauseCircleOutlineRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
@@ -109,46 +108,6 @@ export default function GoalsListPage() {
     [visibleGoals, tab, search, sortBy]
   );
 
-  const handleExport = () => {
-    if (!visibleGoals.length) return;
-    const goalsToExport = visibleGoals.map(
-      ({
-        id,
-        title,
-        category,
-        type,
-        target,
-        progress,
-        status,
-        startDate,
-        endDate,
-        deadline,
-        logs,
-      }) => ({
-        id,
-        title,
-        category,
-        type,
-        target,
-        progress,
-        status,
-        startDate,
-        endDate,
-        deadline,
-        logs,
-      })
-    );
-
-    const dataStr = `data:text/json;charset=utf-8,${encodeURIComponent(
-      JSON.stringify(goalsToExport, null, 2)
-    )}`;
-    const downloadAnchorNode = document.createElement("a");
-    downloadAnchorNode.setAttribute("href", dataStr);
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
-  };
-
   const statCardSx = {
     border: "1px solid",
     borderColor: "divider",
@@ -214,20 +173,48 @@ export default function GoalsListPage() {
                     : "Manage, filter, and track all your goals."}
                 </Typography>
               </Stack>
-              <Stack direction={{ xs: "column", sm: "row" }} gap={1.5}>
-                <Button
-                  variant="contained"
-                  startIcon={<AddRoundedIcon />}
-                  onClick={() => navigate("/goals/new")}
-                >
-                  {isFa ? "هدف جدید" : "New Goal"}
-                </Button>
-                <ExportButton
-                  goals={visibleGoals}
-                  fileName="goals_export.json"
-                  disabled={visibleGoals.length === 0}
-                />
-              </Stack>
+              <Box
+                sx={{
+                  p: 0.75,
+                  borderRadius: 999,
+                  border: "1px solid",
+                  borderColor: alpha(primary, isDark ? 0.5 : 0.42),
+                  bgcolor: isDark
+                    ? "rgba(15,23,42,0.55)"
+                    : "rgba(255,255,255,0.72)",
+                  width: { xs: "100%", sm: "auto" },
+                }}
+              >
+                <Stack direction="row" spacing={1.1} sx={{ width: "100%" }}>
+                  <Button
+                    variant="contained"
+                    startIcon={<AddRoundedIcon />}
+                    onClick={() => navigate("/goals/new")}
+                    sx={{
+                      minHeight: 44,
+                      minWidth: { xs: 0, sm: 170 },
+                      flex: { xs: 1, sm: "0 0 auto" },
+                      fontWeight: 800,
+                      textTransform: "none",
+                      whiteSpace: "nowrap",
+                      borderRadius: 999,
+                    }}
+                  >
+                    {isFa ? "هدف جدید" : "New Goal"}
+                  </Button>
+                  <ExportButton
+                    goals={visibleGoals}
+                    fileName="goals_export.json"
+                    disabled={visibleGoals.length === 0}
+                    sx={{
+                      minHeight: 44,
+                      minWidth: { xs: 0, sm: 170 },
+                      flex: { xs: 1, sm: "0 0 auto" },
+                      borderRadius: 999,
+                    }}
+                  />
+                </Stack>
+              </Box>
             </Stack>
           </CardContent>
         </Card>

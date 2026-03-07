@@ -6,6 +6,7 @@ export default function ExportButton({
   goals,
   fileName = "goals_export.json",
   disabled = false,
+  sx = {},
 }) {
   const { i18n } = useTranslation();
   const isFa = i18n.language === "fa";
@@ -58,7 +59,14 @@ export default function ExportButton({
       startIcon={<DownloadRoundedIcon />}
       onClick={handleExport}
       disabled={disabled}
-      sx={{ px: isFa ? 2.75 : 2, minHeight: 44, width: "100%" }}
+      sx={{
+        px: isFa ? 2.75 : 2,
+        minHeight: 44,
+        fontWeight: 700,
+        textTransform: "none",
+        whiteSpace: "nowrap",
+        ...sx,
+      }}
     >
       {isFa ? "خروجی گرفتن" : "Export"}
     </Button>

@@ -12,7 +12,10 @@ import {
   DialogTitle,
   DialogContent,
   DialogActions,
+  useTheme,
 } from "@mui/material";
+import { alpha } from "@mui/material/styles";
+import WarningAmberIcon from "@mui/icons-material/WarningAmber";
 import { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -22,6 +25,8 @@ import { useGoals } from "../../context/GoalsContext";
 export default function EditGoalPage() {
   const { id } = useParams();
   const { t } = useTranslation();
+  const theme = useTheme();
+  const isDark = theme.palette.mode === "dark";
   const { goals, updateGoal, deleteGoal } = useGoals();
   const [openDelete, setOpenDelete] = useState(false);
   const goal = goals.find(
@@ -42,7 +47,7 @@ export default function EditGoalPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Typography variant="h4" fontWeight={800}>
-          ✏️ Edit Goal
+          Edit Goal
         </Typography>
 
         <Box
@@ -128,19 +133,47 @@ export default function EditGoalPage() {
 
               <Divider sx={{ my: 3 }} />
 
-              <Typography variant="subtitle1" color="error" fontWeight={700}>
-                Danger Zone
-              </Typography>
-
-              <Stack direction="row" spacing={2} sx={{ mt: 2 }}>
-                <Button
-                  color="error"
-                  variant="outlined"
-                  onClick={() => setOpenDelete(true)}
-                >
-                  Delete Goal
-                </Button>
-              </Stack>
+              <Card
+                elevation={0}
+                sx={{
+                  border: "1px solid",
+                  borderColor: alpha(theme.palette.error.main, 0.35),
+                  borderRadius: 3,
+                  overflow: "hidden",
+                  background: isDark
+                    ? `linear-gradient(180deg, ${alpha(
+                        theme.palette.background.paper,
+                        0.92
+                      )}, ${alpha(theme.palette.error.dark, 0.12)})`
+                    : `linear-gradient(180deg, ${alpha("#ffffff", 0.98)}, ${alpha(
+                        theme.palette.error.light,
+                        0.08
+                      )})`,
+                  boxShadow: isDark
+                    ? "0 10px 26px rgba(2,6,23,0.32)"
+                    : "0 10px 22px rgba(15,23,42,0.08)",
+                  mt: 1,
+                }}
+              >
+                <CardContent>
+                  <Typography variant="h6" gutterBottom sx={{ color: "error.main" }}>
+                    Danger Zone
+                  </Typography>
+                  <Button
+                    startIcon={<WarningAmberIcon />}
+                    color="error"
+                    variant="contained"
+                    onClick={() => setOpenDelete(true)}
+                    sx={{
+                      "&:hover": {
+                        background: "linear-gradient(45deg, #ff1744, #f50057)",
+                      },
+                    }}
+                  >
+                    Delete Goal
+                  </Button>
+                </CardContent>
+              </Card>
             </CardContent>
           </Card>
         </Box>
