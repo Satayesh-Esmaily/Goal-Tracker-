@@ -82,7 +82,7 @@ ________________________________________________________________________________
   Satayesh Esmaeily  
   - Implemented the Dashboard page and Categories pages.  
   - Created Login page and Archive page.  
-  - Added Splash/loading screen for page load.
+  - Added Splash/loading screen for page load and Streak System.
 
   Setayesh Azizi  
   - Implemented the Goals page and Settings page.  
