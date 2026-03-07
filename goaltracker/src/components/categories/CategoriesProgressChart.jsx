@@ -11,7 +11,8 @@ function shortLabel(text, max = 12) {
 }
 
 export default function CategoriesProgressChart({ categories }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
@@ -51,6 +52,12 @@ export default function CategoriesProgressChart({ categories }) {
           size="small"
           icon={<AutoGraphRoundedIcon sx={{ fontSize: 16 }} />}
           label={t("categoriesPage.progressChart.analytics")}
+          sx={{
+            "& .MuiChip-label": { px: isFa ? 0.75 : 1 },
+            "& .MuiChip-icon": isFa
+              ? { marginLeft: 0.35, marginRight: 0 }
+              : undefined,
+          }}
         />
       }
       sx={{

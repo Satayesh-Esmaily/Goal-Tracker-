@@ -126,6 +126,10 @@ export default function DashboardHero({
               px: isFa ? 2.75 : 2,
               width: { xs: "100%", sm: "auto" },
               minHeight: 44,
+              gap: isFa ? 0.45 : 0.7,
+              "& .MuiButton-startIcon": isFa
+                ? { marginLeft: 0.35, marginRight: 0 }
+                : undefined,
             }}
           >
             {t("dashboard.newGoal")}
@@ -143,7 +147,14 @@ export default function DashboardHero({
               component={RouterLink}
               to="/goals"
               endIcon={<ArrowOutwardRoundedIcon />}
-              sx={{ px: isFa ? 2.75 : 2, minHeight: 44 }}
+              sx={{
+                px: isFa ? 2.75 : 2,
+                minHeight: 44,
+                gap: isFa ? 0.45 : 0.7,
+                "& .MuiButton-endIcon": isFa
+                  ? { marginRight: 0.35, marginLeft: 0 }
+                  : undefined,
+              }}
             >
               {t("dashboard.manageGoals")}
             </Button>
@@ -152,6 +163,12 @@ export default function DashboardHero({
               goals={goals}
               fileName="dashboard_goals.json"
               disabled={goals.length === 0}
+              sx={{
+                gap: isFa ? 0.45 : 0.7,
+                "& .MuiButton-startIcon": isFa
+                  ? { marginLeft: 0.35, marginRight: 0 }
+                  : undefined,
+              }}
             />
           </Box>
         </Stack>

@@ -93,6 +93,7 @@ export function GoalDetailsPage() {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
+  const isFa = i18n.language === "fa";
   const locale = i18n.language === "fa" ? "fa-IR" : "en-US";
   const { goals } = useGoals();
 
@@ -156,7 +157,13 @@ export function GoalDetailsPage() {
     letterSpacing: "0.01em",
     whiteSpace: "nowrap",
     minWidth: 132,
-    "& .MuiButton-startIcon": { marginRight: 0.7 },
+    gap: isFa ? 0.45 : 0.7,
+    "& .MuiButton-startIcon": isFa
+      ? { marginLeft: 0.35, marginRight: 0 }
+      : { marginRight: 0.7, marginLeft: 0 },
+    "& .MuiButton-endIcon": isFa
+      ? { marginRight: 0.35, marginLeft: 0 }
+      : { marginLeft: 0.7, marginRight: 0 },
   };
 
   return (

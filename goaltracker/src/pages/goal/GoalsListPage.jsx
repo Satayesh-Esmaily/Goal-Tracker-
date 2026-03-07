@@ -185,7 +185,14 @@ export default function GoalsListPage() {
                   width: { xs: "100%", sm: "auto" },
                 }}
               >
-                <Stack direction="row" spacing={1.1} sx={{ width: "100%" }}>
+                <Box
+                  sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexDirection: "row",
+                    gap: isFa ? 1.25 : 1.1,
+                  }}
+                >
                   <Button
                     variant="contained"
                     startIcon={<AddRoundedIcon />}
@@ -198,6 +205,10 @@ export default function GoalsListPage() {
                       textTransform: "none",
                       whiteSpace: "nowrap",
                       borderRadius: 999,
+                      gap: isFa ? 0.45 : 0.7,
+                      "& .MuiButton-startIcon": isFa
+                        ? { marginLeft: 0.35, marginRight: 0 }
+                        : undefined,
                     }}
                   >
                     {isFa ? "هدف جدید" : "New Goal"}
@@ -211,9 +222,13 @@ export default function GoalsListPage() {
                       minWidth: { xs: 0, sm: 170 },
                       flex: { xs: 1, sm: "0 0 auto" },
                       borderRadius: 999,
+                      gap: isFa ? 0.45 : 0.7,
+                      "& .MuiButton-startIcon": isFa
+                        ? { marginLeft: 0.35, marginRight: 0 }
+                        : undefined,
                     }}
                   />
-                </Stack>
+                </Box>
               </Box>
             </Stack>
           </CardContent>
@@ -416,7 +431,7 @@ export default function GoalsListPage() {
                 : "0 10px 24px rgba(15,23,42,0.08)",
             }}
           >
-            <Stack spacing={1.2} alignItems="center">
+            <Stack gap={1.5} alignItems="center">
               <Box
                 sx={{
                   width: 54,
@@ -442,8 +457,9 @@ export default function GoalsListPage() {
                 variant="contained"
                 onClick={() => navigate("/goals/new")}
                 sx={{ mt: 1, borderRadius: 999 }}
+                gap = {1.5}
               >
-                {isFa ? "ساخت هدف جدید" : "Create New Goal"}
+                {isFa ? " هدف جدید" : " New Goal"}
               </Button>
             </Stack>
           </Card>

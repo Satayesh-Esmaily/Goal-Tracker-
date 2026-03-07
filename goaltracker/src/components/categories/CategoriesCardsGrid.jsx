@@ -3,7 +3,6 @@ import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
-import WarningAmberRoundedIcon from "@mui/icons-material/WarningAmberRounded";
 import {
   alpha,
   Box,
@@ -16,6 +15,8 @@ import {
   LinearProgress,
   MenuItem,
   Stack,
+  Tab,
+  Tabs,
   TextField,
   Typography,
   useTheme,
@@ -23,9 +24,10 @@ import {
 import { useTranslation } from "react-i18next";
 
 function CategoryCard({ category, index }) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const isFa = i18n.language === "fa";
   const progressPercent = category.progressRate;
   const barColor =
     progressPercent >= 70
@@ -63,11 +65,11 @@ function CategoryCard({ category, index }) {
       <CardContent sx={{ p: 2.25 }}>
         <Stack spacing={1.35}>
           <Stack
-            direction="row"
+            direction={isFa ? "row-reverse" : "row"}
             justifyContent="space-between"
             alignItems="center"
           >
-            <Stack direction="row" spacing={1} alignItems="center">
+            <Stack direction={isFa ? "row-reverse" : "row"} spacing={1} alignItems="center">
               <Chip
                 size="small"
                 label={`#${index + 1}`}
@@ -84,6 +86,9 @@ function CategoryCard({ category, index }) {
               })}
               color="primary"
               variant="outlined"
+              sx={{
+                "& .MuiChip-label": { px: 1.2 },
+              }}
             />
           </Stack>
 
@@ -94,6 +99,13 @@ function CategoryCard({ category, index }) {
               variant="outlined"
               icon={<FlagCircleOutlinedIcon sx={{ fontSize: 16 }} />}
               label={`${t("categoriesPage.active")}: ${category.active}`}
+              sx={{
+                gap: 0.35,
+                "& .MuiChip-label": { px: 0.9 },
+                "& .MuiChip-icon": isFa
+                  ? { marginLeft: 0.5, marginRight: 0 }
+                  : { marginRight: 0.5, marginLeft: 0 },
+              }}
             />
             <Chip
               size="small"
@@ -101,6 +113,13 @@ function CategoryCard({ category, index }) {
               variant="outlined"
               icon={<TaskAltRoundedIcon sx={{ fontSize: 16 }} />}
               label={`${t("categoriesPage.completed")}: ${category.completed}`}
+              sx={{
+                gap: 0.35,
+                "& .MuiChip-label": { px: 0.9 },
+                "& .MuiChip-icon": isFa
+                  ? { marginLeft: 0.5, marginRight: 0 }
+                  : { marginRight: 0.5, marginLeft: 0 },
+              }}
             />
           </Stack>
 
@@ -108,12 +127,12 @@ function CategoryCard({ category, index }) {
 
           <Box>
             <Stack
-              direction="row"
+              direction={isFa ? "row-reverse" : "row"}
               justifyContent="space-between"
               alignItems="center"
               sx={{ mb: 0.55 }}
             >
-              <Stack direction="row" spacing={0.75} alignItems="center">
+              <Stack direction={isFa ? "row-reverse" : "row"} spacing={0.75} alignItems="center">
                 <AutoGraphRoundedIcon sx={{ fontSize: 18, color: barColor }} />
                 <Typography
                   variant="caption"
@@ -172,17 +191,6 @@ export default function CategoriesCardsGrid({ categories }) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const filterCounts = useMemo(
-    () => ({
-      all: categories.length,
-      active: categories.filter((category) => category.active > 0).length,
-      completed: categories.filter((category) => category.completed > 0).length,
-      attention: categories.filter((category) => category.progressRate < 40)
-        .length,
-    }),
-    [categories]
-  );
-
   const filteredCategories = useMemo(() => {
     let result = categories;
 
@@ -212,25 +220,6 @@ export default function CategoriesCardsGrid({ categories }) {
     return sorted;
   }, [categories, filter, query, sortBy]);
 
-  const filterPills = [
-    { key: "all", label: t("categoriesPage.filters.all"), icon: null },
-    {
-      key: "active",
-      label: t("categoriesPage.filters.active"),
-      icon: <FlagCircleOutlinedIcon sx={{ fontSize: 16 }} />,
-    },
-    {
-      key: "completed",
-      label: t("categoriesPage.filters.completed"),
-      icon: <TaskAltRoundedIcon sx={{ fontSize: 16 }} />,
-    },
-    {
-      key: "attention",
-      label: t("categoriesPage.filters.attention"),
-      icon: <WarningAmberRoundedIcon sx={{ fontSize: 16 }} />,
-    },
-  ];
-
   return (
     <Stack spacing={2}>
       <Box
@@ -245,23 +234,22 @@ export default function CategoriesCardsGrid({ categories }) {
         }}
       >
         <Stack spacing={1.1}>
-          <Stack direction="row" spacing={1} useFlexGap flexWrap="wrap">
-            {filterPills.map((pill) => {
-              const selected = filter === pill.key;
-              return (
-                <Chip
-                  key={pill.key}
-                  clickable
-                  icon={pill.icon}
-                  label={`${pill.label} (${filterCounts[pill.key]})`}
-                  onClick={() => setFilter(pill.key)}
-                  color={selected ? "primary" : "default"}
-                  variant={selected ? "filled" : "outlined"}
-                  sx={{ fontWeight: 700, borderRadius: 2 }}
-                />
-              );
-            })}
-          </Stack>
+          <Tabs
+            value={filter}
+            onChange={(_, next) => setFilter(next)}
+            variant="scrollable"
+          >
+            <Tab value="all" label={t("categoriesPage.filters.all")} />
+            <Tab value="active" label={t("categoriesPage.filters.active")} />
+            <Tab
+              value="completed"
+              label={t("categoriesPage.filters.completed")}
+            />
+            <Tab
+              value="attention"
+              label={t("categoriesPage.filters.attention")}
+            />
+          </Tabs>
 
           <Stack direction={{ xs: "column", md: "row" }} spacing={1.1}>
             <TextField
