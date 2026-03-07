@@ -351,12 +351,16 @@ Screenshots:
 6.Archive Pge
 ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-27.jpg)
 
-7. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-36.jpg)
+7.Goal Page
+![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-36.jpg)
    
-8. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-43.jpg)
+8.Create New Goal
+![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/d06201d6caff8cfeed98ee801e0fffcfc0e66347/goaltracker/src/readme%20images/photo_2026-03-05_16-51-43.jpg)
     
-9. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photodetails_2026-03-06_18-15-19.jpg)
+9.Goal Details Page
+![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photodetails_2026-03-06_18-15-19.jpg)
     
-10. ![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photo1_2026-03-06_18-15-48.jpg)
+10.Moblie Responsive View
+![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/photo1_2026-03-06_18-15-48.jpg)
 
-11.![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg)
+11. Not Found Page (404)![image alt](https://github.com/Satayesh-Esmaily/Goal-Tracker-/blob/main/goaltracker/src/readme%20images/notfound_2026-03-06_17-07-35.jpg)
