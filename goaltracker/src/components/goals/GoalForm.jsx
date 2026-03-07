@@ -25,8 +25,9 @@ import { useNavigate } from "react-router-dom";
 import { useGoals } from "../../context/GoalsContext";
 import { useTranslation } from "react-i18next";
 import { createGoalFormSchema, goalFormDefaultValues } from "./goalFormSchema";
+import { useAuth } from "../../context/AuthContext";
+import { getAllCategories } from "../../utils/categories";
 
-const categories = ["Health", "Study", "Work", "Personal", "Fitness", "Hobby"];
 const types = [
   { value: "daily", label: "Daily" },
   { value: "count", label: "Count Based" },
@@ -45,9 +46,11 @@ export default function GoalForm({
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { createGoal } = useGoals();
+  const { user } = useAuth();
   const { t } = useTranslation();
   const [showOptional, setShowOptional] = useState(true);
   const schema = useMemo(() => createGoalFormSchema(t), [t]);
+  const categories = useMemo(() => getAllCategories(user?.uid), [user?.uid]);
 
   const {
     control,

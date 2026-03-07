@@ -1,32 +1,48 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   alpha,
   Box,
+  Button,
   Card,
   CardContent,
   Container,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid,
   Stack,
+  TextField,
   Typography,
   useTheme,
 } from "@mui/material";
+import AddRoundedIcon from "@mui/icons-material/AddRounded";
 import CategoryRoundedIcon from "@mui/icons-material/CategoryRounded";
 import TaskAltRoundedIcon from "@mui/icons-material/TaskAltRounded";
 import FlagCircleOutlinedIcon from "@mui/icons-material/FlagCircleOutlined";
 import AutoGraphRoundedIcon from "@mui/icons-material/AutoGraphRounded";
 import { useGoals } from "../../context/GoalsContext";
 import { useTranslation } from "react-i18next";
+import { useAuth } from "../../context/AuthContext";
 import CategoriesDonutChart from "../../components/categories/CategoriesDonutChart";
 import CategoriesProgressChart from "../../components/categories/CategoriesProgressChart";
 import CategoriesCardsGrid from "../../components/categories/CategoriesCardsGrid";
 import SectionCard from "../../components/common/SectionCard";
+import { addCustomCategory, readCustomCategories } from "../../utils/categories";
 
 export default function CategoriesPage() {
   const { goals } = useGoals();
-  const { t } = useTranslation();
+  const { user } = useAuth();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const primary = theme.palette.primary.main;
+
+  const [openAddDialog, setOpenAddDialog] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const [addCategoryError, setAddCategoryError] = useState("");
+  const customCategories = readCustomCategories(user?.uid);
 
   const categories = useMemo(() => {
     const map = new Map();
@@ -46,10 +62,7 @@ export default function CategoriesPage() {
         };
 
         const target = Math.max(1, Number(goal.target) || 1);
-        const progress = Math.max(
-          0,
-          Math.min(target, Number(goal.progress) || 0)
-        );
+        const progress = Math.max(0, Math.min(target, Number(goal.progress) || 0));
 
         current.total += 1;
         current.progressSum += progress;
@@ -61,6 +74,20 @@ export default function CategoriesPage() {
         map.set(name, current);
       });
 
+    customCategories.forEach((name) => {
+      if (!map.has(name)) {
+        map.set(name, {
+          name,
+          active: 0,
+          completed: 0,
+          paused: 0,
+          total: 0,
+          progressSum: 0,
+          targetSum: 0,
+        });
+      }
+    });
+
     return [...map.values()]
       .map((item) => ({
         ...item,
@@ -70,14 +97,12 @@ export default function CategoriesPage() {
             : Math.round((item.progressSum / item.targetSum) * 100),
       }))
       .sort((a, b) => b.progressRate - a.progressRate || b.total - a.total);
-  }, [goals]);
+  }, [goals, customCategories]);
+
   const totalCategories = categories.length;
   const totalGoals = categories.reduce((acc, item) => acc + item.total, 0);
   const activeGoals = categories.reduce((acc, item) => acc + item.active, 0);
-  const completedGoals = categories.reduce(
-    (acc, item) => acc + item.completed,
-    0
-  );
+  const completedGoals = categories.reduce((acc, item) => acc + item.completed, 0);
   const avgProgress =
     categories.length === 0
       ? 0
@@ -114,6 +139,26 @@ export default function CategoriesPage() {
     },
   };
 
+  const handleCreateCategory = () => {
+    const result = addCustomCategory(user?.uid, newCategory);
+    if (!result.ok) {
+      if (result.reason === "duplicate") {
+        setAddCategoryError(
+          isFa ? "این کتگوری قبلاً وجود دارد." : "This category already exists."
+        );
+      } else {
+        setAddCategoryError(
+          isFa ? "نام کتگوری را وارد کنید." : "Please enter a category name."
+        );
+      }
+      return;
+    }
+
+    setNewCategory("");
+    setAddCategoryError("");
+    setOpenAddDialog(false);
+  };
+
   return (
     <Container maxWidth="lg" sx={{ py: { xs: 2, md: 4 } }}>
       <Stack spacing={3}>
@@ -135,13 +180,39 @@ export default function CategoriesPage() {
           }}
         >
           <CardContent sx={{ p: { xs: 2, md: 3 } }}>
-            <Stack spacing={0.5}>
-              <Typography variant="h4" fontWeight={900}>
-                {t("categoriesPage.title")}
-              </Typography>
-              <Typography variant="body2" color="text.secondary">
-                {t("categoriesPage.subtitle")}
-              </Typography>
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              spacing={1.5}
+              justifyContent="space-between"
+              alignItems={{ xs: "flex-start", md: "center" }}
+            >
+              <Stack spacing={0.5}>
+                <Typography variant="h4" fontWeight={900}>
+                  {t("categoriesPage.title")}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {t("categoriesPage.subtitle")}
+                </Typography>
+              </Stack>
+
+              <Button
+                variant="contained"
+                startIcon={<AddRoundedIcon />}
+                onClick={() => setOpenAddDialog(true)}
+                sx={{
+                  gap: 0.75,
+                  minHeight: 44,
+                  borderRadius: 999,
+                  textTransform: "none",
+                  fontWeight: 700,
+                  whiteSpace: "nowrap",
+                  "& .MuiButton-startIcon": {
+                    margin: 0,
+                  },
+                }}
+              >
+                {isFa ? "کتگوری جدید" : "New Category"}
+              </Button>
             </Stack>
           </CardContent>
         </Card>
@@ -151,10 +222,7 @@ export default function CategoriesPage() {
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <CategoryRoundedIcon
-                    sx={{ color: primary }}
-                    fontSize="small"
-                  />
+                  <CategoryRoundedIcon sx={{ color: primary }} fontSize="small" />
                   <Typography variant="body2" color="text.secondary">
                     {t("categoriesPage.stats.categories")}
                   </Typography>
@@ -216,10 +284,7 @@ export default function CategoriesPage() {
             <Card elevation={0} sx={statCardSx}>
               <CardContent>
                 <Stack direction="row" alignItems="center" spacing={1}>
-                  <AutoGraphRoundedIcon
-                    sx={{ color: primary }}
-                    fontSize="small"
-                  />
+                  <AutoGraphRoundedIcon sx={{ color: primary }} fontSize="small" />
                   <Typography variant="body2" color="text.secondary">
                     {t("categoriesPage.stats.avgProgress")}
                   </Typography>
@@ -283,6 +348,36 @@ export default function CategoriesPage() {
           </Stack>
         )}
       </Stack>
+
+      <Dialog
+        open={openAddDialog}
+        onClose={() => setOpenAddDialog(false)}
+        fullWidth
+        maxWidth="xs"
+      >
+        <DialogTitle>{isFa ? "افزودن کتگوری" : "Add Category"}</DialogTitle>
+        <DialogContent>
+          <TextField
+            fullWidth
+            autoFocus
+            margin="dense"
+            label={isFa ? "نام کتگوری" : "Category Name"}
+            value={newCategory}
+            onChange={(event) => {
+              setNewCategory(event.target.value);
+              setAddCategoryError("");
+            }}
+            error={Boolean(addCategoryError)}
+            helperText={addCategoryError}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenAddDialog(false)}>{t("common.cancel")}</Button>
+          <Button variant="contained" onClick={handleCreateCategory}>
+            {isFa ? "ایجاد" : "Create"}
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Container>
   );
 }
