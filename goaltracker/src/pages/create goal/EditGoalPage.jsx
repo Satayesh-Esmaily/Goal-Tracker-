@@ -24,7 +24,8 @@ import { useGoals } from "../../context/GoalsContext";
 
 export default function EditGoalPage() {
   const { id } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const isFa = i18n.language === "fa";
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
   const { goals, updateGoal, deleteGoal } = useGoals();
@@ -47,7 +48,7 @@ export default function EditGoalPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Typography variant="h4" fontWeight={800}>
-          Edit Goal
+          {t("goalForm.editTitle")}
         </Typography>
 
         <Box
@@ -61,7 +62,7 @@ export default function EditGoalPage() {
             <Card>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary">
-                  Progress
+                  {isFa ? "پیشرفت" : "Progress"}
                 </Typography>
                 <Typography variant="h5" fontWeight={700}>
                   {progressRate}%
@@ -72,10 +73,10 @@ export default function EditGoalPage() {
             <Card>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary">
-                  Status
+                  {isFa ? "وضعیت" : "Status"}
                 </Typography>
                 <Chip
-                  label={goal.status}
+                  label={t(`common.${goal.status}`)}
                   color={
                     goal.status === "completed"
                       ? "success"
@@ -90,7 +91,7 @@ export default function EditGoalPage() {
             <Card>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary">
-                  XP Earned
+                  {isFa ? "ایکس‌پی کسب‌شده" : "XP Earned"}
                 </Typography>
                 <Typography variant="h6" fontWeight={700}>
                   {xpEarned} XP
@@ -101,14 +102,14 @@ export default function EditGoalPage() {
             <Card>
               <CardContent>
                 <Typography variant="subtitle2" color="text.secondary">
-                  Activity (Last 5)
+                  {isFa ? "فعالیت (۵ مورد آخر)" : "Activity (Last 5)"}
                 </Typography>
                 {goal.logs
                   ?.slice(-5)
                   .reverse()
                   .map((log, index) => (
                     <Typography key={index} variant="body2">
-                      {new Date(log.date).toLocaleDateString()} — +{log.amount}
+                      {new Date(log.date).toLocaleDateString()} - +{log.amount}
                     </Typography>
                   ))}
               </CardContent>
@@ -157,7 +158,7 @@ export default function EditGoalPage() {
               >
                 <CardContent>
                   <Typography variant="h6" gutterBottom sx={{ color: "error.main" }}>
-                    Danger Zone
+                    {t("settings.dangerZone")}
                   </Typography>
                   <Button
                     startIcon={<WarningAmberIcon />}
@@ -165,12 +166,16 @@ export default function EditGoalPage() {
                     variant="contained"
                     onClick={() => setOpenDelete(true)}
                     sx={{
+                      gap: 0.75,
+                      "& .MuiButton-startIcon": {
+                        margin: 0,
+                      },
                       "&:hover": {
                         background: "linear-gradient(45deg, #ff1744, #f50057)",
                       },
                     }}
                   >
-                    Delete Goal
+                    {t("goalCard.delete")}
                   </Button>
                 </CardContent>
               </Card>
@@ -179,10 +184,10 @@ export default function EditGoalPage() {
         </Box>
 
         <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
-          <DialogTitle>Delete Goal?</DialogTitle>
-          <DialogContent>This action cannot be undone.</DialogContent>
+          <DialogTitle>{t("settings.confirmTitle")}</DialogTitle>
+          <DialogContent>{t("settings.confirmText")}</DialogContent>
           <DialogActions>
-            <Button onClick={() => setOpenDelete(false)}>Cancel</Button>
+            <Button onClick={() => setOpenDelete(false)}>{t("common.cancel")}</Button>
             <Button
               color="error"
               onClick={() => {
@@ -190,7 +195,7 @@ export default function EditGoalPage() {
                 setOpenDelete(false);
               }}
             >
-              Delete
+              {t("goalCard.delete")}
             </Button>
           </DialogActions>
         </Dialog>
@@ -198,3 +203,4 @@ export default function EditGoalPage() {
     </Container>
   );
 }
+
