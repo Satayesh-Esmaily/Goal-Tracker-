@@ -1,4 +1,4 @@
-Goal Tracker
+#Goal Tracker
 
 [🌐 View Live Demo](https://goal-tracker-project.vercel.app/) | [🎥 Watch Demo Video](https://youtu.be/X7Wrqzeuk6A?si=Sk_Z20aTVB_3GaA3) | [💻 View Code on GitHub](https://github.com/Satayesh-Esmaily/Goal-Tracker-) 
 
