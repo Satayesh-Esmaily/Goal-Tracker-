@@ -4,8 +4,9 @@ Goal Tracker
 
    Goal Tracker is a multi page React web application designed to help users create and manage goals, track their progress, and visualize achievements through an interactive dashboard. It provides features such as progress tracking, categories, streak monitoring, and a responsive user interface.
    
+---
 
- 📊Features:
+ Features:
  
   1: Dashboard Features:
   
